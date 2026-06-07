@@ -1,0 +1,632 @@
+================================================================================
+HAMRO KARMA — UI DESIGN SYSTEM & PROMPTS FOR AI
+Read this before designing or styling ANY page in this project.
+================================================================================
+
+PROJECT IDENTITY
+----------------
+Name: Hamro Karma
+Purpose: Local service marketplace for Nepal (think UrbanCompany but Nepali)
+Audience: Regular Nepali users — phone-first, bilingual, not tech-savvy
+Vibe: Trustworthy, clean, practical. NOT startup-flashy. NOT corporate-boring.
+      Like a well-designed government portal crossed with a modern app.
+      Feels local, feels safe, feels easy.
+
+================================================================================
+SECTION 1 — FONTS
+================================================================================
+
+Three fonts in this project. Use them correctly:
+
+  DM Sans        → body text, paragraphs, descriptions, form labels, nav items
+  Plus Jakarta Sans → headings, page titles, card titles, stat numbers
+  Yatra One      → ONLY for the Nepali logo text "कर्म" in the sidebar header
+
+They are loaded in index.html already. Use them via Tailwind like:
+
+  font-sans  → DM Sans (already set as default in tailwind config)
+  font-heading → Plus Jakarta Sans  (add this as a custom font family if not set)
+
+For the AI: whenever you write a page title or section heading, use:
+  <h1 className="font-heading text-2xl font-bold ...">
+  <h2 className="font-heading text-xl font-semibold ...">
+
+For body text, labels, descriptions — just leave it (DM Sans is default):
+  <p className="text-sm text-slate-600 dark:text-slate-400">
+
+NEVER use system fonts or Arial or Inter. The fonts are already loaded.
+
+================================================================================
+SECTION 2 — COLOR SYSTEM
+================================================================================
+
+This project uses a LIMITED palette. Do not invent new colors.
+
+BACKGROUNDS:
+  Page background   → bg-slate-50 dark:bg-slate-900
+  Card / panel      → bg-white dark:bg-slate-800
+  Sidebar           → bg-white dark:bg-slate-900 (with border-r)
+  Header            → bg-white dark:bg-slate-900 (with border-b)
+  Input             → bg-white dark:bg-slate-700
+  Hover on nav item → bg-slate-100 dark:bg-slate-800
+  Active nav item   → bg-violet-50 dark:bg-violet-950 (with violet text)
+
+TEXT:
+  Primary text      → text-slate-900 dark:text-slate-100
+  Secondary text    → text-slate-600 dark:text-slate-400
+  Muted/hint text   → text-slate-400 dark:text-slate-500
+  Link / action     → text-violet-600 dark:text-violet-400
+
+BORDERS:
+  Default           → border-slate-200 dark:border-slate-700
+  Focused input     → ring-2 ring-violet-500
+  Divider           → divide-slate-100 dark:divide-slate-700
+
+BRAND COLOR (primary accent): VIOLET
+  Primary button    → bg-violet-600 hover:bg-violet-700 text-white
+  Secondary button  → border border-slate-200 hover:bg-slate-50 text-slate-700
+  Active nav        → text-violet-600 dark:text-violet-400
+  Badge/tag         → bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300
+  Icon accent       → text-violet-500
+
+STATUS COLORS (use for badges, status indicators):
+  Success/Confirmed → bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300
+  Warning/Pending   → bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300
+  Danger/Rejected   → bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300
+  Info/Neutral      → bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300
+  Closed/Inactive   → bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400
+
+KARMA LEVEL COLORS:
+  BRONZE   → text-amber-700 bg-amber-100 (dark: text-amber-300 bg-amber-900)
+  SILVER   → text-slate-600 bg-slate-100 (dark: text-slate-300 bg-slate-700)
+  GOLD     → text-yellow-700 bg-yellow-100 (dark: text-yellow-300 bg-yellow-900)
+  PLATINUM → text-violet-700 bg-violet-100 (dark: text-violet-300 bg-violet-900)
+
+FTL TYPE COLORS:
+  PERSON  → bg-red-100 text-red-700
+  PET     → bg-amber-100 text-amber-700
+  ITEM    → bg-blue-100 text-blue-700
+  VEHICLE → bg-slate-100 text-slate-700
+
+RULE: Every single color class must have a dark: variant. No exceptions.
+      If you write bg-white, you must also write dark:bg-slate-800.
+
+================================================================================
+SECTION 3 — SPACING & LAYOUT RULES
+================================================================================
+
+PAGE WRAPPER (use on every page's root div):
+  <div className="p-6 max-w-6xl mx-auto space-y-6">
+
+NARROW PAGE WRAPPER (forms, detail views):
+  <div className="p-6 max-w-2xl mx-auto space-y-6">
+
+WIDE PAGE (dashboard, tables, listings):
+  <div className="p-6 space-y-6">   ← no max-w, fills available space
+
+CARD (the main building block of every page):
+  <div className="bg-white dark:bg-slate-800 rounded-xl
+                  border border-slate-200 dark:border-slate-700 p-5">
+
+CARD HEADER (inside a card, with a title and optional action):
+  <div className="flex items-center justify-between mb-4">
+    <h2 className="font-heading text-base font-semibold
+                   text-slate-900 dark:text-slate-100">
+      Section Title
+    </h2>
+    <button className="text-sm text-violet-600 hover:underline">View All</button>
+  </div>
+
+SECTION TITLE (standalone, above a card or section):
+  <h1 className="font-heading text-2xl font-bold
+                 text-slate-900 dark:text-slate-100">
+
+GRID LAYOUTS:
+  2 columns   → grid grid-cols-1 md:grid-cols-2 gap-4
+  3 columns   → grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4
+  4 columns   → grid grid-cols-2 lg:grid-cols-4 gap-4
+  Stat cards  → grid grid-cols-2 lg:grid-cols-4 gap-4
+
+STAT CARD (numbers/metrics):
+  <div className="bg-white dark:bg-slate-800 rounded-xl
+                  border border-slate-200 dark:border-slate-700 p-4">
+    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Label</p>
+    <p className="font-heading text-2xl font-bold
+                  text-slate-900 dark:text-slate-100">42</p>
+  </div>
+
+LIST ITEM (inside a card, rows of data):
+  <div className="flex items-center gap-3 py-3
+                  border-b border-slate-100 dark:border-slate-700 last:border-0">
+    {/* icon or avatar */}
+    <div className="flex-1 min-w-0">
+      <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+        Title
+      </p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">Subtitle</p>
+    </div>
+    {/* badge or action */}
+  </div>
+
+================================================================================
+SECTION 4 — COMPONENTS (copy-paste ready)
+================================================================================
+
+--- BADGE / STATUS PILL ---
+  <span className="inline-flex items-center px-2 py-0.5 rounded-full
+                   text-xs font-medium bg-green-100 text-green-700
+                   dark:bg-green-900 dark:text-green-300">
+    Confirmed
+  </span>
+
+--- AVATAR (user profile picture or initials fallback) ---
+  {/* With image */}
+  <img src={avatarUrl} alt={name}
+       className="w-10 h-10 rounded-full object-cover
+                  ring-2 ring-slate-200 dark:ring-slate-700" />
+
+  {/* Initials fallback */}
+  <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900
+                  flex items-center justify-center
+                  text-sm font-semibold text-violet-700 dark:text-violet-300">
+    {name.charAt(0).toUpperCase()}
+  </div>
+
+--- TEXT INPUT ---
+  <input type="text"
+    className="w-full px-3 py-2 rounded-lg
+               border border-slate-200 dark:border-slate-600
+               bg-white dark:bg-slate-700
+               text-slate-900 dark:text-slate-100
+               placeholder:text-slate-400 dark:placeholder:text-slate-500
+               focus:outline-none focus:ring-2 focus:ring-violet-500
+               text-sm" />
+
+--- TEXTAREA ---
+  <textarea rows={4}
+    className="w-full px-3 py-2 rounded-lg
+               border border-slate-200 dark:border-slate-600
+               bg-white dark:bg-slate-700
+               text-slate-900 dark:text-slate-100
+               placeholder:text-slate-400 dark:placeholder:text-slate-500
+               focus:outline-none focus:ring-2 focus:ring-violet-500
+               text-sm resize-none" />
+
+--- SELECT / DROPDOWN ---
+  <select className="w-full px-3 py-2 rounded-lg
+                     border border-slate-200 dark:border-slate-600
+                     bg-white dark:bg-slate-700
+                     text-slate-900 dark:text-slate-100
+                     focus:outline-none focus:ring-2 focus:ring-violet-500
+                     text-sm">
+    <option value="">Select...</option>
+  </select>
+
+--- FORM LABEL ---
+  <label className="block text-sm font-medium
+                    text-slate-700 dark:text-slate-300 mb-1">
+    Field Name
+  </label>
+
+--- FORM GROUP (label + input together) ---
+  <div className="space-y-1">
+    <label className="block text-sm font-medium
+                      text-slate-700 dark:text-slate-300">Label</label>
+    <input ... />
+    <p className="text-xs text-slate-400">Helper text if needed</p>
+  </div>
+
+--- PRIMARY BUTTON ---
+  <button className="px-4 py-2 bg-violet-600 hover:bg-violet-700
+                     text-white text-sm font-medium rounded-lg
+                     transition disabled:opacity-50 disabled:cursor-not-allowed">
+    Action
+  </button>
+
+--- SECONDARY BUTTON ---
+  <button className="px-4 py-2 border border-slate-200 dark:border-slate-600
+                     hover:bg-slate-50 dark:hover:bg-slate-700
+                     text-slate-700 dark:text-slate-300
+                     text-sm font-medium rounded-lg transition">
+    Cancel
+  </button>
+
+--- DANGER BUTTON ---
+  <button className="px-4 py-2 bg-red-600 hover:bg-red-700
+                     text-white text-sm font-medium rounded-lg transition">
+    Delete
+  </button>
+
+--- AI ASSIST BUTTON (special — violet + sparkle) ---
+  <button className="flex items-center gap-1.5 px-3 py-1.5
+                     bg-violet-100 dark:bg-violet-900
+                     text-violet-700 dark:text-violet-300
+                     text-xs font-medium rounded-lg
+                     hover:bg-violet-200 dark:hover:bg-violet-800
+                     transition disabled:opacity-50">
+    <Sparkles size={12} />
+    AI Assist
+  </button>
+
+--- LOADING SPINNER (inline, inside button or card) ---
+  <div className="w-4 h-4 rounded-full border-2
+                  border-violet-300 border-t-violet-600 animate-spin" />
+
+--- EMPTY STATE (when no data) ---
+  <div className="flex flex-col items-center justify-center py-16
+                  text-center text-slate-400 dark:text-slate-500">
+    <AlertCircle size={40} className="mb-3 opacity-40" />
+    <p className="text-sm font-medium">No items found</p>
+    <p className="text-xs mt-1">Try adjusting your filters</p>
+  </div>
+
+--- ERROR STATE ---
+  <div className="p-4 rounded-lg bg-red-50 dark:bg-red-950
+                  border border-red-200 dark:border-red-800
+                  text-red-700 dark:text-red-300 text-sm">
+    {errorMessage}
+  </div>
+
+--- INFO BANNER (status messages at top of page) ---
+  <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950
+                  border border-amber-200 dark:border-amber-800
+                  flex items-start gap-3">
+    <Clock size={16} className="text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+    <p className="text-sm text-amber-700 dark:text-amber-300">
+      Your documents are under review.
+    </p>
+  </div>
+
+--- FILE UPLOAD DROPZONE ---
+  <label className="flex flex-col items-center justify-center
+                    w-full h-32 rounded-xl cursor-pointer
+                    border-2 border-dashed
+                    border-slate-300 dark:border-slate-600
+                    hover:border-violet-400 dark:hover:border-violet-500
+                    transition bg-slate-50 dark:bg-slate-800">
+    <Upload size={24} className="text-slate-400 mb-2" />
+    <span className="text-sm text-slate-500 dark:text-slate-400">
+      Click to upload
+    </span>
+    <input type="file" className="hidden" accept="image/*" onChange={...} />
+  </label>
+
+--- STAR RATING DISPLAY ---
+  <div className="flex items-center gap-0.5">
+    {Array.from({ length: 5 }).map((_, i) => (
+      <Star key={i} size={14}
+        className={i < Math.round(rating)
+          ? 'text-amber-400 fill-amber-400'
+          : 'text-slate-300 dark:text-slate-600'} />
+    ))}
+    <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+      ({reviewCount})
+    </span>
+  </div>
+
+--- DIVIDER ---
+  <hr className="border-slate-100 dark:border-slate-700" />
+
+--- BACK BUTTON (top of detail pages) ---
+  <button onClick={() => navigate(-1)}
+    className="flex items-center gap-1.5 text-sm
+               text-slate-600 dark:text-slate-400
+               hover:text-slate-900 dark:hover:text-slate-100
+               mb-4 transition">
+    <ArrowLeft size={16} />
+    Back
+  </button>
+
+--- PAGE HEADER (title + optional subtitle + optional action button) ---
+  <div className="flex items-start justify-between">
+    <div>
+      <h1 className="font-heading text-2xl font-bold
+                     text-slate-900 dark:text-slate-100">
+        Page Title
+      </h1>
+      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        Subtitle or description
+      </p>
+    </div>
+    <button className="px-4 py-2 bg-violet-600 ...">Action</button>
+  </div>
+
+--- ICON WITH LABEL (used in detail views for metadata rows) ---
+  <div className="flex items-center gap-2 text-sm
+                  text-slate-600 dark:text-slate-400">
+    <MapPin size={15} className="text-slate-400 shrink-0" />
+    <span>{locationText}</span>
+  </div>
+
+--- VERIFICATION BADGE (for verified providers) ---
+  <span className="inline-flex items-center gap-1
+                   text-xs font-medium text-blue-600 dark:text-blue-400">
+    <Shield size={12} className="fill-blue-600 dark:fill-blue-400" />
+    Verified
+  </span>
+
+================================================================================
+SECTION 5 — PAGE-BY-PAGE DESIGN GUIDE
+================================================================================
+
+--- FtlPage (listing) ---
+
+  TOP SECTION:
+    Page header: "Find the Lost" + subtitle "Help reunite people with what they lost"
+    Right side of header: if logged in → "Post Alert" violet button
+    Below header: filter row — 5 pills (All | Person | Pet | Item | Vehicle)
+      Pill style active:  bg-violet-600 text-white rounded-full px-3 py-1 text-sm
+      Pill style inactive: bg-white dark:bg-slate-800 border text-slate-600 ...
+
+  ALERT CARD:
+    Full width, stacked vertically, gap-3 between cards
+    <div className="bg-white dark:bg-slate-800 rounded-xl
+                    border border-slate-200 dark:border-slate-700
+                    p-4 flex gap-4 hover:shadow-sm transition cursor-pointer">
+
+      LEFT:  80x80 image thumbnail (rounded-lg object-cover)
+             OR if no image: placeholder div with bg-slate-100 and a ghost icon
+
+      RIGHT: flex-col gap-1
+             Row 1: type badge (PERSON/PET etc.) + status badge OPEN in green
+             Row 2: title (font-medium text-slate-900)
+             Row 3: description (text-sm text-slate-600 line-clamp-2)
+             Row 4: MapPin icon + last_seen_location (text-xs text-slate-500)
+             Row 5: "Posted by {name} · {timeAgo}" + "View Details →" link right-aligned
+
+  SKELETON (while loading):
+    3 cards, each with animate-pulse gray rectangles in the same layout
+
+--- FtlNewPage (form) ---
+
+  LAYOUT: max-w-2xl, centered, white card, p-6
+
+  HEADING: "Post a Lost Alert" with a small subtitle
+
+  AI ASSIST SECTION (most important UX moment):
+    Description textarea first, large (rows=5)
+    AI Assist button floated top-right of the textarea wrapper:
+      <div className="relative">
+        <textarea ... />
+        <div className="absolute top-2 right-2">
+          <AI Assist button />
+        </div>
+      </div>
+    When AI fills in fields → show a small green notice:
+      "Fields filled by AI — please review before submitting"
+      Style: text-xs text-green-600 flex items-center gap-1
+
+  FIELD ORDER:
+    1. Description (textarea + AI button)
+    2. Type (select)
+    3. Title (text — may be auto-filled)
+    4. Last Seen Location (text — may be auto-filled)
+    5. Contact Method (select)
+    6. Contact Value (text)
+    7. Image Upload (optional, dropzone)
+    8. Submit button (full width)
+
+--- FtlDetailPage (detail view) ---
+
+  LAYOUT: max-w-3xl centered
+
+  TOP:
+    Back button (above card)
+    Image (full width, h-64, object-cover, rounded-xl) or tall placeholder
+
+  MAIN CARD (below image):
+    Row 1: type badge + status badge
+    Row 2: title (font-heading text-2xl font-bold)
+    Row 3: description (text-sm, full text, no truncation)
+    Divider
+    Row 4: metadata rows — MapPin + location, Clock + posted date, User + name
+    Divider
+
+  CONTACT CARD (separate card below main):
+    Title: "Contact the Reporter"
+    Show method icon + value
+    If PHONE → tel: link button
+    If EMAIL → mailto: link button
+    Else → plain text
+
+  OWNER ACTIONS CARD (only if user owns this alert):
+    Title: "Manage your alert"
+    3 buttons in a row: Mark as Matched (amber) | Close Alert (slate) | Delete (red)
+
+--- ProviderProfilePage ---
+
+  LAYOUT: max-w-3xl centered, space-y-4
+
+  TOP CARD (hero):
+    Left: large avatar (80px circle) with verified badge below name if verified
+    Right of avatar: name (text-xl font-bold), category (icon + name, text-sm)
+    Below name: karma level badge + star rating (if reviews exist)
+    Far right: "Book Now" button (violet) — only if logged in customer
+
+  STATS ROW (inside top card, below name section):
+    3-4 stat chips in a flex row:
+      <div className="flex items-center gap-1.5 text-sm text-slate-600">
+        <Clock size={14} className="text-slate-400" />
+        {yearsExp} years exp
+      </div>
+      | Rs. {rate}/hr | {location} | Available/Unavailable dot
+
+  BIO CARD:
+    Title: "About"
+    Body: bio text (text-sm leading-relaxed)
+
+  REVIEWS CARD:
+    Title: "Reviews ({count})" + average rating stars on right
+    List of review rows: avatar + name + stars + date + comment
+    If no reviews: "No reviews yet" empty state
+
+--- VerifyIdentityPage ---
+
+  LAYOUT: max-w-xl centered
+
+  TOP: Status banner (always visible, matches current verification_status)
+       Colors per status as defined in color section above
+
+  IF VERIFIED: No form. Just the success banner + "Return to Profile" button.
+  IF SUBMITTED: Amber banner + explanation text. No form.
+  IF PENDING or REJECTED: Show form below the banner.
+
+  FORM:
+    1. "Document Type" select
+    2. Front image dropzone (required label)
+    3. Back image dropzone (optional label)
+    4. Selfie with document dropzone (optional, recommended label)
+    5. Note: "Your documents are encrypted and only used for verification"
+       Style: text-xs text-slate-400 flex items-center gap-1 (with Lock icon)
+    6. Submit button: "Submit for Verification"
+
+================================================================================
+SECTION 6 — DARK MODE RULES (non-negotiable)
+================================================================================
+
+ALWAYS pair these:
+  bg-white          → dark:bg-slate-800
+  bg-slate-50       → dark:bg-slate-900
+  bg-slate-100      → dark:bg-slate-800
+  text-slate-900    → dark:text-slate-100
+  text-slate-700    → dark:text-slate-300
+  text-slate-600    → dark:text-slate-400
+  text-slate-500    → dark:text-slate-500
+  text-slate-400    → dark:text-slate-500
+  border-slate-200  → dark:border-slate-700
+  border-slate-100  → dark:border-slate-700
+
+NEVER write a Tailwind color class without its dark: pair.
+The toggle is stored in localStorage and applied to <html> by the theme toggle.
+Tailwind dark mode is class-based: class="dark" on <html>.
+Make sure tailwind.config has: darkMode: 'class'
+
+================================================================================
+SECTION 7 — RESPONSIVE RULES
+================================================================================
+
+This app is sidebar-based. The sidebar handles responsiveness:
+  Desktop (lg+): sidebar visible, pages have normal padding
+  Tablet (md):   sidebar collapses to icon-only
+  Mobile (sm):   sidebar hidden, hamburger opens overlay drawer
+
+Your pages do NOT need to handle sidebar behavior.
+But your page content should be responsive:
+
+  - Use grid-cols-1 md:grid-cols-2 lg:grid-cols-3 for card grids
+  - Use flex-col sm:flex-row for action rows that stack on mobile
+  - Use text-xl md:text-2xl for headings that scale
+  - Avoid fixed widths — use max-w + w-full
+  - Padding: p-4 on mobile, p-6 on desktop: className="p-4 md:p-6"
+  - Images in cards: set explicit heights so they don't collapse on mobile
+    (h-48 md:h-64 for hero images, h-20 w-20 for thumbnails)
+
+================================================================================
+SECTION 8 — THINGS TO NEVER DO
+================================================================================
+
+  ✗ No gradients anywhere (no bg-gradient-to-*, no gradient text)
+  ✗ No box shadows for decoration (no shadow-xl, shadow-2xl on cards)
+      Only shadow-sm allowed on hover states: hover:shadow-sm
+  ✗ No animations except: animate-spin (spinner), animate-pulse (skeleton),
+      transition on hover (transition, hover:bg-X)
+  ✗ No fixed pixel font sizes (no style="font-size: 24px") — use Tailwind text-*
+  ✗ No inline style= for colors — always Tailwind classes
+  ✗ No absolute positioning for layout — only for floating buttons (AI assist)
+  ✗ No z-index hacks
+  ✗ No !important
+  ✗ No rounded-full on rectangular cards — only on pills, avatars, badges
+  ✗ No bright/neon accent colors — violet is the ONLY accent
+  ✗ No emojis in UI (except the category icons from DB which are emoji strings)
+  ✗ No placeholder Lorem Ipsum text — write real Nepal-appropriate placeholder text
+      e.g. "Last seen near Thamel, Kathmandu" not "Lorem ipsum dolor..."
+  ✗ No hardcoded English-only text — run all static strings through useTrans()
+
+================================================================================
+SECTION 9 — WRITING useTrans() CORRECTLY
+================================================================================
+
+The i18n system is custom. Here is how to use it:
+
+  import { useTrans } from '../i18n'
+  const { t } = useTrans()
+
+  // Then in JSX:
+  <h1>{t('pageTitle')}</h1>
+  <button>{t('postAlert')}</button>
+
+  // To add a new translation, go to src/i18n/index.ts and add:
+  en: {
+    ...existing keys...
+    postAlert: 'Post Alert',
+    findTheLost: 'Find The Lost',
+    backButton: 'Back',
+    verifyIdentity: 'Verify Identity',
+    submitDocuments: 'Submit for Verification',
+    underReview: 'Your documents are under review',
+    verified: 'Identity Verified',
+  },
+  np: {
+    ...existing keys...
+    postAlert: 'सूचना पोस्ट गर्नुहोस्',
+    findTheLost: 'हराएको खोज्नुहोस्',
+    backButton: 'फिर्ता',
+    verifyIdentity: 'परिचय प्रमाणित गर्नुहोस्',
+    submitDocuments: 'प्रमाणीकरणका लागि पेश गर्नुहोस्',
+    underReview: 'तपाईंका कागजात समीक्षामा छन्',
+    verified: 'परिचय प्रमाणित',
+  }
+
+  For page titles and main labels, always use t(). For dynamic content
+  (names, locations, descriptions from DB) — just use the value directly,
+  it's user-generated and not translated.
+
+================================================================================
+SECTION 10 — PROMPT TEMPLATES FOR THE OTHER AI
+================================================================================
+
+Use these exact prompt templates when asking another AI to write a page.
+Replace [PAGE] with the page name.
+
+--- TEMPLATE A: New page from scratch ---
+
+  You are completing a page in Hamro Karma, a Nepali service marketplace.
+  The project uses React + TypeScript + Tailwind CSS.
+  Read the design rules file completely before writing any code.
+
+  Write [PAGE].tsx following these rules:
+  1. Use bg-white dark:bg-slate-800 cards on bg-slate-50 dark:bg-slate-900 page bg
+  2. All text colors must have dark: variants
+  3. Primary color is violet-600 for buttons and accents
+  4. Font classes: font-heading for titles (Plus Jakarta Sans), default for body (DM Sans)
+  5. Use the exact Tailwind class strings from the design system file — do not invent new ones
+  6. Wrap strings in t() from useTrans() for any static UI text
+  7. Follow the page-specific layout from Section 5 of the design file
+  8. Include loading state (spinner), error state (red banner), and empty state (ghost icon)
+  9. No gradients, no box shadows on cards, no animations except spin/pulse/transition
+
+--- TEMPLATE B: Fixing/improving existing page ---
+
+  The file [PAGE].tsx exists but needs design improvements.
+  Apply the Hamro Karma design system:
+  - Replace any hardcoded colors with the correct Tailwind classes + dark: pairs
+  - Replace any inline styles with Tailwind
+  - Make sure all cards use: bg-white dark:bg-slate-800 rounded-xl
+    border border-slate-200 dark:border-slate-700
+  - Make sure all inputs use the standard input classes from the design file
+  - Make all buttons match the primary/secondary/danger patterns
+  - Check that every grid has responsive breakpoints
+  Do not change the logic — only fix the styling.
+
+--- TEMPLATE C: Adding a component to an existing page ---
+
+  Add [COMPONENT] to [PAGE].tsx in the Hamro Karma project.
+  Follow the design system exactly:
+  - Use the card/list item/badge/button patterns from the design file
+  - Match the existing page's color scheme (slate + violet)
+  - Include dark mode variants on all color classes
+  - Keep it minimal — no decorative elements, no gradients
+
+================================================================================
+END OF DESIGN SYSTEM FILE
+================================================================================

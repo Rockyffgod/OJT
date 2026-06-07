@@ -1,0 +1,22 @@
+# Secrets — never commit
+.env
+context.txt
+teachings/PROJECT_CONTEXT.txt
+
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Build output
+dist/
+.vite/
+
+# Database (SQLite)
+backend/db.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
