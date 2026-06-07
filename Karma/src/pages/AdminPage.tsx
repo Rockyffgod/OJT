@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Check, X, Shield, AlertCircle } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { useTrans } from '../i18n';
 import { useToast } from '../hooks/useToast';
+import { api } from '../lib/api';
 
 const STATUS_STYLES: Record<string, string> = {
   REQUESTED: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
@@ -29,29 +29,24 @@ export default function AdminPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
+      let result: any;
       if (tab === 'users') {
-        const { data: d } = await supabase.from('profiles').select('*').limit(50);
-        setData(d || []);
+        result = await api.get('/api/admin/users/');
       } else if (tab === 'providers') {
-        const { data: d } = await supabase
-          .from('service_providers')
-          .select('*, profiles:profiles!service_providers_user_id_fkey(full_name, email, verification_status)')
-          .limit(50);
-        setData(d || []);
+        result = await api.get('/api/admin/providers/');
       } else {
-        const { data: d } = await supabase.from('bookings').select('*').limit(50);
-        setData(d || []);
+        result = await api.get('/api/admin/bookings/');
       }
+      setData(Array.isArray(result) ? result : result?.results || []);
     } catch (e) {
       console.error('Admin fetch error:', e);
+      setData([]);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [tab]);
+  useEffect(() => { fetchData(); }, [tab]);
 
   const tabs = [
     { key: 'users', label: isNp ? 'प्रयोगकर्ताहरू' : 'Users' },
@@ -59,14 +54,10 @@ export default function AdminPage() {
     { key: 'bookings', label: isNp ? 'बुकिङहरू' : 'Bookings' },
   ];
 
-  const approveProvider = async (id: string) => {
-    setActing(id);
+  const approveProvider = async (userId: string) => {
+    setActing(userId);
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ verification_status: 'APPROVED' })
-        .eq('id', id);
-      if (error) throw error;
+      await api.patch(`/api/admin/users/${userId}/verify/`, { verification_status: 'APPROVED' });
       toast.success(t('toast.saved'));
       await fetchData();
     } catch (e: any) {
@@ -76,14 +67,10 @@ export default function AdminPage() {
     }
   };
 
-  const suspendProvider = async (id: string) => {
-    setActing(id);
+  const suspendProvider = async (userId: string) => {
+    setActing(userId);
     try {
-      const { error } = await supabase
-        .from('service_providers')
-        .update({ is_available: false })
-        .eq('user_id', id);
-      if (error) throw error;
+      await api.patch(`/api/admin/providers/${userId}/suspend/`, { is_available: false });
       toast.success(t('toast.saved'));
       await fetchData();
     } catch (e: any) {
@@ -138,7 +125,6 @@ export default function AdminPage() {
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Name</th>
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Email</th>
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Type</th>
-                      <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Verification</th>
                     </>
                   )}
                   {tab === 'providers' && (
@@ -146,6 +132,7 @@ export default function AdminPage() {
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Name</th>
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Profession</th>
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Karma</th>
+                      <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Verification</th>
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Available</th>
                       <th className="px-4 py-3 text-right font-medium text-slate-500 dark:text-slate-400">Actions</th>
                     </>
@@ -172,28 +159,28 @@ export default function AdminPage() {
                           {u.account_type}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                            STATUS_STYLES[u.verification_status] || 'bg-slate-100 text-slate-600'
-                          }`}
-                        >
-                          {u.verification_status || 'PENDING'}
-                        </span>
-                      </td>
                     </tr>
                   ))}
                 {tab === 'providers' &&
                   data.map((p: any) => (
                     <tr key={p.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                       <td className="px-4 py-3 text-slate-900 dark:text-slate-100 font-medium">
-                        {p.profiles?.full_name || '—'}
+                        {p.user_name || '—'}
                       </td>
                       <td className="px-4 py-3 text-slate-500 dark:text-slate-400">
                         {p.profession || '—'}
                       </td>
                       <td className="px-4 py-3 text-slate-900 dark:text-slate-100 font-semibold">
                         {p.karma_points || 0}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                            STATUS_STYLES[p.verification_status] || 'bg-slate-100 text-slate-600'
+                          }`}
+                        >
+                          {p.verification_status || 'PENDING'}
+                        </span>
                       </td>
                       <td className="px-4 py-3">
                         <span
@@ -208,10 +195,10 @@ export default function AdminPage() {
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          {p.profiles?.verification_status !== 'APPROVED' && (
+                          {p.verification_status !== 'APPROVED' && (
                             <button
                               onClick={() => approveProvider(p.user_id)}
-                              disabled={acting === p.id}
+                              disabled={acting === p.user_id}
                               className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-violet-600 text-white rounded-md text-xs font-medium hover:bg-violet-700 transition-smooth disabled:opacity-50"
                             >
                               <Check size={12} /> Approve
@@ -220,7 +207,7 @@ export default function AdminPage() {
                           {p.is_available && (
                             <button
                               onClick={() => suspendProvider(p.user_id)}
-                              disabled={acting === p.id}
+                              disabled={acting === p.user_id}
                               className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-md text-xs font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-smooth disabled:opacity-50"
                             >
                               <X size={12} /> Suspend

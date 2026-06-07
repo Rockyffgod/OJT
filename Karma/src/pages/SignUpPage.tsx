@@ -4,7 +4,7 @@ import { User as UserIcon, Mail as MailIcon, Phone as PhoneIcon, Lock as LockIco
 import { signUp, signIn, AuthError } from '../lib/auth';
 import { useAuthStore } from '../store/authStore';
 import { useToast } from '../hooks/useToast';
-import { AccountType } from '../lib/supabase';
+import { AccountType } from '../lib/types';
 import SuccessAnimation from '../components/SuccessAnimation';
 
 export default function SignUpPage() {
@@ -99,11 +99,7 @@ export default function SignUpPage() {
       toast.success('Account created');
       setSuccess(true);
       setTimeout(() => {
-        if (accountType === 'PROVIDER') {
-          navigate('/verify-identity');
-        } else {
-          navigate('/complete-profile');
-        }
+        navigate('/dashboard');
       }, 1500);
     } catch (err: any) {
       const msg = err instanceof AuthError ? err.message : 'Sign up failed. Please try again.';

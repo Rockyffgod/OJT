@@ -148,6 +148,7 @@ export async function updateProfile(userId: string, updates: any) {
   if (updates.phone !== undefined) bodyData.phone = updates.phone;
   if (updates.city !== undefined) bodyData.city = updates.city;
   if (updates.username !== undefined) bodyData.username = updates.username;
+  if (updates.email !== undefined) bodyData.email = updates.email;
 
   const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/accounts/me/`, {
     method: 'PATCH',

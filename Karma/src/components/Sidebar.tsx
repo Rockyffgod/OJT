@@ -96,8 +96,6 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           <>
             <div className="border-t border-slate-200 dark:border-slate-700 my-3" />
             {accountNavItems.map(navLink)}
-            {profile?.account_type === 'PROVIDER' &&
-              navLink({ to: '/verify-identity', icon: Shield, key: 'nav.verifyIdentity' })}
             {profile?.account_type === 'ADMIN' &&
               navLink({ to: '/admin', icon: Shield, key: 'nav.admin' })}
           </>

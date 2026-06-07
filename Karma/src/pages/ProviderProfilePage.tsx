@@ -4,7 +4,7 @@ import {
   MapPin, Star, Shield, Clock, Award, ArrowLeft, Sparkles, Loader2,
   MessageSquare, Briefcase, CheckCircle2,
 } from 'lucide-react';
-import { ServiceProvider, KarmaLevel } from '../lib/supabase';
+import { ServiceProvider, KarmaLevel } from '../lib/types';
 import { api } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { useTrans } from '../i18n';

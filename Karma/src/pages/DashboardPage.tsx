@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import {
-  Wrench, Calendar, MessageSquare, Search, ArrowRight,
+  Wrench, Calendar, MessageSquare, ArrowRight,
   Star, Bell, Sparkles, Package, Heart, Trophy, Medal, Award
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
@@ -122,7 +122,7 @@ export default function DashboardPage() {
   const displayName = isNp ? transliterateName(firstName) : firstName;
 
   return (
-    <div className="pb-8 space-y-6">
+    <div className="pb-8 space-y-8">
       {/* Greeting */}
       <div>
         <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-heading flex items-center gap-2 mb-1">
@@ -133,7 +133,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {QUICK_ACTIONS.map((a) => {
           const Icon = a.icon;
           return (

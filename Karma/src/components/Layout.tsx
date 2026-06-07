@@ -26,8 +26,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           />
           <div className="flex-1 flex flex-col min-w-0">
             <Header onMenuClick={() => setMobileOpen(true)} />
-            <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-              <div className="max-w-6xl mx-auto">{children}</div>
+            <main className="flex-1 overflow-y-auto px-4 lg:px-8 py-4 lg:py-6">
+              {children}
             </main>
           </div>
           <ToastContainer />

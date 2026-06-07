@@ -3,6 +3,7 @@ from rest_framework import generics, permissions, filters, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
+from django.conf import settings
 from .models import ServiceCategory, ServiceProvider
 from .serializers import (
     ServiceCategorySerializer,
@@ -136,3 +137,55 @@ class ServiceSuggestionsView(APIView):
                 unique_suggestions.append(s)
 
         return Response(unique_suggestions[:10])
+
+
+class FileUploadView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        file = request.FILES.get('file')
+        if not file:
+            return Response({'error': 'No file provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+        from django.core.files.storage import default_storage
+        from django.core.files.base import ContentFile
+
+        path = default_storage.save(f'uploads/{file.name}', ContentFile(file.read()))
+        url = request.build_absolute_uri(f'{settings.MEDIA_URL}{path}')
+        return Response({'url': url})
+
+
+class SubmitVerificationView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request):
+        try:
+            provider = request.user.service_provider
+        except ServiceProvider.DoesNotExist:
+            return Response({'error': 'Only providers can submit verification'}, status=status.HTTP_403_FORBIDDEN)
+
+        document_type = request.data.get('document_type')
+        document_front_url = request.data.get('document_front_url', '')
+        document_back_url = request.data.get('document_back_url', '')
+        selfie_url = request.data.get('selfie_url', '')
+
+        if not document_type:
+            return Response({'error': 'document_type is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        valid_types = ['CITIZENSHIP_CARD', 'NATIONAL_ID', 'BIRTH_CERTIFICATE', 'PASSPORT']
+        if document_type not in valid_types:
+            return Response({'error': f'Invalid document type. Must be one of: {", ".join(valid_types)}'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        provider.id_document_type = document_type
+        if document_front_url:
+            provider.id_document_url = document_front_url
+        if selfie_url:
+            provider.selfie_url = selfie_url
+        provider.verification_status = 'SUBMITTED'
+        provider.save()
+
+        return Response({
+            'message': 'Verification documents submitted successfully',
+            'verification_status': provider.verification_status
+        })

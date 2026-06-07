@@ -20,8 +20,7 @@ import NotificationsPage from './pages/NotificationsPage';
 import AdminPage from './pages/AdminPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
-import VerifyIdentityPage from './pages/VerifyIdentityPage';
-import CompleteProfilePage from './pages/CompleteProfilePage';
+
 import NotFoundPage from './pages/NotFoundPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
 import TermsAndConditionsPage from './pages/TermsAndConditionsPage';
@@ -59,8 +58,6 @@ export default function App() {
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/edit" element={<ProviderProfileEditPage />} />
           <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/verify-identity" element={<VerifyIdentityPage />} />
-          <Route path="/complete-profile" element={<CompleteProfilePage />} />
           <Route path="/admin" element={<AdminPage />} />
         </Route>
 

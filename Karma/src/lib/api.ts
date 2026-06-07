@@ -30,4 +30,15 @@ export const api = {
   post: (path: string, body: unknown) => request('POST', path, body),
   patch: (path: string, body: unknown) => request('PATCH', path, body),
   delete: (path: string) => request('DELETE', path),
+  upload: async (path: string, formData: FormData) => {
+    const token = useAuthStore.getState().djangoToken;
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const res = await fetch(`${BASE}${path}`, { method: 'POST', headers, body: formData });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: 'Upload failed' }));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+    return res.json();
+  },
 };

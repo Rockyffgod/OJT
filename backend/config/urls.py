@@ -7,6 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('accounts.urls')),
     path('api/accounts/', include('accounts.urls')),  # Frontend uses this path
+    path('api/admin/', include('accounts.admin_urls')),
     path('api/services/', include('services.urls')),
     path('api/bookings/', include('bookings.urls')),
     path('api/messages/', include('messaging.urls')),

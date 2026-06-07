@@ -17,6 +17,9 @@ dist/
 # Database (SQLite)
 backend/db.sqlite3
 
+# Uploaded media
+backend/media/
+
 # OS
 .DS_Store
 Thumbs.db

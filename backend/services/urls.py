@@ -8,5 +8,7 @@ urlpatterns = [
     path('providers/<uuid:pk>/', views.ServiceProviderDetailView.as_view(), name='provider-detail'),
     path('providers/nearby/', views.NearbyProvidersView.as_view(), name='providers-nearby'),
     path('my-profile/', views.MyProviderProfileView.as_view(), name='my-provider-profile'),
+    path('my-profile/submit-verification/', views.SubmitVerificationView.as_view(), name='submit-verification'),
+    path('upload/', views.FileUploadView.as_view(), name='file-upload'),
     path('suggest/', views.ServiceSuggestionsView.as_view(), name='service-suggest'),
 ]

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { Profile } from '../lib/supabase';
+import { Profile } from '../lib/types';
 
 export interface AuthUser {
   id: string;

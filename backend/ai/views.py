@@ -9,6 +9,23 @@ from django.conf import settings
 client = Groq(api_key=os.environ.get('GROQ_API_KEY', settings.GROQ_API_KEY))
 
 SYSTEM_PROMPTS = {
+    "ftl_search": """You are a smart search assistant for 'Find The Lost' alerts in Nepal.
+Given a user's natural language query about something lost, extract structured search info.
+Respond in JSON format only:
+{
+  "type": "one of PERSON, PET, ITEM, VEHICLE or null if unknown",
+  "keywords": ["keyword1", "keyword2"],
+  "location": "location mentioned or null",
+  "description": "brief summary of what was lost"
+}""",
+    "ftl_enhance": """You are a helpful assistant improving 'Find The Lost' alerts.
+Given a rough description of a lost item/pet/person/vehicle, improve it to be more detailed and useful.
+Keep it concise (under 80 words) and Nepal-context aware.
+Respond in JSON format only:
+{
+  "enhanced_description": "improved description",
+  "helpful_tips": "brief search/recovery tip for Nepal"
+}""",
     "job_matcher": """You are a smart job matcher for Hamro Karma, a Nepali service marketplace.
 Given a user's free-text job description, extract structured information.
 Respond in JSON format only, no extra text:
@@ -124,6 +141,77 @@ class FTLAssistView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         result = call_groq(SYSTEM_PROMPTS["ftl_assist"], serializer.validated_data['description'])
+
+        if not result:
+            return Response({"error": "AI service unavailable"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        import json
+        try:
+            parsed = json.loads(result)
+        except json.JSONDecodeError:
+            return Response({"result": result})
+
+        return Response(parsed)
+
+
+class FTLSearchView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        from .serializers import FTLAssistInputSerializer
+        serializer = FTLAssistInputSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        result = call_groq(SYSTEM_PROMPTS["ftl_search"], serializer.validated_data['description'])
+
+        if not result:
+            return Response({"error": "AI service unavailable"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        import json
+        try:
+            parsed = json.loads(result)
+        except json.JSONDecodeError:
+            return Response({"result": result})
+
+        from ftl.models import FTLAlert
+        from django.db.models import Q
+
+        qs = FTLAlert.objects.filter(status__in=['OPEN', 'MATCHED'])
+        ftl_type = parsed.get('type')
+        if ftl_type:
+            qs = qs.filter(type=ftl_type)
+
+        keywords = parsed.get('keywords', [])
+        location = parsed.get('location')
+        if location:
+            qs = qs.filter(
+                Q(last_seen_location__icontains=location) |
+                Q(description__icontains=location)
+            )
+        for kw in keywords:
+            qs = qs.filter(
+                Q(title__icontains=kw) |
+                Q(description__icontains=kw)
+            )
+
+        alerts = qs.order_by('-created_at')[:20]
+        from ftl.serializers import FTLAlertSerializer
+        data = FTLAlertSerializer(alerts, many=True).data
+        parsed['alerts'] = data
+        return Response(parsed)
+
+
+class FTLEnhanceView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        from .serializers import FTLAssistInputSerializer
+        serializer = FTLAssistInputSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        result = call_groq(SYSTEM_PROMPTS["ftl_enhance"], serializer.validated_data['description'])
 
         if not result:
             return Response({"error": "AI service unavailable"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)

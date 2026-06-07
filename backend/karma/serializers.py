@@ -17,10 +17,16 @@ class KarmaEventSerializer(serializers.ModelSerializer):
 
 
 class LeaderboardEntrySerializer(serializers.ModelSerializer):
-    user_name = serializers.CharField(source='user.username', read_only=True)
+    user_name = serializers.SerializerMethodField()
     user_photo = serializers.ImageField(source='user.profile_photo', read_only=True)
 
     class Meta:
         model = ServiceProvider
         fields = ['id', 'user_name', 'user_photo', 'profession', 'karma_points',
                   'karma_level', 'average_rating', 'total_jobs_completed']
+
+    def get_user_name(self, obj):
+        name = obj.user.get_full_name()
+        if not name:
+            return obj.user.username.replace('_', ' ').title()
+        return name

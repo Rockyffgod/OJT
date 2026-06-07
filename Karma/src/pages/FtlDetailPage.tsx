@@ -4,7 +4,7 @@ import {
   ArrowLeft, MapPin, Calendar, User, Phone, Mail, Share2, Package, Cat, Car,
   ImageOff, Trash2, Check, XCircle,
 } from 'lucide-react';
-import { FtlAlert, FtlType, FtlStatus } from '../lib/supabase';
+import { FtlAlert, FtlType, FtlStatus } from '../lib/types';
 import { api } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { useTrans } from '../i18n';

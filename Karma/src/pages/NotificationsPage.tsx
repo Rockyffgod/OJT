@@ -1,58 +1,43 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCheck, Bell } from 'lucide-react';
-import { useAuthStore } from '../store/authStore';
-import { supabase } from '../lib/supabase';
+import { api } from '../lib/api';
 import { useTrans } from '../i18n';
 import { useToast } from '../hooks/useToast';
 
 export default function NotificationsPage() {
-  const { profile } = useAuthStore();
   const { t, isNp } = useTrans();
   const toast = useToast();
   const navigate = useNavigate();
   const [notifs, setNotifs] = useState<any[]>([]);
 
   const fetch = async () => {
-    if (!profile?.id) return;
-    const { data } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', profile.id)
-      .order('created_at', { ascending: false });
-    setNotifs(data || []);
+    try {
+      const data: any = await api.get('/api/notifications/');
+      setNotifs(Array.isArray(data) ? data : data?.results || []);
+    } catch {
+      setNotifs([]);
+    }
   };
 
   useEffect(() => {
     fetch();
-  }, [profile?.id]);
+  }, []);
 
   const markAllRead = async () => {
     try {
-      const update: any = {};
-      // Try both common field names — Supabase schema may use either
-      update.is_read = true;
-      await supabase
-        .from('notifications')
-        .update({ read_at: new Date().toISOString() })
-        .eq('user_id', profile?.id)
-        .is('read_at', null);
+      await api.post('/api/notifications/read-all/', {});
       await fetch();
       toast.success(t('notif.markAllRead'));
-    } catch (e) {
-      console.error('Mark all read failed:', e);
+    } catch {
       toast.error(t('toast.networkError'));
     }
   };
 
   const handleClick = async (n: any) => {
-    // Mark as read
-    if (!n.is_read && !n.read_at) {
+    if (!n.read_at) {
       try {
-        await supabase
-          .from('notifications')
-          .update({ read_at: new Date().toISOString() })
-          .eq('id', n.id);
+        await api.patch(`/api/notifications/${n.id}/read/`, {});
         setNotifs((prev) =>
           prev.map((x) => (x.id === n.id ? { ...x, read_at: new Date().toISOString() } : x))
         );
@@ -60,11 +45,10 @@ export default function NotificationsPage() {
         console.error('Mark read failed:', e);
       }
     }
-    // Navigate
     if (n.link) navigate(n.link);
   };
 
-  const isRead = (n: any) => !!(n.is_read || n.read_at);
+  const isRead = (n: any) => !!n.read_at;
 
   return (
     <div className="space-y-4">

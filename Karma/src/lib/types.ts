@@ -1,10 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
 export type AccountType = 'CUSTOMER' | 'PROVIDER' | 'ADMIN';
 export type VerificationStatus = 'PENDING' | 'SUBMITTED' | 'APPROVED' | 'VERIFIED' | 'REJECTED';
 export type AvailabilityStatus = 'AVAILABLE_NOW' | 'BUSY' | 'OFFLINE';
