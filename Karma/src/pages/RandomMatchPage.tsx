@@ -134,21 +134,21 @@ export default function RandomMatchPage() {
       {matchedProvider && !spinning && (
         <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 max-w-md mx-auto text-center">
           <div className="w-20 h-20 mx-auto rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 mb-4">
-            {matchedProvider.user?.profile_photo ? (
+            {matchedProvider.user_photo ? (
               <img
-                src={matchedProvider.user.profile_photo}
+                src={matchedProvider.user_photo}
                 alt=""
                 className="w-full h-full object-cover"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-xl font-bold text-slate-500">
-                {(matchedProvider.user?.full_name || '?').charAt(0)}
+                {(matchedProvider.user_name || '?').charAt(0)}
               </div>
             )}
           </div>
 
           <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-            {translateName(matchedProvider.user?.full_name || matchedProvider.user?.username || '', isNp) || t('random.provider')}
+            {translateName(matchedProvider.user_name || '', isNp) || t('random.provider')}
           </h2>
           <p className="text-violet-600 dark:text-violet-400 font-medium text-sm">
             {translateProfession(matchedProvider.profession, t)}
