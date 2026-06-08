@@ -24,90 +24,24 @@ class LoginView(TokenObtainPairView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
-        # Try standard Django login first
-        try:
-            res = super().post(request, *args, **kwargs)
-            if res.status_code == 200:
-                user = User.objects.get(email=request.data.get('email'))
-                res.data['id'] = str(user.id)
-                res.data['email'] = user.email
-                res.data['account_type'] = user.account_type
-            return res
-        except Exception:
-            # Login failed. Check if user is in Supabase!
-            email = request.data.get('email')
-            password = request.data.get('password')
-            if not email or not password:
-                raise
+        from rest_framework import status
 
-            try:
-                sb_url = "https://fgazceatncfgmzdtogxe.supabase.co"
-                auth_res = requests.post(
-                    f"{sb_url}/auth/v1/token?grant_type=password",
-                    headers={
-                        "apikey": "sb_publishable_JcbfO9Oc1wkyJo1ANnGwDw_pn8bNA_T",
-                        "Content-Type": "application/json",
-                    },
-                    json={"email": email, "password": password},
-                    timeout=8
-                )
-                if auth_res.status_code == 200:
-                    auth_data = auth_res.json()
-                    user_uuid = auth_data['user']['id']
-                    access_token = auth_data['access_token']
+        # Try standard Django login
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            # Invalid credentials — return 401 immediately, no Supabase fallback
+            return Response(
+                {'detail': 'Invalid email or password'},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
-                    # Fetch user's profile details from Supabase profiles table
-                    profile_res = requests.get(
-                        f"{sb_url}/rest/v1/profiles?id=eq.{user_uuid}",
-                        headers={
-                            "apikey": "sb_publishable_JcbfO9Oc1wkyJo1ANnGwDw_pn8bNA_T",
-                            "Authorization": f"Bearer {access_token}",
-                        },
-                        timeout=8
-                    )
-                    
-                    full_name = ""
-                    account_type = "CUSTOMER"
-                    phone = None
-                    city = ""
-
-                    if profile_res.status_code == 200:
-                        profile_data = profile_res.json()
-                        if profile_data and len(profile_data) > 0:
-                            p = profile_data[0]
-                            full_name = p.get('full_name', '')
-                            account_type = p.get('account_type', 'CUSTOMER')
-                            phone = p.get('phone')
-                            city = p.get('city', '')
-
-                    # Auto-provision user in Django DB
-                    user, created = User.objects.get_or_create(
-                        email=email,
-                        defaults={
-                            'id': user_uuid,
-                            'username': email.split('@')[0],
-                            'account_type': account_type,
-                            'phone': phone,
-                            'city': city or '',
-                        }
-                    )
-                    user.set_password(password)
-                    if full_name:
-                        parts = full_name.split(' ', 1)
-                        user.first_name = parts[0]
-                        user.last_name = parts[1] if len(parts) > 1 else ''
-                    user.save()
-
-                    # Generate simplejwt token
-                    refresh = RefreshToken.for_user(user)
-                    return Response({
-                        'refresh': str(refresh),
-                        'access': str(refresh.access_token),
-                    })
-            except Exception as e:
-                print("Supabase login provision error:", e)
-
-            raise
+        # Login succeeded — build response
+        res = Response(serializer.validated_data, status=status.HTTP_200_OK)
+        user = serializer.user
+        res.data['id'] = str(user.id)
+        res.data['email'] = user.email
+        res.data['account_type'] = user.account_type
+        return res
 
 
 class MeView(generics.RetrieveUpdateAPIView):
