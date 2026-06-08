@@ -116,13 +116,14 @@ class JobMatcherView(APIView):
         providers_data = [
             {
                 "id": str(p.id),
-                "name": p.user.username,
+                "name": p.user.get_full_name() or p.user.username.replace('_', ' ').title(),
                 "profession": p.profession,
                 "service_area": p.service_area,
                 "hourly_rate": p.hourly_rate,
                 "average_rating": p.average_rating,
                 "total_jobs_completed": p.total_jobs_completed,
                 "karma_level": p.karma_level,
+                "photo_url": request.build_absolute_uri(p.user.profile_photo.url) if p.user.profile_photo else None,
             }
             for p in providers[:10]
         ]

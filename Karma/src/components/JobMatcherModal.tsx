@@ -131,18 +131,27 @@ export default function JobMatcherModal({ onClose }: JobMatcherModalProps) {
               ) : (
                 <div className="space-y-2">
                   {result.matched_providers.map((p: any) => (
-                    <Link
+                      <Link
                       key={p.id}
                       to={`/providers/${p.id}`}
                       className="flex items-center justify-between p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg hover:shadow-sm transition-smooth"
                     >
-                      <div className="min-w-0">
-                        <p className="font-medium text-slate-900 dark:text-slate-100 text-sm">
-                          {p.name}
-                        </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
-                          {p.profession} • {p.service_area}
-                        </p>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 dark:text-violet-300 text-sm font-bold overflow-hidden flex-shrink-0">
+                          {p.photo_url ? (
+                            <img src={p.photo_url} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            (p.name || 'P').charAt(0).toUpperCase()
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-medium text-slate-900 dark:text-slate-100 text-sm truncate">
+                            {p.name}
+                          </p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                            {p.profession} • {p.service_area}
+                          </p>
+                        </div>
                       </div>
                       <div className="text-right text-sm flex-shrink-0">
                         <p className="font-medium text-slate-900 dark:text-slate-100">
