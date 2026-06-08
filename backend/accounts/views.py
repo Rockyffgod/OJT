@@ -17,7 +17,6 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
 
-import requests
 from rest_framework_simplejwt.tokens import RefreshToken
 
 class LoginView(TokenObtainPairView):
@@ -29,7 +28,7 @@ class LoginView(TokenObtainPairView):
         # Try standard Django login
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
-            # Invalid credentials — return 401 immediately, no Supabase fallback
+            # Invalid credentials — return 401 immediately
             return Response(
                 {'detail': 'Invalid email or password'},
                 status=status.HTTP_401_UNAUTHORIZED,

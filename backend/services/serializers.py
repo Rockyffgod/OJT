@@ -39,10 +39,14 @@ class ServiceProviderDetailSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_user(self, obj):
+        name = obj.user.get_full_name()
+        if not name:
+            name = obj.user.username.replace('_', ' ').title()
         return {
             'id': str(obj.user.id),
             'email': obj.user.email,
             'username': obj.user.username,
+            'full_name': name,
             'phone': obj.user.phone,
             'profile_photo': obj.user.profile_photo.url if obj.user.profile_photo else None,
         }
