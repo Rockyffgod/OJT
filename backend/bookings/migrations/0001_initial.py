@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('scheduled_date', models.DateTimeField()),
                 ('job_photos', models.JSONField(blank=True, default=list)),
                 ('agreed_price', models.IntegerField(blank=True, null=True)),
-                ('payment_method', models.CharField(blank=True, choices=[('ESEWA', 'eSewa'), ('KHALTI', 'Khalti'), ('CONNECT_IPS', 'Connect IPS'), ('CASH', 'Cash')], max_length=20, null=True)),
+                ('payment_method', models.CharField(blank=True, choices=[('CASH', 'Cash')], max_length=20, null=True)),
                 ('payment_status', models.CharField(choices=[('UNPAID', 'Unpaid'), ('HELD', 'Held'), ('RELEASED', 'Released'), ('REFUNDED', 'Refunded')], default='UNPAID', max_length=20)),
                 ('payment_held', models.IntegerField(blank=True, null=True)),
                 ('vat_amount', models.IntegerField(blank=True, null=True)),

@@ -124,6 +124,7 @@ export const useAuthStore = create<AuthState>()(
         session: state.session,
         user: state.user,
         djangoToken: state.djangoToken,
+        profile: state.profile,
       }),
     }
   )

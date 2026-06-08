@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { I18nProvider } from '../i18n';
 import { ToastProvider } from '../hooks/useToast';
 import ToastContainer from './ToastContainer';
-import { Link, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { useTrans } from '../i18n';
 import { Sparkles } from 'lucide-react';
 

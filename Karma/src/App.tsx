@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import PublicLayout from './components/PublicLayout';
 import ProtectedLayout from './components/ProtectedLayout';
 import AuthLayout from './components/AuthLayout';
@@ -14,6 +14,7 @@ import FtlDetailPage from './pages/FtlDetailPage';
 import ProviderProfilePage from './pages/ProviderProfilePage';
 import ProviderProfileEditPage from './pages/ProviderProfileEditPage';
 import BookingsPage from './pages/BookingsPage';
+import CheckoutPage from './pages/CheckoutPage';
 import MessagesPage from './pages/MessagesPage';
 import KarmaPage from './pages/KarmaPage';
 import NotificationsPage from './pages/NotificationsPage';
@@ -24,6 +25,12 @@ import SettingsPage from './pages/SettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
 import TermsAndConditionsPage from './pages/TermsAndConditionsPage';
+
+function CheckoutRedirect() {
+  const [params] = useSearchParams();
+  const provider = params.get('provider');
+  return <Navigate to={provider ? `/book/checkout/${provider}` : '/services'} replace />;
+}
 
 export default function App() {
   return (
@@ -45,6 +52,8 @@ export default function App() {
           <Route path="/ftl/:id" element={<FtlDetailPage />} />
           <Route path="/providers/:id" element={<ProviderProfilePage />} />
           <Route path="/karma" element={<KarmaPage />} />
+          <Route path="/book/checkout/:providerId" element={<CheckoutPage />} />
+          <Route path="/book/checkout" element={<CheckoutRedirect />} />
         </Route>
 
         {/* Protected pages — auth required */}

@@ -5,7 +5,8 @@ from .models import Booking, Dispute, Review
 class BookingCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ['provider', 'job_description', 'job_address', 'scheduled_date', 'job_photos', 'agreed_price']
+        fields = ['provider', 'job_description', 'job_address', 'scheduled_date', 'job_photos', 'agreed_price',
+                  'payment_method', 'commission_amount']
 
     def create(self, validated_data):
         validated_data['customer'] = self.context['request'].user
@@ -21,7 +22,7 @@ class BookingListSerializer(serializers.ModelSerializer):
         model = Booking
         fields = ['id', 'customer_name', 'provider_name', 'provider_profession',
                   'status', 'job_description', 'scheduled_date', 'agreed_price',
-                  'payment_status', 'created_at', 'updated_at']
+                  'payment_status', 'payment_method', 'created_at', 'updated_at']
 
 
 class BookingDetailSerializer(serializers.ModelSerializer):

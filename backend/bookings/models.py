@@ -15,9 +15,6 @@ class BookingStatus(models.TextChoices):
 
 
 class PaymentMethod(models.TextChoices):
-    ESEWA = 'ESEWA', 'eSewa'
-    KHALTI = 'KHALTI', 'Khalti'
-    CONNECT_IPS = 'CONNECT_IPS', 'Connect IPS'
     CASH = 'CASH', 'Cash'
 
 

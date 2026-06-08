@@ -50,6 +50,7 @@ class NearbyProvidersView(APIView):
                         "latitude": p.latitude,
                         "longitude": p.longitude,
                         "distance_km": round(dist, 2),
+                        "photo_url": p.user.profile_photo.url if p.user.profile_photo else None,
                     })
 
         nearby.sort(key=lambda x: x['distance_km'])

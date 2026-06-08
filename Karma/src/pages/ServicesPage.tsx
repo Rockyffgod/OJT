@@ -1,19 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useRef } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
-import { MapPin, Star, Search as SearchIcon } from 'lucide-react';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { MapPin, Star, Search as SearchIcon, LocateFixed } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { api } from '../lib/api';
+import { useAuthStore } from '../store/authStore';
 
 const GEOAPIFY_KEY = import.meta.env.VITE_GEOAPIFY_KEY;
 
+const DEMO_AVATAR = (name: string) =>
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=7C3AED&color=fff&font-size=0.35&bold=true`;
+
 const STATIC_PROVIDERS = [
-  { id: 'demo-1', name: 'Ram Bahadur Thapa', profession: 'Electrician', service_area: 'Kathmandu, Baneshwor', hourly_rate: 600, average_rating: 4.8, total_jobs_completed: 145, latitude: '27.6915', longitude: '85.3420' },
-  { id: 'demo-2', name: 'Sita Gurung', profession: 'Home Cleaning', service_area: 'Lalitpur, Patan', hourly_rate: 500, average_rating: 4.9, total_jobs_completed: 230, latitude: '27.6710', longitude: '85.3240' },
-  { id: 'demo-3', name: 'Bikash Shrestha', profession: 'Plumber', service_area: 'Bhaktapur, Suryabinayak', hourly_rate: 700, average_rating: 4.7, total_jobs_completed: 98, latitude: '27.6700', longitude: '85.4298' },
-  { id: 'demo-4', name: 'Anita Maharjan', profession: 'Painter', service_area: 'Kathmandu, Balaju', hourly_rate: 800, average_rating: 4.6, total_jobs_completed: 67, latitude: '27.7300', longitude: '85.3050' },
-  { id: 'demo-5', name: 'Prakash Tamang', profession: 'Carpenter', service_area: 'Kathmandu, Thamel', hourly_rate: 750, average_rating: 4.5, total_jobs_completed: 112, latitude: '27.7150', longitude: '85.3123' },
-  { id: 'demo-6', name: 'Sunita Rai', profession: 'AC Repair', service_area: 'Kathmandu, New Road', hourly_rate: 900, average_rating: 4.8, total_jobs_completed: 53, latitude: '27.7030', longitude: '85.3120' },
+  { id: 'demo-1', name: 'Ram Bahadur Thapa', profession: 'Electrician', service_area: 'Kathmandu, Baneshwor', hourly_rate: 600, average_rating: 4.8, total_jobs_completed: 145, latitude: '27.6915', longitude: '85.3420', photo_url: DEMO_AVATAR('Ram Bahadur Thapa') },
+  { id: 'demo-2', name: 'Sita Gurung', profession: 'Home Cleaning', service_area: 'Lalitpur, Patan', hourly_rate: 500, average_rating: 4.9, total_jobs_completed: 230, latitude: '27.6710', longitude: '85.3240', photo_url: DEMO_AVATAR('Sita Gurung') },
+  { id: 'demo-3', name: 'Bikash Shrestha', profession: 'Plumber', service_area: 'Bhaktapur, Suryabinayak', hourly_rate: 700, average_rating: 4.7, total_jobs_completed: 98, latitude: '27.6700', longitude: '85.4298', photo_url: DEMO_AVATAR('Bikash Shrestha') },
+  { id: 'demo-4', name: 'Anita Maharjan', profession: 'Painter', service_area: 'Kathmandu, Balaju', hourly_rate: 800, average_rating: 4.6, total_jobs_completed: 67, latitude: '27.7300', longitude: '85.3050', photo_url: DEMO_AVATAR('Anita Maharjan') },
+  { id: 'demo-5', name: 'Prakash Tamang', profession: 'Carpenter', service_area: 'Kathmandu, Thamel', hourly_rate: 750, average_rating: 4.5, total_jobs_completed: 112, latitude: '27.7150', longitude: '85.3123', photo_url: DEMO_AVATAR('Prakash Tamang') },
+  { id: 'demo-6', name: 'Sunita Rai', profession: 'AC Repair', service_area: 'Kathmandu, New Road', hourly_rate: 900, average_rating: 4.8, total_jobs_completed: 53, latitude: '27.7030', longitude: '85.3120', photo_url: DEMO_AVATAR('Sunita Rai') },
 ];
 
 export default function ServicesPage() {
@@ -29,6 +34,7 @@ export default function ServicesPage() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     api
@@ -66,7 +72,6 @@ export default function ServicesPage() {
       .catch(console.error);
   }, [searchRadius, userLocation]);
 
-  // Init map
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current || !providers.length) return;
     const points = nearby.length > 0 ? nearby : providers;
@@ -85,28 +90,66 @@ export default function ServicesPage() {
     mapInstanceRef.current = map;
 
     if (userLocation) {
+      const { profile } = useAuthStore.getState();
+      const userName = profile?.full_name || 'You';
+      const userAvatar = profile?.avatar_url || (profile?.full_name ? DEMO_AVATAR(profile.full_name) : null);
+      let userIconHtml: string;
+      if (userAvatar) {
+        userIconHtml = `<div style="background:#7C3AED;width:36px;height:36px;border-radius:50%;overflow:hidden;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;">
+          <img src="${userAvatar}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.style.background='#7C3AED';this.parentElement.innerHTML='${userName.charAt(0).toUpperCase()}';" />
+        </div>`;
+      } else {
+        userIconHtml = '<div style="background:#7C3AED;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>';
+      }
+      const hasAvatar = !!userAvatar;
+      const userIconSize = hasAvatar ? [36, 36] as [number, number] : [16, 16] as [number, number];
+      const userIconAnchor = hasAvatar ? [18, 18] as [number, number] : [8, 8] as [number, number];
       const userIcon = L.divIcon({
-        html: '<div style="background:#7C3AED;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>',
+        html: userIconHtml,
         className: '',
-        iconSize: [16, 16],
-        iconAnchor: [8, 8],
+        iconSize: userIconSize,
+        iconAnchor: userIconAnchor,
       });
       L.marker([userLocation.lat, userLocation.lng], { icon: userIcon })
         .addTo(map)
-        .bindPopup('<strong>You are here</strong>');
+        .bindPopup(`<strong>${userName}</strong><br/><span style="font-size:12px;color:#64748b;">You are here</span>`);
     }
 
     points.forEach((p: any) => {
       const lat = parseFloat(p.latitude);
       const lng = parseFloat(p.longitude);
       if (!lat || !lng) return;
+
+      const avatar = p.photo_url || p.user_photo || DEMO_AVATAR(p.name || 'P');
       const icon = L.divIcon({
-        html: `<div style="background:#7C3AED;color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:bold;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.2)">${(p.profession || 'P').charAt(0)}</div>`,
+        html: `<div style="background:#7C3AED;width:36px;height:36px;border-radius:50%;overflow:hidden;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.25);cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <img src="${avatar}" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.parentElement.innerHTML='${(p.profession || 'P').charAt(0)}'" />
+        </div>`,
         className: '',
-        iconSize: [32, 32],
-        iconAnchor: [16, 16],
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
       });
+
       const marker = L.marker([lat, lng], { icon }).addTo(map);
+
+      const popupHtml = `
+        <div style="font-family:system-ui,sans-serif;min-width:180px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <img src="${avatar}" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;background:#f0f0f0;" onerror="this.style.display='none'" />
+            <div>
+              <div style="font-weight:600;font-size:14px;color:#1e293b;">${p.name || 'Provider'}</div>
+              <div style="font-size:12px;color:#64748b;">${p.profession || 'Service'}</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;font-size:13px;color:#475569;margin-bottom:8px;">
+            <span>⭐ ${p.average_rating?.toFixed(1) || 'New'}</span>
+            <span>💰 NPR ${p.hourly_rate || '—'}/hr</span>
+          </div>
+          <a href="/providers/${p.id}" style="display:block;text-align:center;padding:6px 0;background:#7C3AED;color:white;border-radius:6px;font-size:13px;font-weight:500;text-decoration:none;">View Profile →</a>
+        </div>
+      `;
+      marker.bindPopup(popupHtml, { className: 'custom-popup', closeButton: true, maxWidth: 260 });
+      marker.on('click', () => navigate(`/providers/${p.id}`));
       markersRef.current.push(marker);
     });
 
@@ -118,7 +161,16 @@ export default function ServicesPage() {
 
     setMapReady(true);
     setTimeout(() => map.invalidateSize(), 300);
-  }, [providers, nearby, userLocation]);
+  }, [providers, nearby, userLocation, navigate]);
+
+  const centerOnUser = () => {
+    const map = mapInstanceRef.current;
+    if (map && userLocation) {
+      map.setView([userLocation.lat, userLocation.lng], 13);
+    } else {
+      getUserLocation();
+    }
+  };
 
   const filtered = providers.filter((p) => {
     if (!query.trim()) return true;
@@ -170,15 +222,26 @@ export default function ServicesPage() {
         </div>
       </div>
 
-      <div
-        ref={mapRef}
-        className="w-full h-[400px] rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-200 dark:bg-slate-800"
-        style={{ zIndex: 1 }}
-      >
-        {!mapReady && (
-          <div className="flex items-center justify-center h-full text-slate-400">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600" />
-          </div>
+      <div className="relative">
+        <div
+          ref={mapRef}
+          className="w-full h-[400px] rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-200 dark:bg-slate-800"
+          style={{ zIndex: 1 }}
+        >
+          {!mapReady && (
+            <div className="flex items-center justify-center h-full text-slate-400">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600" />
+            </div>
+          )}
+        </div>
+        {mapReady && (
+          <button
+            onClick={centerOnUser}
+            className="absolute bottom-4 right-4 z-[1000] w-10 h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-smooth"
+            title="Center on your location"
+          >
+            <LocateFixed size={18} className="text-violet-600" />
+          </button>
         )}
       </div>
 
@@ -194,13 +257,22 @@ export default function ServicesPage() {
             className="p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-sm transition-smooth"
           >
             <div className="flex items-start justify-between mb-3 gap-2">
-              <div className="min-w-0">
-                <h3 className="font-semibold text-slate-900 dark:text-slate-100 truncate">
-                  {(p.name || p.user_name || 'Provider').replace(/_/g, ' ')}
-                </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  {p.profession || 'Service Provider'}
-                </p>
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center text-violet-600 dark:text-violet-300 text-sm font-bold overflow-hidden flex-shrink-0">
+                  {p.photo_url || p.user_photo ? (
+                    <img src={p.photo_url || p.user_photo} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    (p.name || p.user_name || 'P').charAt(0).toUpperCase()
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-900 dark:text-slate-100 truncate">
+                    {(p.name || p.user_name || 'Provider').replace(/_/g, ' ')}
+                  </h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    {p.profession || 'Service Provider'}
+                  </p>
+                </div>
               </div>
               <span className="inline-flex items-center gap-1 text-sm text-amber-600 dark:text-amber-400 font-medium flex-shrink-0">
                 <Star size={14} fill="currentColor" />

@@ -23,3 +23,17 @@ backend/media/
 # OS
 .DS_Store
 Thumbs.db
+
+.bolt
+
+# Teaching / reference docs (keep locally, don't commit)
+teachings/
+
+# One-time scripts
+backend/assign_photos.py
+backend/list_users.py
+backend/clear_web_photos.py
+*.pyc
+
+# Old Khalti WooCommerce plugin (not part of this project)
+backend/integrate-khalti-in-wc-store/

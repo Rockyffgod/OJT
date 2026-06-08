@@ -226,6 +226,20 @@ const translations: Record<Lang, Record<string, string>> = {
     'service.carpenter': 'Carpenter',
     'service.acRepair': 'AC Repair',
     'booking.staticDemo': 'Demo Bookings',
+    'booking.bookTitle': 'Book {name}',
+    'booking.scheduledDate': 'Scheduled Date & Time',
+    'booking.jobDescription': 'Job Description',
+    'booking.jobDescriptionPlaceholder': 'Describe what you need done...',
+    'booking.jobAddress': 'Job Address',
+    'booking.jobAddressPlaceholder': 'Your location...',
+    'booking.agreedPrice': 'Est. Price (NPR)',
+    'booking.submitBooking': 'Submit Booking',
+    'booking.creating': 'Creating...',
+    'booking.bookingCreated': 'Booking created — pay cash after service!',
+    'booking.fillDateDesc': 'Please fill in date and description',
+    'booking.with': 'With:',
+    'booking.from': 'From:',
+    'booking.cash': 'Cash After Service',
   },
   np: {
     'nav.dashboard': 'ड्यासबोर्ड',
@@ -440,6 +454,20 @@ const translations: Record<Lang, Record<string, string>> = {
     'service.carpenter': 'सिकर्मी',
     'service.acRepair': 'एसी मर्मत',
     'booking.staticDemo': 'डेमो बुकिङहरू',
+    'booking.bookTitle': '{name} बुक गर्नुहोस्',
+    'booking.scheduledDate': 'मिति र समय निर्धारित',
+    'booking.jobDescription': 'कामको विवरण',
+    'booking.jobDescriptionPlaceholder': 'तपाईंलाई के गर्न आवश्यक छ वर्णन गर्नुहोस्...',
+    'booking.jobAddress': 'कामको ठेगाना',
+    'booking.jobAddressPlaceholder': 'तपाईंको स्थान...',
+    'booking.agreedPrice': 'अनुमानित मूल्य (NPR)',
+    'booking.submitBooking': 'बुकिङ पेश गर्नुहोस्',
+    'booking.creating': 'बनाउँदै...',
+    'booking.bookingCreated': 'बुकिङ सिर्जना भयो — क्यास पछि भुक्तानी!',
+    'booking.fillDateDesc': 'कृपया मिति र विवरण भर्नुहोस्',
+    'booking.with': 'सँग:',
+    'booking.from': 'बाट:',
+    'booking.cash': 'क्यास पछि सेवा',
   },
 };
 
@@ -519,10 +547,7 @@ const NAME_TRANSLITERATIONS: Record<string, string> = {
 export function translateName(name: string, isNp: boolean): string {
   if (!isNp || !name) return name;
   const words = name.trim().toLowerCase().split(/\s+/);
-  const translatedWords = words.map(word => {
-    return NAME_TRANSLITERATIONS[word] || (word.charAt(0).toUpperCase() + word.slice(1));
-  });
-  
+
   // If we have translations for any word in our dictionary, return them
   const hasTrans = words.some(word => word in NAME_TRANSLITERATIONS);
   if (hasTrans) {

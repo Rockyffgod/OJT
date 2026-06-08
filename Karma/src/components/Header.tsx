@@ -10,7 +10,7 @@ interface HeaderProps {
 
 export default function Header({ onMenuClick }: HeaderProps) {
   const { user, profile, logout } = useAuthStore();
-  const { t, isNp, setLang, lang } = useTrans();
+  const { t, isNp, setLang } = useTrans();
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [dark, setDark] = useState<boolean>(() => {
@@ -21,7 +21,13 @@ export default function Header({ onMenuClick }: HeaderProps) {
     return document.documentElement.classList.contains('dark');
   });
   const [searchQuery, setSearchQuery] = useState('');
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+interface Suggestion {
+  text: string;
+  text_nepali?: string;
+  icon?: string;
+  type: string;
+}
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   
   const profileRef = useRef<HTMLDivElement>(null);

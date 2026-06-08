@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
-  MapPin, Star, Shield, Clock, Award, ArrowLeft, Sparkles, Loader2,
+  MapPin, Star, Shield, Clock, ArrowLeft, Sparkles, Loader2,
   MessageSquare, Briefcase, CheckCircle2,
 } from 'lucide-react';
 import { ServiceProvider, KarmaLevel } from '../lib/types';
@@ -9,6 +10,18 @@ import { api } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { useTrans } from '../i18n';
 import { useToast } from '../hooks/useToast';
+
+const DEMO_AVATAR = (name: string) =>
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=7C3AED&color=fff&font-size=0.35&bold=true`;
+
+const STATIC_PROVIDERS: Record<string, any> = {
+  'demo-1': { id: 'demo-1', name: 'Ram Bahadur Thapa', profession: 'Electrician', service_area: 'Kathmandu, Baneshwor', hourly_rate: 600, average_rating: 4.8, total_jobs_completed: 145, photo_url: DEMO_AVATAR('Ram Bahadur Thapa'), user: { full_name: 'Ram Bahadur Thapa' }, category_name: 'Electrician', verification_status: 'APPROVED' },
+  'demo-2': { id: 'demo-2', name: 'Sita Gurung', profession: 'Home Cleaning', service_area: 'Lalitpur, Patan', hourly_rate: 500, average_rating: 4.9, total_jobs_completed: 230, photo_url: DEMO_AVATAR('Sita Gurung'), user: { full_name: 'Sita Gurung' }, category_name: 'Home Cleaning', verification_status: 'APPROVED' },
+  'demo-3': { id: 'demo-3', name: 'Bikash Shrestha', profession: 'Plumber', service_area: 'Bhaktapur, Suryabinayak', hourly_rate: 700, average_rating: 4.7, total_jobs_completed: 98, photo_url: DEMO_AVATAR('Bikash Shrestha'), user: { full_name: 'Bikash Shrestha' }, category_name: 'Plumber', verification_status: 'APPROVED' },
+  'demo-4': { id: 'demo-4', name: 'Anita Maharjan', profession: 'Painter', service_area: 'Kathmandu, Balaju', hourly_rate: 800, average_rating: 4.6, total_jobs_completed: 67, photo_url: DEMO_AVATAR('Anita Maharjan'), user: { full_name: 'Anita Maharjan' }, category_name: 'Painter', verification_status: 'APPROVED' },
+  'demo-5': { id: 'demo-5', name: 'Prakash Tamang', profession: 'Carpenter', service_area: 'Kathmandu, Thamel', hourly_rate: 750, average_rating: 4.5, total_jobs_completed: 112, photo_url: DEMO_AVATAR('Prakash Tamang'), user: { full_name: 'Prakash Tamang' }, category_name: 'Carpenter', verification_status: 'APPROVED' },
+  'demo-6': { id: 'demo-6', name: 'Sunita Rai', profession: 'AC Repair', service_area: 'Kathmandu, New Road', hourly_rate: 900, average_rating: 4.8, total_jobs_completed: 53, photo_url: DEMO_AVATAR('Sunita Rai'), user: { full_name: 'Sunita Rai' }, category_name: 'AC Repair', verification_status: 'APPROVED' },
+};
 
 interface Review {
   id: string;
@@ -98,7 +111,17 @@ export default function ProviderProfilePage() {
         });
       } catch (e) {
         console.error('Provider fetch error:', e);
-        setData({ provider: null, profile: null, category: null, reviews: [] });
+        const fallback = STATIC_PROVIDERS[id!];
+        if (fallback) {
+          setData({
+            provider: fallback,
+            profile: { full_name: fallback.user.full_name, avatar_url: fallback.photo_url, is_verified: true },
+            category: { name: fallback.category_name || fallback.profession, icon: '💼' },
+            reviews: [],
+          });
+        } else {
+          setData({ provider: null, profile: null, category: null, reviews: [] });
+        }
       } finally {
         setLoading(false);
       }
@@ -112,7 +135,7 @@ export default function ProviderProfilePage() {
       navigate('/login');
       return;
     }
-    navigate(`/bookings/new?provider=${id}`);
+    navigate(`/book/checkout/${id}`);
   };
 
   const onEnhanceBio = async () => {

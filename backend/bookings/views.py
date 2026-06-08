@@ -1,15 +1,9 @@
-import json
-from rest_framework import generics, permissions, status
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django_filters.rest_framework import DjangoFilterBackend
-from django.utils import timezone
+from rest_framework import generics, permissions
 from .models import Booking, Dispute, Review
 from .serializers import (
     BookingCreateSerializer, BookingListSerializer, BookingDetailSerializer,
     BookingStatusUpdateSerializer, DisputeSerializer, ReviewSerializer,
 )
-from services.models import ServiceProvider
 
 
 class BookingListCreateView(generics.ListCreateAPIView):
@@ -78,36 +72,3 @@ class ReviewListView(generics.ListAPIView):
         if provider_id:
             return Review.objects.filter(provider_id=provider_id)
         return Review.objects.all()
-
-
-class MockPaymentView(APIView):
-    permission_classes = [permissions.AllowAny]
-
-    def post(self, request):
-        booking_id = request.data.get('booking_id')
-        payment_method = request.data.get('payment_method', 'KHALTI')
-
-        if not booking_id:
-            return Response({"error": "booking_id required"}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            booking = Booking.objects.get(id=booking_id)
-        except Booking.DoesNotExist:
-            return Response({"error": "Booking not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        if booking.payment_status != 'UNPAID':
-            return Response({"error": "Booking already paid"}, status=status.HTTP_400_BAD_REQUEST)
-
-        booking.payment_status = 'PAID'
-        booking.payment_method = payment_method
-        booking.status = 'CONFIRMED'
-        booking.save()
-
-        return Response({
-            "success": True,
-            "message": f"Payment of NPR {booking.agreed_price} via {payment_method} completed (mock)",
-            "booking_id": str(booking.id),
-            "payment_status": booking.payment_status,
-            "status": booking.status,
-            "note": "This is a mock payment. Real Khalti API not integrated (OJT project budget constraints).",
-        })
