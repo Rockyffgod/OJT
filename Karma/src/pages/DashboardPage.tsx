@@ -5,7 +5,7 @@ import {
   Star, Bell, Sparkles, Package, Heart, Trophy, Medal, Award
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
-import { useTrans } from '../i18n';
+import { useTrans, translateName, translateProfession } from '../i18n';
 import { api } from '../lib/api';
 import { transliterateName } from '../utils/nepaliTranslate';
 
@@ -241,7 +241,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="min-w-0">
                       <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
-                        {(p.profiles?.full_name || 'Provider').replace(/_/g, ' ')}
+                        {translateName(p.profiles?.full_name || '', isNp) || 'Provider'}
                       </h4>
                       <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{p.profession || '—'}</p>
                     </div>

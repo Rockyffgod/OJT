@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Trophy, Medal, Star, Award, User } from 'lucide-react';
 import { api } from '../lib/api';
-import { useTrans } from '../i18n';
+import { useTrans, translateName, translateProfession } from '../i18n';
 
 const LEVEL_COLORS: Record<string, string> = {
   NONE: 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300',
@@ -100,11 +100,11 @@ export default function KarmaPage() {
                             </div>
                           )}
                         </div>
-                        <span>{p.user_name || `Provider #${p.id?.substring(0, 6)}`}</span>
+                        <span>{translateName(p.user_name || '', isNp) || `Provider #${p.id?.substring(0, 6)}`}</span>
                       </Link>
                     </td>
                     <td className="px-5 py-4 text-slate-500 dark:text-slate-400 hidden sm:table-cell">
-                      {p.profession || '—'}
+                      {translateProfession(p.profession, t) || '—'}
                     </td>
                     <td className="px-5 py-4 font-semibold text-slate-900 dark:text-slate-100">
                       {p.karma_points || 0}

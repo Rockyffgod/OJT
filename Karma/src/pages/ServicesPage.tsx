@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { MapPin, Star, Search as SearchIcon, LocateFixed } from 'lucide-react';
@@ -6,6 +5,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { api } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
+import { useTrans, translateProfession, translateName } from '../i18n';
 
 const GEOAPIFY_KEY = import.meta.env.VITE_GEOAPIFY_KEY;
 
@@ -22,6 +22,7 @@ const STATIC_PROVIDERS = [
 ];
 
 export default function ServicesPage() {
+  const { t, isNp } = useTrans();
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
   const [providers, setProviders] = useState<any[]>([]);
@@ -112,7 +113,7 @@ export default function ServicesPage() {
       });
       L.marker([userLocation.lat, userLocation.lng], { icon: userIcon })
         .addTo(map)
-        .bindPopup(`<strong>${userName}</strong><br/><span style="font-size:12px;color:#64748b;">You are here</span>`);
+        .bindPopup(`<strong>${userName}</strong><br/><span style="font-size:12px;color:#64748b;">${t('services.youAreHere')}</span>`);
     }
 
     points.forEach((p: any) => {
@@ -130,22 +131,21 @@ export default function ServicesPage() {
         iconAnchor: [18, 18],
       });
 
-      const marker = L.marker([lat, lng], { icon }).addTo(map);
-
+      const ratingText = p.average_rating ? `⭐ ${Number(p.average_rating).toFixed(1)}` : t('services.newProvider');
       const popupHtml = `
         <div style="font-family:system-ui,sans-serif;min-width:180px;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
             <img src="${avatar}" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;background:#f0f0f0;" onerror="this.style.display='none'" />
             <div>
-              <div style="font-weight:600;font-size:14px;color:#1e293b;">${p.name || 'Provider'}</div>
-              <div style="font-size:12px;color:#64748b;">${p.profession || 'Service'}</div>
+              <div style="font-weight:600;font-size:14px;color:#1e293b;">${translateName(p.name || '', isNp) || t('services.provider')}</div>
+              <div style="font-size:12px;color:#64748b;">${translateProfession(p.profession, t)}</div>
             </div>
           </div>
           <div style="display:flex;gap:12px;font-size:13px;color:#475569;margin-bottom:8px;">
-            <span>⭐ ${p.average_rating?.toFixed(1) || 'New'}</span>
-            <span>💰 NPR ${p.hourly_rate || '—'}/hr</span>
+            <span>${ratingText}</span>
+            <span>💰 ${t('services.npr')} ${p.hourly_rate || '—'}${t('services.perHour')}</span>
           </div>
-          <a href="/providers/${p.id}" style="display:block;text-align:center;padding:6px 0;background:#7C3AED;color:white;border-radius:6px;font-size:13px;font-weight:500;text-decoration:none;">View Profile →</a>
+          <a href="/providers/${p.id}" style="display:block;text-align:center;padding:6px 0;background:#7C3AED;color:white;border-radius:6px;font-size:13px;font-weight:500;text-decoration:none;">${t('services.viewProfile')} →</a>
         </div>
       `;
       marker.bindPopup(popupHtml, { className: 'custom-popup', closeButton: true, maxWidth: 260 });
@@ -183,17 +183,22 @@ export default function ServicesPage() {
     );
   });
 
+  const radiusLabel = (km: number) => {
+    const key = `services.radius${km}km`;
+    return t(key);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold font-heading text-slate-900 dark:text-slate-100">
-            Find Services
+            {t('services.title')}
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             {userLocation
-              ? `Showing providers near you (${searchRadius}km radius)`
-              : 'Getting your location...'}
+              ? t('services.showingNear').replace('{radius}', String(searchRadius))
+              : t('services.gettingLocation')}
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -203,7 +208,7 @@ export default function ServicesPage() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name or profession"
+              placeholder={t('services.searchPlaceholder')}
               className="bg-transparent outline-none w-40 sm:w-48 text-sm text-slate-700 dark:text-slate-200 placeholder-slate-400"
             />
           </div>
@@ -212,11 +217,11 @@ export default function ServicesPage() {
             onChange={(e) => setSearchRadius(Number(e.target.value))}
             className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-700 dark:text-slate-200 outline-none"
           >
-            <option value={5}>5 km</option>
-            <option value={10}>10 km</option>
-            <option value={25}>25 km</option>
-            <option value={50}>50 km</option>
-            <option value={0}>All Nepal</option>
+            <option value={5}>{t('services.radius5km')}</option>
+            <option value={10}>{t('services.radius10km')}</option>
+            <option value={25}>{t('services.radius25km')}</option>
+            <option value={50}>{t('services.radius50km')}</option>
+            <option value={0}>{t('services.radiusAll')}</option>
           </select>
         </div>
       </div>
@@ -237,7 +242,7 @@ export default function ServicesPage() {
           <button
             onClick={centerOnUser}
             className="absolute bottom-4 right-4 z-[1000] w-10 h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-smooth"
-            title="Center on your location"
+            title={t('services.centerLocation')}
           >
             <LocateFixed size={18} className="text-violet-600" />
           </button>
@@ -245,8 +250,10 @@ export default function ServicesPage() {
       </div>
 
       <p className="text-sm text-slate-500 dark:text-slate-400">
-        {displayProviders.length} provider{displayProviders.length !== 1 ? 's' : ''} found
-        {nearby.length > 0 ? ' near you' : ''}
+        {t('services.foundCount')
+          .replace('{count}', String(displayProviders.length))
+          .replace('{plural}', displayProviders.length !== 1 ? 's' : '')}
+        {nearby.length > 0 ? t('services.nearYou') : ''}
       </p>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -266,21 +273,21 @@ export default function ServicesPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 dark:text-slate-100 truncate">
-                    {(p.name || p.user_name || 'Provider').replace(/_/g, ' ')}
+                    {translateName(p.name || p.user_name || '', isNp) || t('services.provider')}
                   </h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400">
-                    {p.profession || 'Service Provider'}
+                    {translateProfession(p.profession, t)}
                   </p>
                 </div>
               </div>
               <span className="inline-flex items-center gap-1 text-sm text-amber-600 dark:text-amber-400 font-medium flex-shrink-0">
                 <Star size={14} fill="currentColor" />
-                {p.average_rating?.toFixed(1) || 'New'}
+                {p.average_rating?.toFixed(1) || t('services.newProvider')}
               </span>
             </div>
             <div className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 mb-2">
               <MapPin size={14} />
-              <span className="truncate">{p.service_area || 'Nepal'}</span>
+              <span className="truncate">{p.service_area || t('services.radiusAll')}</span>
               {p.distance_km != null && (
                 <span className="ml-1 text-violet-600 dark:text-violet-400 font-medium">
                   ({p.distance_km.toFixed(1)} km)
@@ -289,17 +296,17 @@ export default function ServicesPage() {
             </div>
             <div className="flex items-center justify-between text-sm mb-3">
               <span className="text-slate-500 dark:text-slate-400">
-                {p.total_jobs_completed || 0} jobs
+                {t('services.jobCount').replace('{count}', String(p.total_jobs_completed || 0))}
               </span>
               <span className="font-semibold text-slate-900 dark:text-slate-100">
-                {p.hourly_rate ? `NPR ${p.hourly_rate}/hr` : '—'}
+                {p.hourly_rate ? `${t('services.npr')} ${p.hourly_rate}${t('services.perHour')}` : '—'}
               </span>
             </div>
             <Link
               to={`/providers/${p.id}`}
               className="block w-full text-center py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 transition-smooth"
             >
-              View Profile
+              {t('services.viewProfile')}
             </Link>
           </div>
         ))}
@@ -309,10 +316,10 @@ export default function ServicesPage() {
         <div className="text-center py-16 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
           <MapPin size={40} className="text-slate-300 dark:text-slate-600 mx-auto mb-3" />
           <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-1">
-            No providers found
+            {t('services.noProviders')}
           </h3>
           <p className="text-slate-500 dark:text-slate-400 text-sm">
-            Try increasing the search radius or check back later
+            {t('services.noProvidersHint')}
           </p>
         </div>
       )}
