@@ -53,7 +53,7 @@ export default function App() {
           <Route path="/ftl/:id" element={<FtlDetailPage />} />
           <Route path="/providers/:id" element={<ProviderProfilePage />} />
           <Route path="/karma" element={<KarmaPage />} />
-          <Route path="/random-match" element={<RandomMatchPage />} />
+          <Route path="/quick-find" element={<RandomMatchPage />} />
           <Route path="/book/checkout/:providerId" element={<CheckoutPage />} />
           <Route path="/book/checkout" element={<CheckoutRedirect />} />
         </Route>
