@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Trophy, Medal, Star, Award } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Trophy, Medal, Star, Award, User } from 'lucide-react';
 import { api } from '../lib/api';
 import { useTrans } from '../i18n';
 
@@ -81,8 +82,26 @@ export default function KarmaPage() {
                         <span className="text-slate-500 dark:text-slate-400 font-medium">{i + 1}</span>
                       )}
                     </td>
-                    <td className="px-5 py-4 font-medium text-slate-900 dark:text-slate-100">
-                      {p.user_name || `Provider #${p.id?.substring(0, 6)}`}
+                    <td className="px-5 py-4">
+                      <Link
+                        to={`/providers/${p.id}`}
+                        className="flex items-center gap-3 font-medium text-slate-900 dark:text-slate-100 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-600 flex-shrink-0">
+                          {p.user_photo ? (
+                            <img
+                              src={p.user_photo}
+                              alt={p.user_name || ''}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <User size={14} className="text-slate-500 dark:text-slate-400" />
+                            </div>
+                          )}
+                        </div>
+                        <span>{p.user_name || `Provider #${p.id?.substring(0, 6)}`}</span>
+                      </Link>
                     </td>
                     <td className="px-5 py-4 text-slate-500 dark:text-slate-400 hidden sm:table-cell">
                       {p.profession || '—'}

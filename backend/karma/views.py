@@ -17,5 +17,6 @@ class LeaderboardView(generics.ListAPIView):
 
     def get_queryset(self):
         return ServiceProvider.objects.filter(
-            verification_status='APPROVED'
+            verification_status='APPROVED',
+            user__profile_photo__isnull=False,
         ).order_by('-karma_points')[:50]

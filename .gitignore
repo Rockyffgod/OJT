@@ -17,8 +17,9 @@ dist/
 # Database (SQLite)
 backend/db.sqlite3
 
-# Uploaded media
-backend/media/
+# Uploaded media (except profiles — needed for demo)
+backend/media/*
+!backend/media/profiles/
 
 # OS
 .DS_Store
