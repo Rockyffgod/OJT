@@ -7,13 +7,13 @@ import { useAuthStore } from '../store/authStore';
 import { useTrans } from '../i18n';
 
 const publicNavItems = [
+  { to: '/dashboard', icon: LayoutDashboard, key: 'nav.dashboard' },
   { to: '/services', icon: Wrench, key: 'nav.services' },
   { to: '/ftl', icon: Search, key: 'nav.ftl' },
   { to: '/karma', icon: Heart, key: 'nav.karma' },
 ];
 
 const authNavItems = [
-  { to: '/dashboard', icon: LayoutDashboard, key: 'nav.dashboard' },
   { to: '/bookings', icon: Calendar, key: 'nav.bookings' },
   { to: '/messages', icon: MessageSquare, key: 'nav.messages' },
 ];

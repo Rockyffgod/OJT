@@ -74,7 +74,7 @@ export default function ServicesPage() {
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current || !providers.length) return;
-    const points = nearby.length > 0 ? nearby : providers;
+    const points = displayProviders;
     const loc = userLocation || { lat: 27.7172, lng: 85.3240 };
 
     const map = L.map(mapRef.current).setView([loc.lat, loc.lng], 12);
@@ -161,7 +161,7 @@ export default function ServicesPage() {
 
     setMapReady(true);
     setTimeout(() => map.invalidateSize(), 300);
-  }, [providers, nearby, userLocation, navigate]);
+  }, [providers, nearby, userLocation, navigate, query]);
 
   const centerOnUser = () => {
     const map = mapInstanceRef.current;
@@ -172,7 +172,7 @@ export default function ServicesPage() {
     }
   };
 
-  const filtered = providers.filter((p) => {
+  const displayProviders = (nearby.length > 0 ? nearby : providers).filter((p) => {
     if (!query.trim()) return true;
     const q = query.toLowerCase();
     const pName = p.name || p.user_name || '';
@@ -182,8 +182,6 @@ export default function ServicesPage() {
       p.service_area?.toLowerCase().includes(q)
     );
   });
-
-  const displayProviders = nearby.length > 0 ? nearby : filtered;
 
   return (
     <div className="space-y-6">
