@@ -121,7 +121,7 @@ export default function FtlNewPage() {
             <div className="relative">
               <textarea
                 value={description}
-                onChange={(e) => { setDescription(e.target.value); setAiFilled(false); }}
+                onChange={(e) => setDescription(e.target.value)}
                 rows={5}
                 placeholder="Describe what was lost, who was missing, or what happened..."
                 className="w-full px-4 py-3 pr-28 border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 text-sm resize-none"

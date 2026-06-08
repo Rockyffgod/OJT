@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Shuffle, MapPin, Star, Trophy, RotateCcw } from 'lucide-react';
+import { Shuffle, MapPin, Star, Trophy, RotateCcw, RefreshCw } from 'lucide-react';
 import { api } from '../lib/api';
-import DEMO_AVATAR from '../lib/demoAvatar';
 import { useAuthStore } from '../store/authStore';
 import { useTrans, translateProfession, translateName } from '../i18n';
 

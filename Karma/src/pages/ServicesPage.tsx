@@ -131,6 +131,7 @@ export default function ServicesPage() {
         iconAnchor: [18, 18],
       });
 
+      const marker = L.marker([lat, lng], { icon }).addTo(map);
       const ratingText = p.average_rating ? `⭐ ${Number(p.average_rating).toFixed(1)}` : t('services.newProvider');
       const popupHtml = `
         <div style="font-family:system-ui,sans-serif;min-width:180px;">
