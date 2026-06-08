@@ -69,6 +69,12 @@ export default function ProviderProfilePage() {
   const [data, setData] = useState<ProviderFull | null>(null);
   const [loading, setLoading] = useState(true);
   const [enhancing, setEnhancing] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [completedBookingId, setCompletedBookingId] = useState<string | null>(null);
+  const [existingReviewIds, setExistingReviewIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!id) return;
@@ -81,16 +87,32 @@ export default function ProviderProfilePage() {
         if (providerData) {
           const reviewsRes = await api.get(`/api/bookings/reviews/?provider=${providerData.id}`);
           const reviewsList = Array.isArray(reviewsRes) ? reviewsRes : (reviewsRes.results || []);
-          reviewsData = reviewsList.map((r: any) => ({
-            id: r.id,
-            rating: r.rating,
-            comment: r.comment,
-            created_at: r.created_at,
-            profiles: {
-              full_name: r.customer_name || 'Customer',
-              avatar_url: r.customer_photo || null,
-            }
-          }));
+          const existingIds = new Set<string>();
+          reviewsData = reviewsList.map((r: any) => {
+            existingIds.add(r.id);
+            return {
+              id: r.id,
+              rating: r.rating,
+              comment: r.comment,
+              created_at: r.created_at,
+              profiles: {
+                full_name: r.customer_name || 'Customer',
+                avatar_url: r.customer_photo || null,
+              }
+            };
+          });
+          setExistingReviewIds(existingIds);
+
+          if (user && providerData.id) {
+            try {
+              const bookingsRes = await api.get('/api/bookings/');
+              const bookingsList = Array.isArray(bookingsRes) ? bookingsRes : (bookingsRes.results || []);
+              const completed = bookingsList.find(
+                (b: any) => b.provider_id === providerData.id && b.status === 'COMPLETED'
+              );
+              if (completed && !existingIds.has(completed.id)) setCompletedBookingId(completed.id);
+            } catch (_) {}
+          }
         }
 
         setData({
@@ -378,6 +400,103 @@ export default function ProviderProfilePage() {
           </div>
         )}
       </div>
+
+      {/* Write a Review */}
+      {user && completedBookingId && !showReviewForm && (
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 text-center">
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+            Have you used this provider's service? Leave a review!
+          </p>
+          <button
+            onClick={() => setShowReviewForm(true)}
+            className="px-5 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 transition-smooth"
+          >
+            Write a Review
+          </button>
+        </div>
+      )}
+
+      {/* Review Modal */}
+      {showReviewForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-700">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-4">
+              Rate your experience
+            </h3>
+            <div className="flex items-center gap-1 mb-4 justify-center">
+              {[1,2,3,4,5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => setReviewRating(star)}
+                  className={`text-2xl transition-smooth ${
+                    star <= reviewRating
+                      ? 'text-amber-400'
+                      : 'text-slate-300 dark:text-slate-600'
+                  }`}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+            <textarea
+              value={reviewComment}
+              onChange={(e) => setReviewComment(e.target.value)}
+              placeholder="Share your experience (optional)"
+              rows={3}
+              className="w-full px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-900 text-sm text-slate-900 dark:text-slate-100 outline-none focus:border-violet-500 resize-none mb-4"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => { setShowReviewForm(false); setReviewRating(5); setReviewComment(''); }}
+                className="flex-1 px-4 py-2 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-smooth"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  setSubmittingReview(true);
+                  try {
+                    await api.post('/api/bookings/reviews/create/', {
+                      booking: completedBookingId,
+                      rating: reviewRating,
+                      comment: reviewComment,
+                    });
+                    toast.success('Review submitted!');
+                    setShowReviewForm(false);
+                    setCompletedBookingId(null);
+                    setReviewRating(5);
+                    setReviewComment('');
+                    // Refresh reviews
+                    const reviewsRes = await api.get(`/api/bookings/reviews/?provider=${data?.provider?.id || id}`);
+                    const reviewsList = Array.isArray(reviewsRes) ? reviewsRes : (reviewsRes.results || []);
+                    setData(prev => prev ? {
+                      ...prev,
+                      reviews: reviewsList.map((r: any) => ({
+                        id: r.id,
+                        rating: r.rating,
+                        comment: r.comment,
+                        created_at: r.created_at,
+                        profiles: {
+                          full_name: r.customer_name || 'Customer',
+                          avatar_url: r.customer_photo || null,
+                        }
+                      }))
+                    } : prev);
+                  } catch (e: any) {
+                    toast.error(e?.message || 'Failed to submit review');
+                  } finally {
+                    setSubmittingReview(false);
+                  }
+                }}
+                disabled={submittingReview}
+                className="flex-1 px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 disabled:opacity-50 transition-smooth"
+              >
+                {submittingReview ? 'Submitting...' : 'Submit Review'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

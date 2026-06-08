@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Wrench, Calendar, MessageSquare, Heart,
-  Search, User, Settings, Shield, LogOut, X,
+  Search, User, Settings, Shield, LogOut, X, Shuffle,
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useTrans } from '../i18n';
@@ -9,6 +9,7 @@ import { useTrans } from '../i18n';
 const publicNavItems = [
   { to: '/dashboard', icon: LayoutDashboard, key: 'nav.dashboard' },
   { to: '/services', icon: Wrench, key: 'nav.services' },
+  { to: '/random-match', icon: Shuffle, key: 'nav.randomMatch' },
   { to: '/ftl', icon: Search, key: 'nav.ftl' },
   { to: '/karma', icon: Heart, key: 'nav.karma' },
 ];

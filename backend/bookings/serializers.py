@@ -15,12 +15,13 @@ class BookingCreateSerializer(serializers.ModelSerializer):
 
 class BookingListSerializer(serializers.ModelSerializer):
     customer_name = serializers.CharField(source='customer.username', read_only=True)
+    provider_id = serializers.UUIDField(source='provider.id', read_only=True)
     provider_name = serializers.CharField(source='provider.user.username', read_only=True)
     provider_profession = serializers.CharField(source='provider.profession', read_only=True)
 
     class Meta:
         model = Booking
-        fields = ['id', 'customer_name', 'provider_name', 'provider_profession',
+        fields = ['id', 'customer_name', 'provider_id', 'provider_name', 'provider_profession',
                   'status', 'job_description', 'scheduled_date', 'agreed_price',
                   'payment_status', 'payment_method', 'created_at', 'updated_at']
 

@@ -18,6 +18,7 @@ import CheckoutPage from './pages/CheckoutPage';
 import MessagesPage from './pages/MessagesPage';
 import KarmaPage from './pages/KarmaPage';
 import NotificationsPage from './pages/NotificationsPage';
+import RandomMatchPage from './pages/RandomMatchPage';
 import AdminPage from './pages/AdminPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
@@ -52,6 +53,7 @@ export default function App() {
           <Route path="/ftl/:id" element={<FtlDetailPage />} />
           <Route path="/providers/:id" element={<ProviderProfilePage />} />
           <Route path="/karma" element={<KarmaPage />} />
+          <Route path="/random-match" element={<RandomMatchPage />} />
           <Route path="/book/checkout/:providerId" element={<CheckoutPage />} />
           <Route path="/book/checkout" element={<CheckoutRedirect />} />
         </Route>

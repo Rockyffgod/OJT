@@ -1,4 +1,5 @@
-import math
+import math, random
+from django.db.models import Avg, Sum, Q
 from rest_framework import generics, permissions, filters, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -190,3 +191,77 @@ class SubmitVerificationView(APIView):
             'message': 'Verification documents submitted successfully',
             'verification_status': provider.verification_status
         })
+
+
+class MyProviderStatsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        try:
+            provider = request.user.service_provider
+        except ServiceProvider.DoesNotExist:
+            return Response({'error': 'Only providers can access stats'}, status=status.HTTP_403_FORBIDDEN)
+
+        from bookings.models import Booking, BookingStatus, Review
+        bookings = Booking.objects.filter(provider=provider)
+        completed = bookings.filter(status=BookingStatus.COMPLETED)
+        reviews = Review.objects.filter(provider=provider)
+
+        stats = {
+            'total_jobs': bookings.count(),
+            'completed_jobs': completed.count(),
+            'pending_bookings': bookings.filter(status=BookingStatus.REQUESTED).count(),
+            'avg_rating': round(reviews.aggregate(avg=Avg('rating'))['avg'] or 0, 1),
+            'review_count': reviews.count(),
+            'total_earnings': completed.aggregate(total=Sum('agreed_price'))['total'] or 0,
+        }
+        return Response(stats)
+
+
+class RandomMatchView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        category_name = request.query_params.get('category', '').strip()
+        lat = request.query_params.get('lat')
+        lng = request.query_params.get('lng')
+
+        qs = ServiceProvider.objects.filter(
+            verification_status='APPROVED',
+            is_available=True,
+        )
+        if category_name:
+            qs = qs.filter(
+                Q(profession__icontains=category_name) |
+                Q(category__name__icontains=category_name)
+            )
+
+        if not qs.exists():
+            return Response({'error': 'No providers found for this category'}, status=status.HTTP_404_NOT_FOUND)
+
+        if lat and lng:
+            user_lat, user_lng = float(lat), float(lng)
+            scored = []
+            for p in qs:
+                if p.latitude and p.longitude:
+                    dlat = math.radians(float(p.latitude) - user_lat)
+                    dlng = math.radians(float(p.longitude) - user_lng)
+                    a = math.sin(dlat/2)**2 + math.cos(math.radians(user_lat)) * math.cos(math.radians(float(p.latitude))) * math.sin(dlng/2)**2
+                    dist = 6371 * 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+                    scored.append((dist, p))
+            scored.sort(key=lambda x: x[0])
+            candidates = [p for _, p in scored[:5]]
+            if not candidates:
+                candidates = list(qs)
+            provider = random.choice(candidates)
+            distance_km = round(scored[0][0], 2) if scored else None
+        else:
+            provider = random.choice(list(qs))
+            distance_km = None
+
+        from .serializers import ServiceProviderListSerializer
+        serializer = ServiceProviderListSerializer(provider, context={'request': request})
+        data = serializer.data
+        if distance_km is not None:
+            data['distance_km'] = distance_km
+        return Response(data)
