@@ -175,9 +175,10 @@ export default function ServicesPage() {
   const filtered = providers.filter((p) => {
     if (!query.trim()) return true;
     const q = query.toLowerCase();
+    const pName = p.name || p.user_name || '';
     return (
       p.profession?.toLowerCase().includes(q) ||
-      p.name?.toLowerCase().includes(q) ||
+      pName.toLowerCase().includes(q) ||
       p.service_area?.toLowerCase().includes(q)
     );
   });

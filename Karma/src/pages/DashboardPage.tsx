@@ -174,9 +174,10 @@ export default function DashboardPage() {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {SERVICES.map((s) => (
-                <div
+                <Link
                   key={s.name}
-                  className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden transition-smooth hover:shadow-sm cursor-pointer group"
+                  to={`/services?q=${encodeURIComponent(s.name)}`}
+                  className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden transition-smooth hover:shadow-sm cursor-pointer group block"
                 >
                   <img
                     src={s.img}
@@ -195,7 +196,7 @@ export default function DashboardPage() {
                     </div>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 font-medium">{s.price}</p>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
