@@ -1,4 +1,4 @@
-# हाम्रो कर्म (Hamro Karma)
+#  कर्म ( Karma)
 
 Nepal's first karma-based service marketplace — a full-stack platform connecting customers with local service providers, featuring a Lost & Found (FTL) system and AI-powered search.
 
