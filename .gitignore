@@ -17,9 +17,8 @@ dist/
 # Database (SQLite)
 backend/db.sqlite3
 
-# Uploaded media (except profiles — needed for demo)
+# Uploaded media (now on Cloudinary in production)
 backend/media/*
-!backend/media/profiles/
 
 # OS
 .DS_Store

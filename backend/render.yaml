@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: hamro-karma-api
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: gunicorn config.wsgi:application --workers 4 --worker-class sync --timeout 120
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com,localhost"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://hamro-karma.vercel.app"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://hamro-karma.vercel.app,https://hamro-karma-api.onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hamro-karma-db
+          property: connectionString
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+
+databases:
+  - name: hamro-karma-db
+    databaseName: hamro_karma
+    plan: free
+    region: oregon
