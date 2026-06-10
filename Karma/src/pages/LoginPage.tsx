@@ -4,17 +4,37 @@ import { Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import { signIn, AuthError } from '../lib/auth';
 import { useAuthStore } from '../store/authStore';
 import { useToast } from '../hooks/useToast';
+import { useTrans } from '../i18n';
 import SuccessAnimation from '../components/SuccessAnimation';
 
 export default function LoginPage() {
+  const { t } = useTrans();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
-  const { fetchProfile, setAuth } = useAuthStore();
+  const { fetchProfile } = useAuthStore();
   const toast = useToast();
+
+  const demoLogin = async (demoEmail: string, demoPassword: string) => {
+    setError('');
+    setLoading(true);
+    try {
+      const user = await signIn(demoEmail, demoPassword);
+      await fetchProfile(user.id);
+      toast.success(t('toast.loginSuccess'));
+      setSuccess(true);
+      setTimeout(() => navigate('/dashboard'), 1500);
+    } catch (err: any) {
+      const msg = err instanceof AuthError ? err.message : 'Login failed';
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,6 +144,30 @@ export default function LoginPage() {
             Create Account
           </Link>
         </form>
+
+        <div className="mt-8 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5">
+          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 text-center">
+            {t('login.quickDemo')}
+          </h3>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => demoLogin('rockyffgod@gmail.com', 'rk1234')}
+              disabled={loading}
+              className="flex-1 py-2.5 border border-violet-200 dark:border-violet-800 text-violet-700 dark:text-violet-300 font-medium rounded-lg hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-smooth text-sm"
+            >
+              {t('login.demoCustomer')}
+            </button>
+            <button
+              type="button"
+              onClick={() => demoLogin('ram@example.com', 'ram1234')}
+              disabled={loading}
+              className="flex-1 py-2.5 bg-violet-600 text-white font-medium rounded-lg hover:bg-violet-700 transition-smooth text-sm"
+            >
+              {t('login.demoProvider')}
+            </button>
+          </div>
+        </div>
 
         <p className="text-center text-sm text-slate-600 dark:text-slate-400 mt-6">
           Need help?{' '}

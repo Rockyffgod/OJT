@@ -7,6 +7,7 @@ import {
   LocateFixed, Locate, ShieldAlert, ExternalLink, Star, MapIcon
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import { useLocationStore } from '../store/locationStore';
 import { api } from '../lib/api';
 import { useTrans } from '../i18n';
 import { useToast } from '../hooks/useToast';
@@ -46,7 +47,7 @@ export default function BookingsPage() {
   const [tab, setTab] = useState<'active' | 'history'>('active');
 
   const [sharingBookings, setSharingBookings] = useState<Set<string>>(new Set());
-  const watchRefs = useRef<Map<string, number>>(new Map());
+  const shareIntervals = useRef<Map<string, ReturnType<typeof setInterval>>>(new Map());
 
   const [mapsOpen, setMapsOpen] = useState<Set<string>>(new Set());
   const pollRefs = useRef<Map<string, ReturnType<typeof setInterval>>>(new Map());
@@ -92,8 +93,8 @@ export default function BookingsPage() {
 
   useEffect(() => {
     return () => {
-      watchRefs.current.forEach((id) => navigator.geolocation.clearWatch(id));
-      watchRefs.current.clear();
+      shareIntervals.current.forEach((id) => clearInterval(id));
+      shareIntervals.current.clear();
       pollRefs.current.forEach((id) => clearInterval(id));
       pollRefs.current.clear();
     };
@@ -118,31 +119,24 @@ export default function BookingsPage() {
       return;
     }
     const bookingId = booking.id;
-    const watchId = navigator.geolocation.watchPosition(
-      async (pos) => {
-        try {
-          await api.patch(`/api/bookings/${bookingId}/location/`, {
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude,
-          });
-        } catch (e: any) {
-          stopSharing(bookingId);
-          toast.error(e?.message || 'Failed to share location');
-        }
-      },
-      () => toast.error('Failed to get location'),
-      { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
-    );
-    watchRefs.current.set(bookingId, watchId);
+    const patch = () => {
+      const loc = useLocationStore.getState();
+      if (loc.lat && loc.lng) {
+        api.patch(`/api/bookings/${bookingId}/location/`, { lat: loc.lat, lng: loc.lng }).catch(() => {});
+      }
+    };
+    patch();
+    const interval = setInterval(patch, 10000);
+    shareIntervals.current.set(bookingId, interval);
     setSharingBookings((prev) => new Set(prev).add(bookingId));
     toast.success(t('booking.sharingLocation'));
   };
 
   const stopSharing = (bookingId: string) => {
-    const watchId = watchRefs.current.get(bookingId);
-    if (watchId !== undefined) {
-      navigator.geolocation.clearWatch(watchId);
-      watchRefs.current.delete(bookingId);
+    const interval = shareIntervals.current.get(bookingId);
+    if (interval !== undefined) {
+      clearInterval(interval);
+      shareIntervals.current.delete(bookingId);
     }
     setSharingBookings((prev) => {
       const next = new Set(prev);
@@ -530,7 +524,9 @@ export default function BookingsPage() {
                     ) : (
                       <div className="text-center py-8 text-sm text-slate-400 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
                         <MapPin size={24} className="mx-auto mb-2 opacity-40" />
-                        {t('booking.noLocationData')}
+                        {b.job_address
+                          ? t('booking.noLocationData')
+                          : t('booking.noLocationAddress')}
                       </div>
                     )}
                   </div>

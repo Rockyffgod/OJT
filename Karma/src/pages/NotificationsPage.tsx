@@ -1,9 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCheck, Bell } from 'lucide-react';
+import { CheckCheck, Bell, Globe, User, Package, Cat, Car } from 'lucide-react';
 import { api } from '../lib/api';
 import { useTrans } from '../i18n';
 import { useToast } from '../hooks/useToast';
+
+const ftlTypeMeta: Record<string, { Icon: any; color: string }> = {
+  PERSON: { Icon: User, color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' },
+  PET: { Icon: Cat, color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' },
+  ITEM: { Icon: Package, color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' },
+  VEHICLE: { Icon: Car, color: 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300' },
+};
 
 export default function NotificationsPage() {
   const { t, isNp } = useTrans();
@@ -35,7 +42,7 @@ export default function NotificationsPage() {
   };
 
   const handleClick = async (n: any) => {
-    if (!n.read_at) {
+    if (!n.is_global && !n.read_at) {
       try {
         await api.patch(`/api/notifications/${n.id}/read/`, {});
         setNotifs((prev) =>
@@ -48,7 +55,7 @@ export default function NotificationsPage() {
     if (n.link) navigate(n.link);
   };
 
-  const isRead = (n: any) => !!n.read_at;
+  const isRead = (n: any) => n.is_global || !!n.read_at;
 
   return (
     <div className="space-y-4">
@@ -80,6 +87,10 @@ export default function NotificationsPage() {
         <div className="space-y-2">
           {notifs.map((n) => {
             const read = isRead(n);
+            const ftlMeta = n.type === 'ftl_new_alert'
+              ? ftlTypeMeta[n.data?.ftl_type]
+              : null;
+
             return (
               <button
                 key={n.id}
@@ -91,14 +102,41 @@ export default function NotificationsPage() {
                 } hover:bg-slate-50 dark:hover:bg-slate-800/50`}
               >
                 <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      {n.is_global && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                          <Globe size={10} />
+                          {t('notif.global')}
+                        </span>
+                      )}
+                      {ftlMeta && (
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${ftlMeta.color}`}>
+                          <ftlMeta.Icon size={10} />
+                          {n.data?.ftl_type === 'PERSON'
+                            ? t('ftl.missingPerson')
+                            : n.data?.ftl_type === 'PET'
+                            ? t('ftl.lostPet')
+                            : n.data?.ftl_type === 'VEHICLE'
+                            ? t('ftl.filterVehicle')
+                            : t('ftl.lostItem')}
+                        </span>
+                      )}
+                      {n.data?.image_url && (
+                        <img
+                          src={n.data.image_url}
+                          alt=""
+                          className="w-8 h-8 rounded-md object-cover border border-slate-200 dark:border-slate-700"
+                        />
+                      )}
+                    </div>
                     <p
                       className={`text-sm ${read ? 'font-normal text-slate-700 dark:text-slate-300' : 'font-semibold text-slate-900 dark:text-slate-100'}`}
                     >
                       {n.title || n.body || (isNp ? 'सूचना' : 'Notification')}
                     </p>
                     {n.title && n.body && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{n.body}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">{n.body}</p>
                     )}
                   </div>
                   <span className="text-xs text-slate-400 dark:text-slate-500 flex-shrink-0">

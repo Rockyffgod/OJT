@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Shuffle, MapPin, Star, Trophy, RotateCcw, RefreshCw } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
+import { useLocationStore } from '../store/locationStore';
 import { useTrans, translateProfession, translateName } from '../i18n';
 
 const categories = [
@@ -19,21 +20,27 @@ const categories = [
 export default function RandomMatchPage() {
   const { t, isNp } = useTrans();
   const { user } = useAuthStore();
+  const storeLat = useLocationStore((s) => s.lat);
+  const storeLng = useLocationStore((s) => s.lng);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [fallbackLoc, setFallbackLoc] = useState<{ lat: number; lng: number } | null>(null);
+  const fallbackFired = useRef(false);
+
+  const userLocation = storeLat && storeLng ? { lat: storeLat, lng: storeLng } : fallbackLoc;
 
   useEffect(() => {
-    if ('geolocation' in navigator) {
+    if (!storeLat && !storeLng && !fallbackFired.current && 'geolocation' in navigator) {
+      fallbackFired.current = true;
       navigator.geolocation.getCurrentPosition(
-        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        (pos) => setFallbackLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
         () => {},
-        { timeout: 5000 }
+        { timeout: 5000 },
       );
     }
-  }, []);
+  }, [storeLat, storeLng]);
 
   const handleSpin = async () => {
     setSpinning(true);

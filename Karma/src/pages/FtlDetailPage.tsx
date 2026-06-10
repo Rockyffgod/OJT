@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, MapPin, Calendar, User, Phone, Mail, Share2, Package, Cat, Car,
-  ImageOff, Trash2, Check, XCircle,
+  ImageOff, Trash2, Check, XCircle, QrCode,
 } from 'lucide-react';
 import { FtlAlert, FtlType, FtlStatus } from '../lib/types';
 import { api } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { useTrans } from '../i18n';
 import { useToast } from '../hooks/useToast';
+import FtlQrModal from '../components/FtlQrModal';
 
 const typeMeta: Record<FtlType, { labelKey: string; color: string; Icon: any }> = {
   PERSON: { labelKey: 'ftl.missingPerson', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300', Icon: User },
@@ -34,6 +35,7 @@ export default function FtlDetailPage() {
   const [alert, setAlert] = useState<FtlAlert | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [showQr, setShowQr] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -244,7 +246,16 @@ export default function FtlDetailPage() {
           <Share2 size={14} />
           {t('ftl.share')}
         </button>
+        <button
+          onClick={() => setShowQr(true)}
+          className="inline-flex items-center gap-2 px-4 py-2 border border-violet-200 dark:border-violet-800 rounded-lg text-sm font-medium text-violet-700 dark:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-smooth"
+        >
+          <QrCode size={14} />
+          {t('ftl.generateQr')}
+        </button>
       </div>
+
+      <FtlQrModal open={showQr} onClose={() => setShowQr(false)} alert={alert} />
 
       {/* Owner actions */}
       {isOwner && (

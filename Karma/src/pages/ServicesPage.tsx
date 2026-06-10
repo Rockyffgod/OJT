@@ -1,10 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { MapPin, Star, Search as SearchIcon, LocateFixed } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { api } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
+import { useLocationStore } from '../store/locationStore';
 import { useTrans, translateProfession, translateName } from '../i18n';
 
 const GEOAPIFY_KEY = import.meta.env.VITE_GEOAPIFY_KEY;
@@ -29,13 +30,18 @@ export default function ServicesPage() {
   const [nearby, setNearby] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [mapReady, setMapReady] = useState(false);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [searchRadius, setSearchRadius] = useState(10);
   const [query, setQuery] = useState(initialQuery);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const navigate = useNavigate();
+  const storeLat = useLocationStore((s) => s.lat);
+  const storeLng = useLocationStore((s) => s.lng);
+  const userLocation = useMemo(
+    () => (storeLat && storeLng ? { lat: storeLat, lng: storeLng } : null),
+    [storeLat, storeLng],
+  );
 
   useEffect(() => {
     api
@@ -48,21 +54,6 @@ export default function ServicesPage() {
       })
       .catch(() => setProviders(STATIC_PROVIDERS))
       .finally(() => setLoading(false));
-  }, []);
-
-  const getUserLocation = () => {
-    if (!navigator.geolocation) {
-      setUserLocation({ lat: 27.7172, lng: 85.3240 });
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      () => setUserLocation({ lat: 27.7172, lng: 85.3240 })
-    );
-  };
-
-  useEffect(() => {
-    getUserLocation();
   }, []);
 
   useEffect(() => {
@@ -170,8 +161,6 @@ export default function ServicesPage() {
     const map = mapInstanceRef.current;
     if (map && userLocation) {
       map.setView([userLocation.lat, userLocation.lng], 13);
-    } else {
-      getUserLocation();
     }
   };
 

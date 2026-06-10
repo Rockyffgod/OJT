@@ -12,6 +12,7 @@ class Notification(models.Model):
     data = models.JSONField(null=True, blank=True)
     reference_id = models.CharField(max_length=255, null=True, blank=True)
     link = models.CharField(max_length=500, null=True, blank=True)
+    is_global = models.BooleanField(default=False)
     read_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

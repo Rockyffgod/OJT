@@ -57,19 +57,23 @@ export default function BookingMap({
 
   useEffect(() => {
     if (!mapRef.current || mapInstance.current) return;
-    const map = L.map(mapRef.current, {
-      center: [centerLat, centerLng],
-      zoom: compact ? 12 : 14,
-      zoomControl: !compact,
-      attributionControl: false,
-    });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-    mapInstance.current = map;
-    return () => {
-      cancelAnimationFrame(animFrame.current);
-      map.remove();
+    try {
+      const map = L.map(mapRef.current, {
+        center: [centerLat, centerLng],
+        zoom: compact ? 12 : 14,
+        zoomControl: !compact,
+        attributionControl: false,
+      });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+      mapInstance.current = map;
+      return () => {
+        cancelAnimationFrame(animFrame.current);
+        map.remove();
+        mapInstance.current = null;
+      };
+    } catch {
       mapInstance.current = null;
-    };
+    }
   }, [centerLat, centerLng, compact]);
 
   // Routing control: created only when dest or arrived changes (not on provider movement)
