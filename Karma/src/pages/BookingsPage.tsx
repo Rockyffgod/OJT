@@ -125,7 +125,10 @@ export default function BookingsPage() {
             lat: pos.coords.latitude,
             lng: pos.coords.longitude,
           });
-        } catch { /* silent */ }
+        } catch (e: any) {
+          stopSharing(bookingId);
+          toast.error(e?.message || 'Failed to share location');
+        }
       },
       () => toast.error('Failed to get location'),
       { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }

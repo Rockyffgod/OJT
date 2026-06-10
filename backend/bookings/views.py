@@ -82,7 +82,7 @@ class BookingLocationUpdateView(APIView):
         if not is_provider and not is_customer:
             return Response({'error': 'Not part of this booking'}, status=status.HTTP_403_FORBIDDEN)
 
-        if booking.status not in ('CONFIRMED', 'IN_PROGRESS'):
+        if booking.status not in ('REQUESTED', 'CONFIRMED', 'IN_PROGRESS'):
             return Response({'error': 'Booking is not active'}, status=status.HTTP_400_BAD_REQUEST)
 
         lat = request.data.get('lat')
