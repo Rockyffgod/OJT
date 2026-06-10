@@ -97,7 +97,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           <>
             <div className="border-t border-slate-200 dark:border-slate-700 my-3" />
             {accountNavItems.map(navLink)}
-            {profile?.account_type === 'ADMIN' &&
+            {profile?.email === 'admin@example.com' &&
               navLink({ to: '/admin', icon: Shield, key: 'nav.admin' })}
           </>
         )}

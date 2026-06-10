@@ -3,12 +3,21 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.utils import timezone
-from .models import User, EmergencyContact, SOSAlert
+from .models import User, EmergencyContact, SOSAlert, AccountType
 from .serializers import UserSerializer, RegisterSerializer, EmergencyContactSerializer, SOSAlertSerializer
 from bookings.models import Booking
 from services.models import ServiceProvider
 from bookings.serializers import BookingListSerializer
 from services.serializers import ServiceProviderListSerializer
+
+
+class IsSuperAdmin(permissions.BasePermission):
+    """Only the master admin (admin@example.com) can access admin endpoints."""
+    def has_permission(self, request, view):
+        return (
+            request.user.is_authenticated
+            and request.user.email == 'admin@example.com'
+        )
 
 
 class RegisterView(generics.CreateAPIView):
@@ -139,23 +148,23 @@ class ChangePasswordView(APIView):
 class AdminUserListView(generics.ListAPIView):
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsSuperAdmin]
 
 
 class AdminProviderListView(generics.ListAPIView):
     queryset = ServiceProvider.objects.select_related('user', 'category').all().order_by('-created_at')
     serializer_class = ServiceProviderListSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsSuperAdmin]
 
 
 class AdminBookingListView(generics.ListAPIView):
     queryset = Booking.objects.select_related('customer', 'provider').all().order_by('-created_at')
     serializer_class = BookingListSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsSuperAdmin]
 
 
 class AdminVerifyUserView(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsSuperAdmin]
 
     def patch(self, request, pk):
         try:
@@ -179,7 +188,7 @@ class AdminVerifyUserView(APIView):
 
 
 class AdminSuspendProviderView(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsSuperAdmin]
 
     def patch(self, request, pk):
         try:
@@ -201,3 +210,36 @@ class AdminSuspendProviderView(APIView):
             'message': 'Provider unsuspended' if is_available else 'Provider suspended',
             'is_available': provider.is_available
         })
+
+
+class AdminPromoteUserView(APIView):
+    permission_classes = [IsSuperAdmin]
+
+    def patch(self, request, pk):
+        try:
+            user = User.objects.get(id=pk)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        user.account_type = AccountType.ADMIN
+        user.save()  # model save() auto-sets is_staff
+        return Response({'message': f'User {user.email} promoted to admin'})
+
+
+class AdminDemoteUserView(APIView):
+    permission_classes = [IsSuperAdmin]
+
+    def patch(self, request, pk):
+        try:
+            user = User.objects.get(id=pk)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if user.email == 'admin@example.com':
+            return Response({'error': 'Cannot demote the master admin account'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.account_type = AccountType.CUSTOMER
+        user.is_staff = False
+        user.is_superuser = False
+        user.save()
+        return Response({'message': f'User {user.email} demoted from admin'})

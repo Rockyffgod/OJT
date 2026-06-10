@@ -60,6 +60,11 @@ class RegisterSerializer(serializers.ModelSerializer):
             )
         return value
 
+    def validate_account_type(self, value):
+        if value == 'ADMIN':
+            raise serializers.ValidationError("Admin registration is not allowed via public signup.")
+        return value
+
     def create(self, validated_data):
         password = validated_data.pop('password')
         full_name = validated_data.pop('full_name', '')

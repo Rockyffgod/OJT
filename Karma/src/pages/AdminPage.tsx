@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Check, X, Shield, AlertCircle, RefreshCw } from 'lucide-react';
+import { Check, X, Shield, AlertCircle, RefreshCw, UserPlus, UserX } from 'lucide-react';
 import { useTrans } from '../i18n';
 import { useToast } from '../hooks/useToast';
 import { api } from '../lib/api';
@@ -82,6 +82,32 @@ export default function AdminPage() {
     }
   };
 
+  const promoteUser = async (userId: string) => {
+    setActing(userId);
+    try {
+      await api.patch(`/api/admin/users/${userId}/promote/`, {});
+      toast.success('User promoted to admin');
+      await fetchData();
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to promote user');
+    } finally {
+      setActing(null);
+    }
+  };
+
+  const demoteUser = async (userId: string) => {
+    setActing(userId);
+    try {
+      await api.patch(`/api/admin/users/${userId}/demote/`, {});
+      toast.success('User demoted from admin');
+      await fetchData();
+    } catch (e: any) {
+      toast.error(e?.message || 'Failed to demote user');
+    } finally {
+      setActing(null);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -132,7 +158,7 @@ export default function AdminPage() {
           </button>
           {fetchError.includes('403') || fetchError.includes('401') ? (
             <p className="text-xs text-slate-400 mt-3">
-              You need admin privileges to access this page. Make sure your account has ADMIN account type.
+              Only the master admin (admin@example.com) can access this page.
             </p>
           ) : null}
         </div>
@@ -160,6 +186,7 @@ export default function AdminPage() {
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Phone</th>
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Type</th>
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Joined</th>
+                      <th className="px-4 py-3 text-right font-medium text-slate-500 dark:text-slate-400">Actions</th>
                     </>
                   )}
                   {tab === 'providers' && (
@@ -200,6 +227,29 @@ export default function AdminPage() {
                       </td>
                       <td className="px-4 py-3 text-slate-400 text-xs">
                         {u.date_joined ? new Date(u.date_joined).toLocaleDateString() : '—'}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {u.email !== 'admin@example.com' && (
+                          <div className="flex items-center justify-end gap-2">
+                            {u.account_type === 'ADMIN' ? (
+                              <button
+                                onClick={() => demoteUser(u.id)}
+                                disabled={acting === u.id}
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-md text-xs font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition-smooth disabled:opacity-50"
+                              >
+                                <UserX size={12} /> Demote
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => promoteUser(u.id)}
+                                disabled={acting === u.id}
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-md text-xs font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-smooth disabled:opacity-50"
+                              >
+                                <UserPlus size={12} /> Promote
+                              </button>
+                            )}
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}
