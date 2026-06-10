@@ -4,15 +4,19 @@ from .models import User, EmergencyContact, SOSAlert
 
 class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
+    full_name_nepali = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ['id', 'email', 'username', 'phone', 'profile_photo', 'account_type',
-                  'is_phone_verified', 'is_email_verified', 'city', 'date_joined', 'first_name', 'last_name', 'full_name']
+                  'is_phone_verified', 'is_email_verified', 'city', 'date_joined', 'first_name', 'last_name', 'name_nepali', 'full_name', 'full_name_nepali']
         read_only_fields = ['id', 'date_joined']
 
     def get_full_name(self, obj):
         return f'{obj.first_name} {obj.last_name}'.strip() or obj.username
+
+    def get_full_name_nepali(self, obj):
+        return obj.name_nepali or self.get_full_name(obj)
 
     def update(self, instance, validated_data):
         full_name = self.context['request'].data.get('full_name')
@@ -20,6 +24,9 @@ class UserSerializer(serializers.ModelSerializer):
             parts = full_name.split(' ', 1)
             instance.first_name = parts[0]
             instance.last_name = parts[1] if len(parts) > 1 else ''
+        name_nepali = self.context['request'].data.get('name_nepali')
+        if name_nepali is not None:
+            instance.name_nepali = name_nepali
         return super().update(instance, validated_data)
 
 
@@ -29,7 +36,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'username', 'password', 'phone', 'account_type', 'first_name', 'last_name', 'full_name']
+        fields = ['id', 'email', 'username', 'password', 'phone', 'account_type', 'first_name', 'last_name', 'name_nepali', 'full_name']
         extra_kwargs = {
             'username': {'required': False},
         }

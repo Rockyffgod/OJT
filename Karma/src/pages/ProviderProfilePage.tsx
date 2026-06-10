@@ -8,7 +8,7 @@ import {
 import { ServiceProvider, KarmaLevel } from '../lib/types';
 import { api } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
-import { useTrans } from '../i18n';
+import { useTrans, translateName } from '../i18n';
 import { useToast } from '../hooks/useToast';
 
 const DEMO_AVATAR = (name: string) =>
@@ -62,7 +62,7 @@ function StarRating({ value, size = 14 }: { value: number; size?: number }) {
 
 export default function ProviderProfilePage() {
   const { id } = useParams<{ id: string }>();
-  const { t } = useTrans();
+  const { t, isNp } = useTrans();
   const toast = useToast();
   const { user } = useAuthStore();
   const navigate = useNavigate();
@@ -120,6 +120,7 @@ export default function ProviderProfilePage() {
           profile: {
             id: providerData.user?.id,
             full_name: providerData.user?.full_name || providerData.user?.username?.replace(/_/g, ' ') || 'Provider',
+            full_name_nepali: providerData.user?.full_name_nepali,
             avatar_url: providerData.user?.profile_photo || null,
             email: providerData.user?.email,
             phone: providerData.user?.phone,
@@ -200,7 +201,7 @@ export default function ProviderProfilePage() {
   }
 
   const { provider, profile, category, reviews } = data;
-  const name = profile?.full_name || 'Provider';
+  const name = (isNp ? profile?.full_name_nepali : null) || profile?.full_name || 'Provider';
   const avgRating = provider.average_rating || 0;
   const karmaLevel = (provider.karma_level || 'NONE') as KarmaLevel;
   const isAvailable = provider.is_available ?? provider.availability_status === 'AVAILABLE_NOW';

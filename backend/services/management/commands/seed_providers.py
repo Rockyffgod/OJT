@@ -22,32 +22,32 @@ PHOTO_MAP = {
 }
 
 PROVIDERS = [
-    {"name": "Ram Sharma", "email": "ram@example.com", "profession": "Plumber", "category": "Plumber",
+    {"name": "Ram Sharma", "name_nepali": "राम शर्मा", "email": "ram@example.com", "profession": "Plumber", "category": "Plumber",
      "lat": 27.7172, "lng": 85.3240, "area": "Kathmandu", "rate": 500, "rating": 4.5, "jobs": 120, "karma": "GOLD", "karma_pts": 850},
-    {"name": "Hari Gurung", "email": "hari@example.com", "profession": "Carpenter", "category": "Carpenter",
+    {"name": "Hari Gurung", "name_nepali": "हरि गुरुङ", "email": "hari@example.com", "profession": "Carpenter", "category": "Carpenter",
      "lat": 27.7050, "lng": 85.3100, "area": "Kathmandu", "rate": 450, "rating": 4.2, "jobs": 67, "karma": "SILVER", "karma_pts": 450},
-    {"name": "Bishal Poudel", "email": "bishal@example.com", "profession": "AC Technician", "category": "AC Tech",
+    {"name": "Bishal Poudel", "name_nepali": "विशाल पौडेल", "email": "bishal@example.com", "profession": "AC Technician", "category": "AC Tech",
      "lat": 27.6900, "lng": 85.3000, "area": "Kathmandu", "rate": 800, "rating": 4.9, "jobs": 210, "karma": "PLATINUM", "karma_pts": 1500},
-    {"name": "Harka Langtang", "email": "harka@example.com", "profession": "Electrician", "category": "Electrician",
+    {"name": "Harka Langtang", "name_nepali": "हर्क लाङटाङ", "email": "harka@example.com", "profession": "Electrician", "category": "Electrician",
      "lat": 27.6850, "lng": 85.3350, "area": "Lalitpur", "rate": 600, "rating": 4.8, "jobs": 95, "karma": "GOLD", "karma_pts": 920},
-    {"name": "KP Ba", "email": "kp@example.com", "profession": "Painter", "category": "Painter",
+    {"name": "KP Ba", "name_nepali": "केपी बा", "email": "kp@example.com", "profession": "Painter", "category": "Painter",
      "lat": 27.7300, "lng": 85.3400, "area": "Bhaktapur", "rate": 350, "rating": 4.6, "jobs": 88, "karma": "SILVER", "karma_pts": 520},
-    {"name": "Mahesh Khasnet", "email": "mahesh@example.com", "profession": "Cleaner", "category": "Cleaner",
+    {"name": "Mahesh Khasnet", "name_nepali": "महेश खस्नेत", "email": "mahesh@example.com", "profession": "Cleaner", "category": "Cleaner",
      "lat": 27.7200, "lng": 85.3550, "area": "Lalitpur", "rate": 250, "rating": 4.3, "jobs": 150, "karma": "SILVER", "karma_pts": 380},
-    {"name": "Rajesh Hamal", "email": "rajesh@example.com", "profession": "Repair Technician", "category": "Repair",
+    {"name": "Rajesh Hamal", "name_nepali": "राजेश हमाल", "email": "rajesh@example.com", "profession": "Repair Technician", "category": "Repair",
      "lat": 27.7100, "lng": 85.2900, "area": "Kathmandu", "rate": 550, "rating": 4.4, "jobs": 75, "karma": "BRONZE", "karma_pts": 280},
-    {"name": "Shyam Hamal", "email": "shyam@example.com", "profession": "Tutor", "category": "Tutor",
+    {"name": "Shyam Hamal", "name_nepali": "श्याम हमाल", "email": "shyam@example.com", "profession": "Tutor", "category": "Tutor",
      "lat": 27.6950, "lng": 85.3250, "area": "Kathmandu", "rate": 300, "rating": 4.7, "jobs": 45, "karma": "BRONZE", "karma_pts": 200},
 ]
 
 DEMOS = [
-    {"name": "Sita Adhikari", "email": "sita@example.com", "profession": "Electrician", "category": "Electrician",
+    {"name": "Sita Adhikari", "name_nepali": "सीता अधिकारी", "email": "sita@example.com", "profession": "Electrician", "category": "Electrician",
      "lat": 27.6850, "lng": 85.3350, "area": "Lalitpur", "rate": 600, "rating": 4.8, "jobs": 95, "karma": "GOLD", "karma_pts": 920},
-    {"name": "Gita Rai", "email": "gita@example.com", "profession": "Painter", "category": "Painter",
+    {"name": "Gita Rai", "name_nepali": "गीता राई", "email": "gita@example.com", "profession": "Painter", "category": "Painter",
      "lat": 27.7300, "lng": 85.3400, "area": "Bhaktapur", "rate": 350, "rating": 4.6, "jobs": 88, "karma": "SILVER", "karma_pts": 520},
-    {"name": "Anita KC", "email": "anita@example.com", "profession": "Cleaner", "category": "Cleaner",
+    {"name": "Anita KC", "name_nepali": "अनिता केसी", "email": "anita@example.com", "profession": "Cleaner", "category": "Cleaner",
      "lat": 27.7200, "lng": 85.3550, "area": "Lalitpur", "rate": 250, "rating": 4.3, "jobs": 150, "karma": "SILVER", "karma_pts": 380},
-    {"name": "Maya Tamang", "email": "maya@example.com", "profession": "Tutor", "category": "Tutor",
+    {"name": "Maya Tamang", "name_nepali": "माया तामाङ", "email": "maya@example.com", "profession": "Tutor", "category": "Tutor",
      "lat": 27.6950, "lng": 85.3250, "area": "Kathmandu", "rate": 300, "rating": 4.7, "jobs": 45, "karma": "BRONZE", "karma_pts": 200},
 ]
 
@@ -63,6 +63,7 @@ def create_user(p, is_admin=False):
     parts = p["name"].split(" ", 1)
     user.first_name = parts[0]
     user.last_name = parts[1] if len(parts) > 1 else ""
+    user.name_nepali = p.get("name_nepali", "")
     user.set_password("test1234")
     if is_admin:
         user.is_staff = True

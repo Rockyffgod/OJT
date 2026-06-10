@@ -1,3 +1,10 @@
+# Hamro Karma — Backend Python Dependencies
+# (Python 3.10+, pip install -r requirements.txt)
+#
+# Frontend (Node.js) deps are managed by Karma/package.json:
+#   React 18, Vite 5, TypeScript 5, Tailwind CSS 3,
+#   React Router 7, Leaflet, Lucide React, Zustand
+
 Django>=5.0,<6.0
 djangorestframework>=3.15
 djangorestframework-simplejwt>=5.3

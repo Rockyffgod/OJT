@@ -60,6 +60,7 @@ export const useAuthStore = create<AuthState>()(
           const mappedProfile: Profile = {
             id: userData.id,
             full_name: userData.full_name || `${userData.first_name} ${userData.last_name}`.trim() || userData.username,
+            full_name_nepali: userData.full_name_nepali,
             username: userData.username,
             phone: userData.phone,
             email: userData.email,

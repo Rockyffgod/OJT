@@ -28,6 +28,7 @@ interface Suggestion {
   type: string;
 }
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [searched, setSearched] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   
   const profileRef = useRef<HTMLDivElement>(null);
@@ -74,7 +75,8 @@ interface Suggestion {
         if (resp.ok) {
           const data = await resp.json();
           setSuggestions(data);
-          setShowSuggestions(data.length > 0);
+          setShowSuggestions(true);
+          setSearched(true);
         }
       } catch (e) {
         console.error('Failed to fetch suggestions:', e);
@@ -125,30 +127,37 @@ interface Suggestion {
           />
         </form>
 
-        {showSuggestions && suggestions.length > 0 && (
+        {showSuggestions && (suggestions.length > 0 || (searched && searchQuery.trim().length >= 2)) && (
           <div className="absolute top-full left-0 md:left-10 mt-1.5 w-full max-w-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-50 overflow-hidden divide-y divide-slate-100 dark:divide-slate-700">
-            {suggestions.map((s, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => {
-                  setSearchQuery(s.text);
-                  setShowSuggestions(false);
-                  navigate(`/services?q=${encodeURIComponent(s.text)}`);
-                }}
-                className="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-3 transition-smooth text-sm"
-              >
-                <span className="text-lg shrink-0">{s.icon || '💼'}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-slate-800 dark:text-slate-200 truncate">
-                    {isNp && s.text_nepali ? s.text_nepali : s.text}
-                  </p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 capitalize">
-                    {s.type}
-                  </p>
-                </div>
-              </button>
-            ))}
+            {suggestions.length > 0 ? (
+              suggestions.map((s, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery(s.text);
+                    setShowSuggestions(false);
+                    navigate(`/services?q=${encodeURIComponent(s.text)}`);
+                  }}
+                  className="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-3 transition-smooth text-sm"
+                >
+                  <span className="text-lg shrink-0">{s.icon || '💼'}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-slate-800 dark:text-slate-200 truncate">
+                      {isNp && s.text_nepali ? s.text_nepali : s.text}
+                    </p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 capitalize">
+                      {s.type}
+                    </p>
+                  </div>
+                </button>
+              ))
+            ) : searched && searchQuery.trim().length >= 2 ? (
+              <div className="px-4 py-8 text-center">
+                <p className="text-sm text-slate-500">Sorry, no enlisted providers found</p>
+                <p className="text-xs text-slate-400 mt-1">कुनै सूचीबद्ध सेवा प्रदायक भेटिएन</p>
+              </div>
+            ) : null}
           </div>
         )}
       </div>

@@ -74,6 +74,10 @@ class MeView(generics.RetrieveUpdateAPIView):
         if email is not None:
             user.email = email
 
+        name_nepali = request.data.get('name_nepali')
+        if name_nepali is not None:
+            user.name_nepali = name_nepali
+
         if 'profile_photo' in request.FILES:
             user.profile_photo = request.FILES['profile_photo']
 

@@ -5,7 +5,7 @@ import {
   Star, Bell, Sparkles, Package, Heart, Trophy, Medal, Award
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
-import { useTrans, translateName, translateProfession } from '../i18n';
+import { useTrans, translateProfession } from '../i18n';
 import { api } from '../lib/api';
 import { transliterateName } from '../utils/nepaliTranslate';
 
@@ -95,10 +95,13 @@ export default function DashboardPage() {
           karma_points: p.karma_points,
           profiles: {
             full_name: p.user_name || 'Provider',
+            full_name_nepali: p.user_name_nepali,
             avatar_url: p.user_photo || null,
           }
         }));
-        setTopProviders(mapped.length > 0 ? mapped.slice(0, 3) : STATIC_KARMA);
+        const ids = new Set(mapped.map((p: any) => p.id));
+        const merged = [...mapped, ...STATIC_KARMA.filter((s) => !ids.has(s.id))];
+        setTopProviders(merged.slice(0, 3));
       } catch (err) {
         setTopProviders(STATIC_KARMA);
       }
@@ -241,7 +244,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="min-w-0">
                       <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
-                        {translateName(p.profiles?.full_name || '', isNp) || 'Provider'}
+                        {(isNp ? p.profiles?.full_name_nepali : null) || p.profiles?.full_name || 'Provider'}
                       </h4>
                       <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{p.profession || '—'}</p>
                     </div>

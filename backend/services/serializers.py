@@ -12,13 +12,14 @@ class ServiceProviderListSerializer(serializers.ModelSerializer):
     user_email = serializers.EmailField(source='user.email', read_only=True)
     user_id = serializers.UUIDField(source='user.id', read_only=True)
     user_name = serializers.SerializerMethodField()
+    user_name_nepali = serializers.SerializerMethodField()
     user_photo = serializers.ImageField(source='user.profile_photo', read_only=True)
     category_name = serializers.CharField(source='category.name', read_only=True)
     verification_status = serializers.CharField(read_only=True)
 
     class Meta:
         model = ServiceProvider
-        fields = ['id', 'user_id', 'user_email', 'user_name', 'user_photo', 'profession', 'category_name',
+        fields = ['id', 'user_id', 'user_email', 'user_name', 'user_name_nepali', 'user_photo', 'profession', 'category_name',
                   'experience', 'hourly_rate', 'service_area', 'availability_status',
                   'karma_points', 'karma_level', 'average_rating', 'total_jobs_completed',
                   'is_available', 'latitude', 'longitude', 'verification_status']
@@ -27,6 +28,12 @@ class ServiceProviderListSerializer(serializers.ModelSerializer):
         name = obj.user.get_full_name()
         if not name:
             return obj.user.username.replace('_', ' ').title()
+        return name
+
+    def get_user_name_nepali(self, obj):
+        name = obj.user.name_nepali
+        if not name:
+            return self.get_user_name(obj)
         return name
 
 
@@ -51,6 +58,7 @@ class ServiceProviderDetailSerializer(serializers.ModelSerializer):
             'email': obj.user.email,
             'username': obj.user.username,
             'full_name': name,
+            'full_name_nepali': obj.user.name_nepali or name,
             'phone': obj.user.phone,
             'profile_photo': photo_url,
         }

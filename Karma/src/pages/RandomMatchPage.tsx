@@ -120,7 +120,8 @@ export default function RandomMatchPage() {
       {error && (
         <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 max-w-md mx-auto">
           <MapPin size={40} className="text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-          <p className="text-slate-600 dark:text-slate-400 mb-5 px-6 text-sm leading-relaxed">{error}</p>
+          <p className="text-slate-600 dark:text-slate-400 mb-1 px-6 text-sm leading-relaxed">{error}</p>
+          <p className="text-slate-500 dark:text-slate-500 mb-4 px-6 text-sm">माफ गर्नुहोस्, यस श्रेणीको लागि कुनै सेवा प्रदायक सूचीबद्ध छैन</p>
           <button
             onClick={handleSpin}
             className="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-smooth"

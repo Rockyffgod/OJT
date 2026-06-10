@@ -34,6 +34,7 @@ class User(AbstractUser):
     is_phone_verified = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)
     city = models.CharField(max_length=100, default='')
+    name_nepali = models.CharField(max_length=300, blank=True, default='')
     updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = 'email'

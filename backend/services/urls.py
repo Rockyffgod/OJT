@@ -13,4 +13,5 @@ urlpatterns = [
     path('my-stats/', views.MyProviderStatsView.as_view(), name='my-stats'),
     path('upload/', views.FileUploadView.as_view(), name='file-upload'),
     path('suggest/', views.ServiceSuggestionsView.as_view(), name='service-suggest'),
+    path('reverse-geocode/', views.ReverseGeocodeView.as_view(), name='reverse-geocode'),
 ]

@@ -127,6 +127,7 @@ export async function getProfile(userId: string) {
   return {
     id: userData.id,
     full_name: userData.full_name || `${userData.first_name} ${userData.last_name}`.trim() || userData.username,
+    full_name_nepali: userData.full_name_nepali,
     username: userData.username,
     phone: userData.phone,
     email: userData.email,
@@ -149,6 +150,7 @@ export async function updateProfile(userId: string, updates: any) {
   if (updates.city !== undefined) bodyData.city = updates.city;
   if (updates.username !== undefined) bodyData.username = updates.username;
   if (updates.email !== undefined) bodyData.email = updates.email;
+  if (updates.name_nepali !== undefined) bodyData.name_nepali = updates.name_nepali;
 
   const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/accounts/me/`, {
     method: 'PATCH',

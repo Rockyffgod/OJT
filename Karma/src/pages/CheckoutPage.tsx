@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Star, Briefcase, MapPin, Loader2, CheckCircle, AlertTriangle, Package, ChevronDown, ChevronUp, Calendar, FileText, MapPinned, Wallet, User } from 'lucide-react';
+import { ArrowLeft, Star, Briefcase, MapPin, Loader2, CheckCircle, AlertTriangle, Package, ChevronDown, ChevronUp, Calendar, FileText, MapPinned, Wallet, User, Navigation } from 'lucide-react';
 import { api } from '../lib/api';
 import { useTrans } from '../i18n';
 import { useToast } from '../hooks/useToast';
@@ -26,7 +26,7 @@ export default function CheckoutPage() {
   const [searchParams] = useSearchParams();
   const providerId = pathProviderId || searchParams.get('provider');
   const navigate = useNavigate();
-  const { t } = useTrans();
+  const { t, isNp } = useTrans();
   const toast = useToast();
   const { user } = useAuthStore();
 
@@ -41,6 +41,39 @@ export default function CheckoutPage() {
     agreed_price: 0,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [locating, setLocating] = useState(false);
+
+  const useCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.info('Geolocation not available');
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          const res = await api.get(
+            `/api/services/reverse-geocode/?lat=${latitude}&lon=${longitude}`
+          );
+          setForm((prev) => ({ ...prev, job_address: res.address }));
+          setErrors((prev) => ({ ...prev, job_address: '' }));
+        } catch {
+          setForm((prev) => ({
+            ...prev,
+            job_address: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
+          }));
+          setErrors((prev) => ({ ...prev, job_address: '' }));
+        }
+        setLocating(false);
+      },
+      () => {
+        toast.info('Could not get location');
+        setLocating(false);
+      },
+      { timeout: 10000 }
+    );
+  };
 
   useEffect(() => {
     if (!providerId) {
@@ -126,7 +159,7 @@ export default function CheckoutPage() {
     );
   }
 
-  const name = provider.user?.full_name || provider.user?.username?.replace(/_/g, ' ').title() || provider.name || 'Provider';
+  const name = (isNp ? provider.user?.full_name_nepali : null) || provider.user?.full_name || provider.user?.username?.replace(/_/g, ' ').title() || provider.name || 'Provider';
   const avatar = provider.user?.profile_photo || provider.photo_url || null;
 
   const renderLoginPrompt = () => (
@@ -210,13 +243,29 @@ export default function CheckoutPage() {
                 <MapPinned size={14} className="text-slate-400" />
                 {t('booking.jobAddress')}
               </label>
-              <input
-                type="text"
-                value={form.job_address}
-                onChange={(e) => { setForm({ ...form, job_address: e.target.value }); setErrors((prev) => ({ ...prev, job_address: '' })); }}
-                placeholder={t('booking.jobAddressPlaceholder')}
-                className="w-full px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none"
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={form.job_address}
+                  onChange={(e) => { setForm({ ...form, job_address: e.target.value }); setErrors((prev) => ({ ...prev, job_address: '' })); }}
+                  placeholder={t('booking.jobAddressPlaceholder')}
+                  className="flex-1 px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={useCurrentLocation}
+                  disabled={locating}
+                  className="px-3 py-2.5 bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 rounded-lg text-violet-600 dark:text-violet-400 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-smooth disabled:opacity-50 flex items-center gap-1.5 text-sm font-medium flex-shrink-0"
+                  title="Use current location"
+                >
+                  {locating ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Navigation size={16} />
+                  )}
+                  <span className="hidden sm:inline">{locating ? 'Locating...' : 'Current'}</span>
+                </button>
+              </div>
               {errors.job_address && <p className="text-xs text-red-500 mt-1">{errors.job_address}</p>}
             </div>
             <div>

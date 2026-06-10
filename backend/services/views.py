@@ -39,9 +39,13 @@ class NearbyProvidersView(APIView):
                 c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
                 dist = 6371 * c
                 if dist <= radius:
+                    name = p.user.get_full_name() or p.user.username.replace('_', ' ').title()
+                    photo_url = request.build_absolute_uri(p.user.profile_photo.url) if p.user.profile_photo else None
                     nearby.append({
                         "id": str(p.id),
-                        "name": p.user.get_full_name() or p.user.username.replace('_', ' ').title(),
+                        "name": name,
+                        "user_name": name,
+                        "user_name_nepali": p.user.name_nepali or name,
                         "profession": p.profession,
                         "service_area": p.service_area,
                         "hourly_rate": p.hourly_rate,
@@ -51,7 +55,8 @@ class NearbyProvidersView(APIView):
                         "latitude": p.latitude,
                         "longitude": p.longitude,
                         "distance_km": round(dist, 2),
-                        "photo_url": request.build_absolute_uri(p.user.profile_photo.url) if p.user.profile_photo else None,
+                        "photo_url": photo_url,
+                        "user_photo": photo_url,
                     })
 
         nearby.sort(key=lambda x: x['distance_km'])
@@ -265,3 +270,30 @@ class RandomMatchView(APIView):
         if distance_km is not None:
             data['distance_km'] = distance_km
         return Response(data)
+
+
+class ReverseGeocodeView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        lat = request.query_params.get('lat')
+        lon = request.query_params.get('lon')
+        if not lat or not lon:
+            return Response({'error': 'lat and lon query params required'}, status=400)
+
+        api_key = settings.GEOAPIFY_KEY
+        if not api_key:
+            return Response({'address': f'{lat}, {lon}'})
+
+        import requests
+        try:
+            res = requests.get(
+                f'https://api.geoapify.com/v1/geocode/reverse',
+                params={'lat': lat, 'lon': lon, 'apiKey': api_key},
+                timeout=5,
+            )
+            data = res.json()
+            addr = data.get('features', [{}])[0].get('properties', {}).get('formatted', '')
+            return Response({'address': addr or f'{lat}, {lon}'})
+        except Exception:
+            return Response({'address': f'{lat}, {lon}'})

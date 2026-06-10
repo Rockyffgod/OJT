@@ -42,7 +42,9 @@ export default function ServicesPage() {
       .get('/api/services/providers/')
       .then((data: any) => {
         const result = Array.isArray(data) ? data : data?.results || [];
-        setProviders(result.length > 0 ? result : STATIC_PROVIDERS);
+        const ids = new Set(result.map((p: any) => p.id));
+        const merged = [...result, ...STATIC_PROVIDERS.filter((s) => !ids.has(s.id))];
+        setProviders(merged);
       })
       .catch(() => setProviders(STATIC_PROVIDERS))
       .finally(() => setLoading(false));
@@ -138,7 +140,7 @@ export default function ServicesPage() {
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
             <img src="${avatar}" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;background:#f0f0f0;" onerror="this.style.display='none'" />
             <div>
-              <div style="font-weight:600;font-size:14px;color:#1e293b;">${translateName(p.name || '', isNp) || t('services.provider')}</div>
+              <div style="font-weight:600;font-size:14px;color:#1e293b;">${(isNp ? p.user_name_nepali : null) || translateName(p.name || '', isNp) || t('services.provider')}</div>
               <div style="font-size:12px;color:#64748b;">${translateProfession(p.profession, t)}</div>
             </div>
           </div>
@@ -274,7 +276,7 @@ export default function ServicesPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 dark:text-slate-100 truncate">
-                    {translateName(p.name || p.user_name || '', isNp) || t('services.provider')}
+                    {(isNp ? p.user_name_nepali : null) || translateName(p.name || p.user_name || '', isNp) || t('services.provider')}
                   </h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400">
                     {translateProfession(p.profession, t)}
@@ -319,8 +321,11 @@ export default function ServicesPage() {
           <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-1">
             {t('services.noProviders')}
           </h3>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-1">
             {t('services.noProvidersHint')}
+          </p>
+          <p className="text-slate-400 dark:text-slate-500 text-xs">
+            माफ गर्नुहोस्, कुनै सेवा प्रदायक भेटिएन — हाम्रो प्लेटफर्ममा अहिलेसम्म यसको लागि कुनै सूचीबद्ध सेवा प्रदायक छैन
           </p>
         </div>
       )}

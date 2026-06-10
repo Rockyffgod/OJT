@@ -18,6 +18,7 @@ export type NotificationType =
 export interface Profile {
   id: string;
   full_name: string;
+  full_name_nepali?: string;
   username?: string;
   phone?: string;
   email?: string;
@@ -36,9 +37,13 @@ export interface Profile {
 export interface ServiceProvider {
   id: string;
   user_id: string;
+  user_name?: string;
+  user_name_nepali?: string;
+  user_photo?: string;
   bio?: string;
   profession: string;
   category_id?: string;
+  category_name?: string;
   experience: number;
   hourly_rate?: number;
   service_area: string;
