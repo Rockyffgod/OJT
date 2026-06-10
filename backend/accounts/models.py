@@ -40,6 +40,11 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
+    def save(self, *args, **kwargs):
+        if self.account_type == AccountType.ADMIN and not self.is_staff:
+            self.is_staff = True
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.email
 

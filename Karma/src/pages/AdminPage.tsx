@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Check, X, Shield, AlertCircle } from 'lucide-react';
+import { Check, X, Shield, AlertCircle, RefreshCw } from 'lucide-react';
 import { useTrans } from '../i18n';
 import { useToast } from '../hooks/useToast';
 import { api } from '../lib/api';
@@ -25,9 +25,11 @@ export default function AdminPage() {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
+    setFetchError(null);
     try {
       let result: any;
       if (tab === 'users') {
@@ -38,8 +40,8 @@ export default function AdminPage() {
         result = await api.get('/api/admin/bookings/');
       }
       setData(Array.isArray(result) ? result : result?.results || []);
-    } catch (e) {
-      console.error('Admin fetch error:', e);
+    } catch (e: any) {
+      setFetchError(e?.message || 'Failed to fetch data');
       setData([]);
     } finally {
       setLoading(false);
@@ -82,13 +84,22 @@ export default function AdminPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
-          <Shield size={20} className="text-violet-600 dark:text-violet-400" />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+            <Shield size={20} className="text-violet-600 dark:text-violet-400" />
+          </div>
+          <h1 className="text-2xl font-bold font-heading text-slate-900 dark:text-slate-100">
+            {t('nav.admin')}
+          </h1>
         </div>
-        <h1 className="text-2xl font-bold font-heading text-slate-900 dark:text-slate-100">
-          {t('nav.admin')}
-        </h1>
+        <button
+          onClick={fetchData}
+          className="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-smooth"
+          title="Refresh"
+        >
+          <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+        </button>
       </div>
 
       <div className="flex gap-2">
@@ -107,15 +118,37 @@ export default function AdminPage() {
         ))}
       </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-        {loading ? (
-          <div className="text-center py-12 text-slate-400">{t('common.loading')}</div>
-        ) : data.length === 0 ? (
-          <div className="text-center py-12">
-            <AlertCircle size={32} className="text-slate-300 dark:text-slate-600 mx-auto mb-2" />
-            <p className="text-slate-500 dark:text-slate-400 text-sm">{t('notif.empty')}</p>
-          </div>
-        ) : (
+      {/* Error state */}
+      {fetchError && !loading && (
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 text-center">
+          <AlertCircle size={36} className="text-red-400 mx-auto mb-3" />
+          <p className="text-slate-700 dark:text-slate-300 font-medium mb-1">Failed to load {tab}</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{fetchError}</p>
+          <button
+            onClick={fetchData}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 transition-smooth"
+          >
+            <RefreshCw size={14} /> Retry
+          </button>
+          {fetchError.includes('403') || fetchError.includes('401') ? (
+            <p className="text-xs text-slate-400 mt-3">
+              You need admin privileges to access this page. Make sure your account has ADMIN account type.
+            </p>
+          ) : null}
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!fetchError && !loading && data.length === 0 && (
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-12 text-center">
+          <AlertCircle size={32} className="text-slate-300 dark:text-slate-600 mx-auto mb-2" />
+          <p className="text-slate-500 dark:text-slate-400 text-sm">No {tab} found</p>
+        </div>
+      )}
+
+      {/* Data table */}
+      {!fetchError && data.length > 0 && (
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -124,7 +157,9 @@ export default function AdminPage() {
                     <>
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Name</th>
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Email</th>
+                      <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Phone</th>
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Type</th>
+                      <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Joined</th>
                     </>
                   )}
                   {tab === 'providers' && (
@@ -139,9 +174,12 @@ export default function AdminPage() {
                   )}
                   {tab === 'bookings' && (
                     <>
-                      <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Description</th>
+                      <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Customer</th>
+                      <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Provider</th>
+                      <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Job</th>
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Price</th>
                       <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Status</th>
+                      <th className="px-4 py-3 text-left font-medium text-slate-500 dark:text-slate-400">Payment</th>
                     </>
                   )}
                 </tr>
@@ -151,13 +189,17 @@ export default function AdminPage() {
                   data.map((u: any) => (
                     <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                       <td className="px-4 py-3 text-slate-900 dark:text-slate-100 font-medium">
-                        {u.full_name || '—'}
+                        {u.full_name || u.username || '—'}
                       </td>
                       <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{u.email || '—'}</td>
+                      <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{u.phone || '—'}</td>
                       <td className="px-4 py-3">
                         <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
                           {u.account_type}
                         </span>
+                      </td>
+                      <td className="px-4 py-3 text-slate-400 text-xs">
+                        {u.date_joined ? new Date(u.date_joined).toLocaleDateString() : '—'}
                       </td>
                     </tr>
                   ))}
@@ -170,8 +212,9 @@ export default function AdminPage() {
                       <td className="px-4 py-3 text-slate-500 dark:text-slate-400">
                         {p.profession || '—'}
                       </td>
-                      <td className="px-4 py-3 text-slate-900 dark:text-slate-100 font-semibold">
-                        {p.karma_points || 0}
+                      <td className="px-4 py-3">
+                        <span className="text-slate-900 dark:text-slate-100 font-semibold">{p.karma_points || 0}</span>
+                        <span className="text-xs text-slate-400 ml-1">{p.karma_level || ''}</span>
                       </td>
                       <td className="px-4 py-3">
                         <span
@@ -220,11 +263,13 @@ export default function AdminPage() {
                 {tab === 'bookings' &&
                   data.map((b: any) => (
                     <tr key={b.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                      <td className="px-4 py-3 text-slate-900 dark:text-slate-100">
-                        {b.job_description?.substring(0, 50) || '—'}
+                      <td className="px-4 py-3 text-slate-900 dark:text-slate-100">{b.customer_name || '—'}</td>
+                      <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{b.provider_name || '—'}</td>
+                      <td className="px-4 py-3 text-slate-700 dark:text-slate-300 max-w-[200px] truncate">
+                        {b.job_description || '—'}
                       </td>
                       <td className="px-4 py-3 text-slate-700 dark:text-slate-300 font-medium">
-                        NPR {b.agreed_price || '—'}
+                        {b.agreed_price ? `NPR ${b.agreed_price}` : '—'}
                       </td>
                       <td className="px-4 py-3">
                         <span
@@ -235,13 +280,27 @@ export default function AdminPage() {
                           {b.status}
                         </span>
                       </td>
+                      <td className="px-4 py-3">
+                        <span className="text-xs text-slate-500">{b.payment_status || '—'}</span>
+                      </td>
                     </tr>
                   ))}
               </tbody>
             </table>
           </div>
-        )}
-      </div>
+          <div className="px-4 py-2 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400">
+            {data.length} record{data.length !== 1 ? 's' : ''}
+          </div>
+        </div>
+      )}
+
+      {/* Loading overlay */}
+      {loading && (
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-12 text-center">
+          <div className="animate-spin w-6 h-6 border-2 border-violet-600 border-t-transparent rounded-full mx-auto mb-3" />
+          <p className="text-sm text-slate-400">{t('common.loading')}</p>
+        </div>
+      )}
     </div>
   );
 }
