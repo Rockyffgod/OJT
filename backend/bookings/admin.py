@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Booking, Dispute, Review
+from .models import Booking, Dispute, Review, Report
 
 
 @admin.register(Booking)
@@ -31,6 +31,18 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display = ('id_short', 'provider', 'customer', 'rating', 'created_at')
     list_filter = ('rating',)
     search_fields = ('provider__user__email', 'customer__email', 'comment')
+    readonly_fields = ('id', 'created_at')
+
+    def id_short(self, obj):
+        return str(obj.id)[:8] + '...'
+    id_short.short_description = 'ID'
+
+
+@admin.register(Report)
+class ReportAdmin(admin.ModelAdmin):
+    list_display = ('id_short', 'reporter', 'reported_user', 'report_type', 'status', 'created_at')
+    list_filter = ('status', 'report_type')
+    search_fields = ('reporter__email', 'reported_user__email', 'description')
     readonly_fields = ('id', 'created_at')
 
     def id_short(self, obj):

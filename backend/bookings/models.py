@@ -46,9 +46,82 @@ class Booking(models.Model):
     cancel_reason = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    provider_lat = models.FloatField(null=True, blank=True)
+    provider_lng = models.FloatField(null=True, blank=True)
+    provider_location_updated_at = models.DateTimeField(null=True, blank=True)
+    arrived_at = models.DateTimeField(null=True, blank=True)
+    customer_lat = models.FloatField(null=True, blank=True)
+    customer_lng = models.FloatField(null=True, blank=True)
+    customer_location_updated_at = models.DateTimeField(null=True, blank=True)
+    destination_lat = models.FloatField(null=True, blank=True)
+    destination_lng = models.FloatField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.job_address:
+            needs_geocode = False
+            if not self.destination_lat or not self.destination_lng:
+                needs_geocode = True
+            elif self.pk:
+                try:
+                    orig = Booking.objects.get(pk=self.pk)
+                    if orig.job_address != self.job_address:
+                        needs_geocode = True
+                except Booking.DoesNotExist:
+                    needs_geocode = True
+            if needs_geocode:
+                import requests
+                try:
+                    resp = requests.get(
+                        'https://nominatim.openstreetmap.org/search',
+                        params={'q': self.job_address, 'format': 'json', 'limit': 1},
+                        headers={'User-Agent': 'HamroKarma/1.0'},
+                        timeout=5
+                    )
+                    if resp.ok:
+                        results = resp.json()
+                        if results:
+                            self.destination_lat = float(results[0]['lat'])
+                            self.destination_lng = float(results[0]['lon'])
+                except Exception:
+                    pass
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Booking {self.id} - {self.status}"
+
+
+class ReportType(models.TextChoices):
+    NO_SHOW = 'NO_SHOW', 'No Show'
+    POOR_SERVICE = 'POOR_SERVICE', 'Poor Service'
+    OVERCHARGED = 'OVERCHARGED', 'Overcharged'
+    INAPPROPRIATE = 'INAPPROPRIATE', 'Inappropriate Behavior'
+    DIDNT_PAY = 'DIDNT_PAY', 'Did Not Pay'
+    DAMAGE_TO_PROPERTY = 'DAMAGE_TO_PROPERTY', 'Damage to Property'
+    SCAM = 'SCAM', 'Scam/Fraud'
+    FAKE_PROFILE = 'FAKE_PROFILE', 'Fake Profile'
+    OTHER = 'OTHER', 'Other'
+
+
+class ReportStatus(models.TextChoices):
+    PENDING = 'PENDING', 'Pending'
+    REVIEWED = 'REVIEWED', 'Reviewed'
+    RESOLVED = 'RESOLVED', 'Resolved'
+    DISMISSED = 'DISMISSED', 'Dismissed'
+
+
+class Report(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reports_filed')
+    reported_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reports_against')
+    booking = models.ForeignKey(Booking, on_delete=models.SET_NULL, null=True, blank=True, related_name='reports')
+    report_type = models.CharField(max_length=30, choices=ReportType.choices)
+    description = models.TextField(default='')
+    status = models.CharField(max_length=20, choices=ReportStatus.choices, default=ReportStatus.PENDING)
+    admin_note = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Report {self.id} - {self.report_type} by {self.reporter.email}"
 
 
 class DisputeReason(models.TextChoices):

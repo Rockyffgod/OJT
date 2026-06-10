@@ -36,6 +36,10 @@ class User(AbstractUser):
     city = models.CharField(max_length=100, default='')
     name_nepali = models.CharField(max_length=300, blank=True, default='')
     updated_at = models.DateTimeField(auto_now=True)
+    is_suspended = models.BooleanField(default=False)
+    suspended_at = models.DateTimeField(null=True, blank=True)
+    suspension_reason = models.TextField(null=True, blank=True)
+    suspended_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='suspensions_given')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

@@ -44,8 +44,20 @@ class LoginView(TokenObtainPairView):
             )
 
         # Login succeeded — build response
-        res = Response(serializer.validated_data, status=status.HTTP_200_OK)
         user = serializer.user
+
+        # Block suspended users
+        if user.is_suspended:
+            return Response(
+                {
+                    'detail': 'Your account has been suspended. Please contact support for assistance.',
+                    'is_suspended': True,
+                    'support_discord': 'https://discord.gg/hb8GuuSsfb',
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        res = Response(serializer.validated_data, status=status.HTTP_200_OK)
         res.data['id'] = str(user.id)
         res.data['email'] = user.email
         res.data['account_type'] = user.account_type
@@ -243,3 +255,42 @@ class AdminDemoteUserView(APIView):
         user.is_superuser = False
         user.save()
         return Response({'message': f'User {user.email} demoted from admin'})
+
+
+class AdminSuspendUserView(APIView):
+    permission_classes = [IsSuperAdmin]
+
+    def patch(self, request, pk):
+        try:
+            user = User.objects.get(id=pk)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if user.email == 'admin@example.com':
+            return Response({'error': 'Cannot suspend the master admin'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.is_suspended = True
+        user.suspended_at = timezone.now()
+        user.suspension_reason = request.data.get('reason', 'Violation of terms')
+        user.suspended_by = request.user
+        user.is_active = False
+        user.save()
+        return Response({'message': f'User {user.email} has been suspended'})
+
+
+class AdminUnsuspendUserView(APIView):
+    permission_classes = [IsSuperAdmin]
+
+    def patch(self, request, pk):
+        try:
+            user = User.objects.get(id=pk)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        user.is_suspended = False
+        user.suspended_at = None
+        user.suspension_reason = None
+        user.suspended_by = None
+        user.is_active = True
+        user.save()
+        return Response({'message': f'User {user.email} has been unsuspended'})

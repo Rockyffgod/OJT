@@ -20,6 +20,7 @@ import KarmaPage from './pages/KarmaPage';
 import NotificationsPage from './pages/NotificationsPage';
 import RandomMatchPage from './pages/RandomMatchPage';
 import AdminPage from './pages/AdminPage';
+import CustomerProfilePage from './pages/CustomerProfilePage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
 
@@ -70,6 +71,7 @@ export default function App() {
           <Route path="/profile/edit" element={<ProviderProfileEditPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/customers/:id" element={<CustomerProfilePage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
