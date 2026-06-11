@@ -19,26 +19,26 @@ case "${1:-dev}" in
         echo "Starting frontend..."
         cd "$KARMA_DIR" && npm run dev &
         echo "Starting backend..."
-        cd "$BACKEND_DIR" && ../venv/Scripts/python manage.py runserver 0.0.0.0:8000 &
+        cd "$BACKEND_DIR" && ../venv/bin/python3 manage.py runserver 0.0.0.0:8000 &
         wait
         ;;
     frontend)
         cd "$KARMA_DIR" && npm run dev
         ;;
     backend)
-        cd "$BACKEND_DIR" && ../venv/Scripts/python manage.py runserver 0.0.0.0:8000
+        cd "$BACKEND_DIR" && ../venv/bin/python3 manage.py runserver 0.0.0.0:8000
         ;;
     build)
         cd "$KARMA_DIR" && npm run build
         ;;
     migrate)
-        cd "$BACKEND_DIR" && ../venv/Scripts/python manage.py migrate
+        cd "$BACKEND_DIR" && ../venv/bin/python3 manage.py migrate
         ;;
     setup)
         echo "Installing frontend dependencies..."
         cd "$KARMA_DIR" && npm install
         echo "Backend dependencies already in venv"
-        cd "$BACKEND_DIR" && ../venv/Scripts/python manage.py migrate
+        cd "$BACKEND_DIR" && ../venv/bin/python3 manage.py migrate
         ;;
     help|--help|-h)
         print_usage

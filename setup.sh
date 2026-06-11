@@ -39,7 +39,7 @@ echo "[OK] Migrations complete"
 
 # ---- Seed data ----
 echo "[INFO] Seeding database..."
-python3 backend/manage.py seed_providers
+python3 backend/manage.py seed_demo
 echo "[OK] Seed data loaded"
 
 # ---- Install frontend deps ----

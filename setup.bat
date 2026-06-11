@@ -47,7 +47,7 @@ echo [OK] Migrations complete
 
 REM ---- Seed data ----
 echo [INFO] Seeding database...
-python backend\manage.py seed_providers
+python backend\manage.py seed_demo
 echo [OK] Seed data loaded
 
 REM ---- Install frontend deps ----
