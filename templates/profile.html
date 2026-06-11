@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Profile - Hamro Karma{% endblock %}
+{% block content %}
+<h2 class="mb-4">My Profile</h2>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card text-center">
+            <div class="card-body">
+                {% if user.profile_photo %}
+                <img src="{{ user.profile_photo.url }}" class="rounded-circle mb-3" width="120" height="120" style="object-fit:cover;">
+                {% else %}
+                <div class="rounded-circle bg-secondary mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:120px;height:120px;"><i class="bi bi-person-fill text-white fs-1"></i></div>
+                {% endif %}
+                <h4>{{ user.first_name }} {{ user.last_name }}</h4>
+                <p class="text-muted">{{ user.get_account_type_display }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Edit Profile</h5></div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col"><label class="form-label">First Name</label><input type="text" name="first_name" class="form-control" value="{{ user.first_name }}"></div>
+                        <div class="col"><label class="form-label">Last Name</label><input type="text" name="last_name" class="form-control" value="{{ user.last_name }}"></div>
+                    </div>
+                    <div class="mb-3"><label class="form-label">Email</label><input type="email" name="email" class="form-control" value="{{ user.email }}" required></div>
+                    <div class="row mb-3">
+                        <div class="col"><label class="form-label">Phone</label><input type="text" name="phone" class="form-control" value="{{ user.phone|default:'' }}"></div>
+                        <div class="col"><label class="form-label">City</label><input type="text" name="city" class="form-control" value="{{ user.city|default:'' }}"></div>
+                    </div>
+                    <div class="mb-3"><label class="form-label">Name (Nepali)</label><input type="text" name="name_nepali" class="form-control" value="{{ user.name_nepali|default:'' }}"></div>
+                    <div class="mb-3"><label class="form-label">Profile Photo</label><input type="file" name="profile_photo" class="form-control"></div>
+
+                    {% if provider %}
+                    <hr>
+                    <h6>Service Provider Info</h6>
+                    <div class="row mb-3">
+                        <div class="col"><label class="form-label">Profession</label><input type="text" name="profession" class="form-control" value="{{ provider.profession }}"></div>
+                        <div class="col"><label class="form-label">Experience (years)</label><input type="number" name="experience" class="form-control" value="{{ provider.experience }}"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col"><label class="form-label">Hourly Rate (Rs.)</label><input type="number" name="hourly_rate" class="form-control" value="{{ provider.hourly_rate|default:'' }}"></div>
+                        <div class="col"><label class="form-label">Service Area</label><input type="text" name="service_area" class="form-control" value="{{ provider.service_area }}"></div>
+                    </div>
+                    <div class="mb-3"><label class="form-label">Bio</label><textarea name="bio" class="form-control" rows="3">{{ provider.bio|default:'' }}</textarea></div>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+body { background-color: #f8f9fa; min-height: 100vh; }
+.sidebar { min-height: calc(100vh - 56px); border-right: 1px solid #dee2e6; }
+.sidebar .nav-link { color: #333; padding: .5rem 1rem; border-radius: .25rem; }
+.sidebar .nav-link:hover { background-color: #e9ecef; }
+.sidebar .nav-link i { margin-right: .5rem; min-width: 20px; }
+.card { border-radius: .5rem; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+.bg-primary.text-white .card-body { padding: 1.5rem; }

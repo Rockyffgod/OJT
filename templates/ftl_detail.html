@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}{{ alert.title }} - Hamro Karma{% endblock %}
+{% block content %}
+<a href="{% url 'ftl_list' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back</a>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="mb-0">{{ alert.title }}</h5>
+                <span class="badge bg-{% if alert.status == 'OPEN' %}danger{% elif alert.status == 'MATCHED' %}warning{% else %}secondary{% endif %} fs-6">{{ alert.get_status_display }}</span>
+            </div>
+            <div class="card-body">
+                <p><strong>Type:</strong> {{ alert.get_type_display }}</p>
+                <p><strong>Description:</strong><br>{{ alert.description }}</p>
+                <p><strong>Last Seen:</strong> {{ alert.last_seen_location|default:"Unknown" }}</p>
+                <p><strong>Contact:</strong> {{ alert.get_contact_method_display }} {% if alert.contact_value %}- {{ alert.contact_value }}{% endif %}</p>
+                <p><strong>Reported:</strong> {{ alert.created_at|date:"F d, Y" }} by {{ alert.user.get_full_name|default:alert.user.username }}</p>
+                <p><strong>Expires:</strong> {{ alert.expires_at|date:"F d, Y" }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        {% if alert.latitude and alert.longitude %}
+        <div class="card mb-4">
+            <div class="card-header"><h5 class="mb-0">Location</h5></div>
+            <div class="card-body p-0">
+                <iframe width="100%" height="200" style="border:0"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox={{ alert.longitude|add:-0.01 }}%2C{{ alert.latitude|add:-0.01 }}%2C{{ alert.longitude|add:0.01 }}%2C{{ alert.latitude|add:0.01 }}&amp;layer=mapnik&amp;marker={{ alert.latitude }}%2C{{ alert.longitude }}">
+                </iframe>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if is_owner %}
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Manage</h5></div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {% if alert.status == 'OPEN' %}
+                    <button type="submit" name="action" value="matched" class="btn btn-warning w-100 mb-2">Mark as Matched</button>
+                    {% endif %}
+                    <button type="submit" name="action" value="close" class="btn btn-secondary w-100 mb-2">Close Alert</button>
+                    <button type="submit" name="action" value="delete" class="btn btn-danger w-100" onclick="return confirm('Delete this alert?')">Delete</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

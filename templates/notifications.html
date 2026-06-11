@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Notifications - Hamro Karma{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Notifications {% if unread_count > 0 %}<span class="badge bg-danger">{{ unread_count }}</span>{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-primary btn-sm">Mark All Read</button>
+    </form>
+</div>
+
+{% if notifications_list %}
+<div class="list-group">
+    {% for n in notifications_list %}
+    <div class="list-group-item {% if not n.read_at %}list-group-item-primary{% endif %}">
+        <div class="fw-bold">{{ n.title }}</div>
+        <p class="mb-1 small">{{ n.body }}</p>
+        <small class="text-muted">{{ n.created_at|timesince }} ago</small>
+        {% if not n.read_at %}<span class="badge bg-primary float-end">New</span>{% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-center text-muted py-5">No notifications.</p>
+{% endif %}
+{% endblock %}

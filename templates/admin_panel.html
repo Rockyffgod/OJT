@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Admin Panel - Hamro Karma{% endblock %}
+{% block content %}
+<h2 class="mb-4">Admin Panel</h2>
+
+<div class="row mb-4">
+    <div class="col-md-3 mb-3"><div class="card bg-primary text-white"><div class="card-body text-center"><h3>{{ total_users }}</h3><p class="mb-0">Users</p></div></div></div>
+    <div class="col-md-3 mb-3"><div class="card bg-success text-white"><div class="card-body text-center"><h3>{{ total_providers }}</h3><p class="mb-0">Providers</p></div></div></div>
+    <div class="col-md-3 mb-3"><div class="card bg-warning text-white"><div class="card-body text-center"><h3>{{ total_bookings }}</h3><p class="mb-0">Bookings</p></div></div></div>
+    <div class="col-md-3 mb-3"><div class="card bg-danger text-white"><div class="card-body text-center"><h3>{{ pending_verifications }}</h3><p class="mb-0">Pending Verifications</p></div></div></div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Recent Users</h5></div>
+            <table class="table table-hover mb-0">
+                <thead><tr><th>Username</th><th>Email</th><th>Type</th><th>Joined</th></tr></thead>
+                <tbody>
+                {% for u in recent_users %}
+                <tr><td>{{ u.username }}</td><td>{{ u.email }}</td><td>{{ u.get_account_type_display }}</td><td>{{ u.date_joined|date:"M d" }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Recent Bookings</h5></div>
+            <table class="table table-hover mb-0">
+                <thead><tr><th>Customer</th><th>Provider</th><th>Status</th><th>Date</th></tr></thead>
+                <tbody>
+                {% for b in recent_bookings %}
+                <tr><td>{{ b.customer.username }}</td><td>{{ b.provider.user.username }}</td><td><span class="badge bg-info">{{ b.get_status_display }}</span></td><td>{{ b.created_at|date:"M d" }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h5 class="mb-0">Quick Links</h5></div>
+    <div class="card-body">
+        <a href="/admin/" class="btn btn-outline-primary">Django Admin</a>
+        <a href="{% url 'services' %}" class="btn btn-outline-success">Services</a>
+        <a href="{% url 'page_bookings' %}" class="btn btn-outline-info">Bookings</a>
+    </div>
+</div>
+{% endblock %}

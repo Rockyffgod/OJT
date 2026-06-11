@@ -1,7 +1,5 @@
 # Secrets — never commit
 .env
-context.txt
-teachings/PROJECT_CONTEXT.txt
 
 # Dependencies
 node_modules/
@@ -15,10 +13,10 @@ dist/
 .vite/
 
 # Database (SQLite)
-backend/db.sqlite3
+db.sqlite3
 
 # Uploaded media (now on Cloudinary in production)
-backend/media/*
+media/*
 
 # OS
 .DS_Store
@@ -26,14 +24,5 @@ Thumbs.db
 
 .bolt
 
-# Teaching / reference docs (keep locally, don't commit)
-teachings/
-
-# One-time scripts
-backend/assign_photos.py
-backend/list_users.py
-backend/clear_web_photos.py
-*.pyc
-
-# Old Khalti WooCommerce plugin (not part of this project)
-backend/integrate-khalti-in-wc-store/
+# React reference (moved out of project)
+react_reference/

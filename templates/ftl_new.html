@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Report Lost - Hamro Karma{% endblock %}
+{% block content %}
+<a href="{% url 'ftl_list' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back</a>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Report Lost Item / Person / Pet</h5></div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Title *</label>
+                        <input type="text" name="title" class="form-control" required placeholder="e.g., Lost Brown Wallet">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Type *</label>
+                        <select name="type" class="form-select" required>
+                            <option value="">Select...</option>
+                            {% for k, v in ftl_types %}
+                            <option value="{{ k }}">{{ v }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description *</label>
+                        <textarea name="description" class="form-control" rows="4" required placeholder="Describe what was lost, when, and any distinguishing features..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Last Seen Location</label>
+                        <input type="text" name="last_seen_location" class="form-control" placeholder="e.g., New Bus Park, Kathmandu">
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label">Contact Method</label>
+                            <select name="contact_method" class="form-select">
+                                <option value="PHONE">Phone</option>
+                                <option value="EMAIL">Email</option>
+                                <option value="IN_APP">In App</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Contact Value</label>
+                            <input type="text" name="contact_value" class="form-control" placeholder="Phone or email">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Submit Alert</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

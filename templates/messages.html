@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Messages - Hamro Karma{% endblock %}
+{% block content %}
+<h2 class="mb-4">Messages</h2>
+
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Conversations</h5></div>
+            <ul class="list-group list-group-flush" style="max-height:400px;overflow-y:auto;">
+                {% for c in conversation_bookings %}
+                <a href="{% url 'page_messages' %}?booking={{ c.id }}" class="list-group-item list-group-item-action {% if current_booking and current_booking.id == c.id %}active{% endif %}">
+                    <small class="fw-bold">
+                        {% if user.account_type == 'PROVIDER' %}
+                            {{ c.customer.get_full_name|default:c.customer.username }}
+                        {% else %}
+                            {{ c.provider.user.get_full_name|default:c.provider.user.username }}
+                        {% endif %}
+                    </small><br>
+                    <small class="text-muted">{{ c.job_description|truncatechars:30 }}</small>
+                </a>
+                {% empty %}
+                <li class="list-group-item text-muted">No conversations</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-8 mb-3">
+        <div class="card">
+            {% if current_booking %}
+            <div class="card-header">
+                <h5 class="mb-0">
+                    Chat with 
+                    {% if user.account_type == 'PROVIDER' %}
+                        {{ current_booking.customer.get_full_name|default:current_booking.customer.username }}
+                    {% else %}
+                        {{ current_booking.provider.user.get_full_name|default:current_booking.provider.user.username }}
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="card-body" style="height:350px;overflow-y:auto;">
+                {% for msg in current_messages %}
+                <div class="mb-2 {% if msg.sender == user %}text-end{% endif %}">
+                    <div class="d-inline-block {% if msg.sender == user %}bg-primary text-white{% else %}bg-light{% endif %} rounded p-2" style="max-width:70%;">
+                        <small class="fw-bold d-block">{{ msg.sender.get_full_name|default:msg.sender.username }}</small>
+                        {{ msg.text }}
+                    </div>
+                    <br><small class="text-muted" style="font-size:0.7rem;">{{ msg.created_at|time:"H:i" }}</small>
+                </div>
+                {% empty %}
+                <p class="text-muted text-center">No messages yet.</p>
+                {% endfor %}
+            </div>
+            <div class="card-footer">
+                <form method="post" action="{% url 'send_message' %}" class="d-flex gap-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="booking_id" value="{{ current_booking.id }}">
+                    <input type="text" name="text" class="form-control" placeholder="Type a message..." required>
+                    <button class="btn btn-primary">Send</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="card-body text-center py-5">
+                <p class="text-muted">Select a conversation.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
