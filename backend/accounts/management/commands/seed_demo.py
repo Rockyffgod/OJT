@@ -14,6 +14,25 @@ class Command(BaseCommand):
     help = 'Seed demo users and data for presentation'
 
     def handle(self, *args, **kwargs):
+        # ── Admin User ──
+        admin, created = User.objects.get_or_create(
+            username='admin',
+            defaults={
+                'email': 'admin@example.com',
+                'account_type': AccountType.ADMIN,
+                'first_name': 'Admin',
+                'is_active': True,
+                'is_staff': True,
+                'is_email_verified': True,
+            },
+        )
+        if created:
+            admin.set_password('admin1234')
+            admin.save()
+            self.stdout.write('  Created user: admin')
+        else:
+            self.stdout.write('  Found existing: admin')
+
         # ── Service Categories ──
         categories = {
             'Plumber': None,
