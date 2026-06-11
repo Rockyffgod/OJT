@@ -7,6 +7,9 @@ from ftl.models import FTLAlert, FTLType, FTLContactMethod, FTLStatus
 from notifications.models import Notification
 
 
+CLOUD_BASE = 'https://res.cloudinary.com/dfffms38g/image/upload'
+
+
 class Command(BaseCommand):
     help = 'Seed demo users and data for presentation'
 
@@ -46,6 +49,7 @@ class Command(BaseCommand):
                 'first_name': 'Roshan',
                 'last_name': 'Tamang',
                 'city': 'Kathmandu',
+                'name_nepali': 'रोशन तामाङ',
                 'is_active': True,
                 'is_phone_verified': True,
                 'is_email_verified': True,
@@ -53,14 +57,13 @@ class Command(BaseCommand):
         )
         if created:
             customer.set_password('rk1234')
-            customer.save()
-            self.stdout.write('  Created user: rk1234 (customer)')
         else:
-            # ensure correct type
             if customer.account_type != AccountType.CUSTOMER:
                 customer.account_type = AccountType.CUSTOMER
-                customer.save()
-            self.stdout.write('  Found existing: rk1234')
+        customer.name_nepali = 'रोशन तामाङ'
+        customer.profile_photo = 'rk1234'
+        customer.save()
+        self.stdout.write(f"{'  Created' if created else '  Found existing'} user: rk1234 (customer)")
 
         # ── Demo Provider (ram1234) ──
         provider_user, created = User.objects.get_or_create(
@@ -72,6 +75,7 @@ class Command(BaseCommand):
                 'first_name': 'Ram',
                 'last_name': 'Sharma',
                 'city': 'Kathmandu',
+                'name_nepali': 'राम शर्मा',
                 'is_active': True,
                 'is_phone_verified': True,
                 'is_email_verified': True,
@@ -79,13 +83,13 @@ class Command(BaseCommand):
         )
         if created:
             provider_user.set_password('ram1234')
-            provider_user.save()
-            self.stdout.write('  Created user: ram1234 (provider)')
         else:
             if provider_user.account_type != AccountType.PROVIDER:
                 provider_user.account_type = AccountType.PROVIDER
-                provider_user.save()
-            self.stdout.write('  Found existing: ram1234')
+        provider_user.name_nepali = 'राम शर्मा'
+        provider_user.profile_photo = 'ramsharma'
+        provider_user.save()
+        self.stdout.write(f"{'  Created' if created else '  Found existing'} user: ram1234 (provider)")
 
         # ── ServiceProvider profile for ram1234 ──
         provider_profile, created = ServiceProvider.objects.get_or_create(
@@ -103,23 +107,24 @@ class Command(BaseCommand):
                 'longitude': 85.3240,
             },
         )
-        if created:
-            self.stdout.write('  Created ServiceProvider: ram_sharma (plumber)')
-        else:
-            self.stdout.write('  Found existing ServiceProvider: ram_sharma')
+        self.stdout.write(f"{'  Created' if created else '  Found existing'} ServiceProvider: ram_sharma")
 
         # ── Additional providers for browsing ──
         additional_providers = [
-            dict(username='anita_cleaner', email='anita.cleaner@karma.com', fn='Anita', ln='KC', phone='9841111111',
+            dict(username='anita_cleaner', email='anita.cleaner@karma.com', fn='Anita', ln='KC',
+                 phone='9841111111', photo='', name_nepali='अनिता के.सी.',
                  cat=cat_cleaner, prof='Cleaner', rate=250, area='Lalitpur',
                  bio='Experienced cleaner with 150+ jobs completed.'),
-            dict(username='bishal_actech', email='bishal.actech@karma.com', fn='Bishal', ln='Poudel', phone='9842222222',
+            dict(username='bishal_actech', email='bishal.actech@karma.com', fn='Bishal', ln='Poudel',
+                 phone='9842222222', photo='bishalpoudel', name_nepali='विशाल पौडेल',
                  cat=cat_ac, prof='AC Technician', rate=800, area='Kathmandu',
                  bio='AC repair and maintenance expert with 10+ years experience.'),
-            dict(username='maya_tutor', email='maya.tutor@karma.com', fn='Maya', ln='Tamang', phone='9843333333',
+            dict(username='maya_tutor', email='maya.tutor@karma.com', fn='Maya', ln='Tamang',
+                 phone='9843333333', photo='', name_nepali='माया तामाङ',
                  cat=cat_tutor, prof='Tutor', rate=300, area='Kathmandu',
                  bio='Mathematics and Science tutor for grades 5-10.'),
-            dict(username='rajesh_repair', email='rajesh.repair@karma.com', fn='Rajesh', ln='Hamal', phone='9844444444',
+            dict(username='rajesh_repair', email='rajesh.repair@karma.com', fn='Rajesh', ln='Hamal',
+                 phone='9844444444', photo='rajesh_hamal', name_nepali='राजेश हमाल',
                  cat=cat_repair, prof='Repair Technician', rate=550, area='Kathmandu',
                  bio='Home appliance repair specialist with 7+ years experience.'),
         ]
@@ -133,6 +138,7 @@ class Command(BaseCommand):
                     first_name=p['fn'],
                     last_name=p['ln'],
                     city=p['area'].split(',')[0],
+                    name_nepali=p['name_nepali'],
                     is_active=True,
                     is_phone_verified=True,
                     is_email_verified=True,
@@ -140,8 +146,12 @@ class Command(BaseCommand):
             )
             if created:
                 u.set_password('demo1234')
-                u.save()
-                self.stdout.write(f"  Created user: {p['username']}")
+            u.name_nepali = p['name_nepali']
+            if p['photo']:
+                u.profile_photo = p['photo']
+            u.save()
+            self.stdout.write(f"{'  Created' if created else '  Found existing'} user: {p['username']}")
+
             sp, sp_created = ServiceProvider.objects.get_or_create(
                 user=u,
                 defaults=dict(
@@ -219,7 +229,12 @@ class Command(BaseCommand):
             ),
         )
         if _:
+            ftl1.image = 'kp_ba'
+            ftl1.save()
             self.stdout.write('  Created FTL alert: Missing elderly man')
+        else:
+            ftl1.image = 'kp_ba'
+            ftl1.save(update_fields=['image'])
 
         ftl2, _ = FTLAlert.objects.get_or_create(
             user=customer,
@@ -235,7 +250,12 @@ class Command(BaseCommand):
             ),
         )
         if _:
+            ftl2.image = 'shyam_hamal'
+            ftl2.save()
             self.stdout.write('  Created FTL alert: Lost dog')
+        else:
+            ftl2.image = 'shyam_hamal'
+            ftl2.save(update_fields=['image'])
 
         # ── Demo Notifications ──
         notif_types = [
