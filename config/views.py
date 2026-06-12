@@ -11,6 +11,7 @@ from bookings.models import Booking, BookingStatus
 from ftl.models import FTLAlert, FTLType, FTLStatus
 from notifications.models import Notification
 from messaging.models import Message
+import json
 
 
 def login_view(request):
@@ -146,9 +147,22 @@ def services_list(request):
             Q(service_area__icontains=search) |
             Q(user__first_name__icontains=search)
         )
+    providers_data = [
+        {
+            'name': sp.user.get_full_name() or sp.user.username,
+            'prof': sp.profession,
+            'rate': f'Rs.{sp.hourly_rate}/hr',
+            'area': sp.service_area or '',
+            'lat': float(sp.latitude),
+            'lng': float(sp.longitude),
+        }
+        for sp in providers
+        if sp.latitude and sp.longitude
+    ]
     return render(request, 'services.html', {
         'categories': categories,
         'providers': providers,
+        'providers_data': json.dumps(providers_data),
         'selected_category': category_id,
         'search': search,
     })
