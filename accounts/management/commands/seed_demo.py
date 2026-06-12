@@ -319,11 +319,11 @@ class Command(BaseCommand):
             ),
         )
         if _:
-            ftl1.image = 'kp_ba'
+            ftl1.image = 'ftl/elder_man.png'
             ftl1.save()
             self.stdout.write('  Created FTL alert: Missing elderly man')
         else:
-            ftl1.image = 'kp_ba'
+            ftl1.image = 'ftl/elder_man.png'
             ftl1.save(update_fields=['image'])
 
         ftl2, _ = FTLAlert.objects.get_or_create(
@@ -340,11 +340,11 @@ class Command(BaseCommand):
             ),
         )
         if _:
-            ftl2.image = 'shyam_hamal'
+            ftl2.image = 'ftl/bruno.png'
             ftl2.save()
             self.stdout.write('  Created FTL alert: Lost dog')
         else:
-            ftl2.image = 'shyam_hamal'
+            ftl2.image = 'ftl/bruno.png'
             ftl2.save(update_fields=['image'])
 
         # ── Demo Notifications ──

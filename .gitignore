@@ -28,6 +28,7 @@ media/*
 !media/profiles/shyam_hamal.png
 !media/profiles/rudraksha.jpg
 !media/profiles/rk1234.png
+!media/ftl/
 
 # OS
 .DS_Store
