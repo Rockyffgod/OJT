@@ -53,6 +53,7 @@
         <a href="{% url 'dashboard' %}"><i class="bi bi-house-fill"></i><span>Home</span></a>
         <a href="{% url 'services' %}"><i class="bi bi-tools"></i><span>Services</span></a>
         <a href="{% url 'bookings' %}"><i class="bi bi-calendar-check"></i><span>Bookings</span></a>
+        <a href="{% url 'notifications' %}"><i class="bi bi-bell"></i><span>{% if unread_notifications_count > 0 %}<span style="position:absolute;top:2px;right:10px;background:var(--karma-red);color:white;font-size:0.6rem;padding:2px 5px;border-radius:10px;line-height:1;">{{ unread_notifications_count }}</span>{% endif %}Alerts</span></a>
         <a href="{% url 'ftl_list' %}"><i class="bi bi-search-heart"></i><span>FTL</span></a>
         <a href="{% url 'profile' %}"><i class="bi bi-person-circle"></i><span>Profile</span></a>
     </nav>
