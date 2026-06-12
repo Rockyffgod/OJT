@@ -5,6 +5,8 @@
 
 <h2 class="fw-bold mb-4">Checkout</h2>
 
+<div class="alert alert-success"><i class="bi bi-check-circle me-1"></i> Your booking has been accepted by <strong>{{ booking.provider.user.get_full_name|default:booking.provider.user.username }}</strong>! Complete payment to proceed.</div>
+
 <div class="row g-4">
     <div class="col-lg-7">
         <div class="card mb-4">
@@ -35,7 +37,7 @@
                             <small class="d-block text-muted ms-4">Pay in cash after the service is completed</small>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-karma w-100 mt-2">Confirm Booking</button>
+                    <button type="submit" class="btn btn-karma w-100 mt-2">Confirm Payment</button>
                 </form>
             </div>
         </div>

@@ -21,6 +21,7 @@ urlpatterns = [
     path('bookings/<uuid:pk>/tracking/', views.booking_tracking, name='booking_tracking'),
     path('bookings/<uuid:pk>/accept/', views.booking_accept, name='booking_accept'),
     path('bookings/<uuid:pk>/reject/', views.booking_reject, name='booking_reject'),
+    path('bookings/<uuid:pk>/complete/', views.booking_mark_complete, name='booking_mark_complete'),
     path('profile/', views.profile_view, name='profile'),
     path('profile/edit/', views.profile_edit, name='profile_edit'),
     path('ftl/', views.ftl_list, name='ftl_list'),

@@ -204,23 +204,23 @@ def book_booking(request, provider_pk):
                 destination_lat=27.7172,
                 destination_lng=85.3240,
             )
-            messages.success(request, 'Booking created! Proceed to checkout.')
-            return redirect('booking_checkout', pk=booking.id)
+            messages.success(request, 'Booking submitted! Waiting for provider to accept.')
+            return redirect('booking_detail', pk=booking.id)
     return render(request, 'bookings/book_booking.html', {'provider': provider, 'now': timezone.now()})
 
 @login_required
 def booking_checkout(request, pk):
     booking = get_object_or_404(Booking, pk=pk, customer=request.user)
-    if booking.status not in ('REQUESTED', 'CONFIRMED'):
-        messages.error(request, 'This booking is not available for checkout.')
+    if booking.status != BookingStatus.CONFIRMED:
+        messages.error(request, 'Checkout is only available after the provider accepts your booking.')
         return redirect('booking_detail', pk=pk)
     if request.method == 'POST':
         method = request.POST.get('payment_method')
         if method == 'CASH':
             booking.payment_method = method
-            booking.status = BookingStatus.CONFIRMED
+            booking.status = BookingStatus.PAID
             booking.save()
-            messages.success(request, 'Booking confirmed!')
+            messages.success(request, 'Payment confirmed! You can now track your provider.')
             return redirect('booking_tracking', pk=pk)
     platform_fee = 10
     total = (booking.agreed_price or 0) + platform_fee
@@ -229,6 +229,9 @@ def booking_checkout(request, pk):
 @login_required
 def booking_tracking(request, pk):
     booking = get_object_or_404(Booking, pk=pk, customer=request.user)
+    if booking.status != BookingStatus.PAID:
+        messages.error(request, 'Tracking is only available after payment is confirmed.')
+        return redirect('booking_detail', pk=pk)
     return render(request, 'bookings/tracking.html', {'booking': booking})
 
 @login_required
@@ -272,6 +275,25 @@ def booking_reject(request, pk):
 
 
 @login_required
+def booking_mark_complete(request, pk):
+    booking = get_object_or_404(Booking, id=pk, status=BookingStatus.PAID)
+    if getattr(request.user, 'service_provider', None) != booking.provider:
+        messages.error(request, 'Only the provider can mark a booking as complete.')
+        return redirect('bookings')
+    booking.status = BookingStatus.COMPLETED
+    booking.save()
+    Notification.objects.create(
+        user=booking.customer,
+        title='Booking Completed',
+        body=f'Your booking with {booking.provider.user.get_full_name() or booking.provider.user.username} has been marked as complete.',
+        type='booking_completed',
+        reference_id=str(booking.id),
+    )
+    messages.success(request, 'Booking marked as complete.')
+    return redirect('bookings')
+
+
+@login_required
 def bookings_list(request):
     user = request.user
     if user.account_type == AccountType.PROVIDER:
@@ -301,20 +323,6 @@ def booking_detail(request, pk):
             booking.cancel_reason = request.POST.get('reason', '')
             booking.save()
             messages.success(request, 'Booking cancelled.')
-        elif action == 'accept' and booking.status == BookingStatus.REQUESTED and getattr(user, 'service_provider', None) == booking.provider:
-            booking.status = BookingStatus.CONFIRMED
-            booking.save()
-            messages.success(request, 'Booking accepted.')
-        elif action == 'complete' and booking.status in [BookingStatus.CONFIRMED, BookingStatus.IN_PROGRESS] and getattr(user, 'service_provider', None) == booking.provider:
-            booking.status = BookingStatus.COMPLETED
-            booking.completed_at = timezone.now()
-            booking.save()
-            messages.success(request, 'Booking marked complete.')
-        elif action == 'arrived' and booking.status in [BookingStatus.CONFIRMED] and getattr(user, 'service_provider', None) == booking.provider:
-            booking.arrived_at = timezone.now()
-            booking.status = BookingStatus.IN_PROGRESS
-            booking.save()
-            messages.success(request, 'Arrival confirmed.')
         return redirect('booking_detail', pk=booking.id)
 
     messages_list = Message.objects.filter(booking=booking).order_by('created_at')

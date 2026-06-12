@@ -32,34 +32,44 @@
                     <td>
                         <span class="badge rounded-pill
                             {% if b.status == 'COMPLETED' %}bg-success
-                            {% elif b.status == 'CANCELLED' or b.status == 'DISPUTED' %}bg-danger
+                            {% elif b.status == 'CANCELLED' %}bg-secondary
                             {% elif b.status == 'REJECTED' %}bg-danger
                             {% elif b.status == 'REQUESTED' %}bg-warning text-dark
                             {% elif b.status == 'CONFIRMED' %}bg-info
-                            {% else %}bg-primary{% endif %}">
-                            {{ b.get_status_display }}
+                            {% elif b.status == 'PAID' %}bg-primary
+                            {% else %}bg-secondary{% endif %}">
+                            {% if b.status == 'REQUESTED' and user.account_type == 'CUSTOMER' %}
+                                Awaiting Provider...
+                            {% else %}
+                                {{ b.get_status_display }}
+                            {% endif %}
                         </span>
                     </td>
                     <td>{{ b.scheduled_date|date:"M d, H:i" }}</td>
                     <td>{% if b.agreed_price %}Rs. {{ b.agreed_price }}{% else %}&mdash;{% endif %}</td>
                     <td><a href="{% url 'booking_detail' b.id %}" class="btn btn-sm btn-outline-primary">View</a></td>
-                    {% if user.account_type == 'PROVIDER' and b.status == 'REQUESTED' %}
-                    <td>
-                        <form method="post" action="{% url 'booking_accept' b.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-success me-1">
-                                <i class="bi bi-check-lg"></i> Accept
-                            </button>
-                        </form>
-                        <form method="post" action="{% url 'booking_reject' b.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-danger">
-                                <i class="bi bi-x-lg"></i> Reject
-                            </button>
-                        </form>
-                    </td>
-                    {% elif user.account_type == 'PROVIDER' %}
-                    <td></td>
+                    {% if user.account_type == 'PROVIDER' %}
+                        {% if b.status == 'REQUESTED' %}
+                        <td>
+                            <form method="post" action="{% url 'booking_accept' b.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success me-1"><i class="bi bi-check-lg"></i> Accept</button>
+                            </form>
+                            <form method="post" action="{% url 'booking_reject' b.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-x-lg"></i> Reject</button>
+                            </form>
+                        </td>
+                        {% elif b.status == 'PAID' %}
+                        <td>
+                            <form method="post" action="{% url 'booking_mark_complete' b.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-check2-all"></i> Mark Complete</button>
+                            </form>
+                        </td>
+                        {% else %}
+                        <td></td>
+                        {% endif %}
                     {% endif %}
                 </tr>
                 {% endfor %}

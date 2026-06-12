@@ -26,7 +26,7 @@
             <div class="card-body">
                 <p class="mb-1"><strong>Provider:</strong> {{ booking.provider.user.get_full_name|default:booking.provider.user.username }}</p>
                 <p class="mb-1"><strong>Service:</strong> {{ booking.provider.profession }}</p>
-                <p class="mb-1"><strong>Status:</strong> <span class="badge bg-success">Confirmed</span></p>
+                <p class="mb-1"><strong>Status:</strong> <span class="badge bg-primary">Paid</span></p>
                 <p class="mb-1"><strong>Address:</strong> {{ booking.job_address }}</p>
                 <p class="mb-0"><strong>Price:</strong> Rs. {{ booking.agreed_price|floatformat:0 }}</p>
             </div>

@@ -298,7 +298,7 @@ class Command(BaseCommand):
             provider=provider_profile,
             job_description='Bathroom pipe leakage repair',
             defaults=dict(
-                status=BookingStatus.IN_PROGRESS,
+                status=BookingStatus.PAID,
                 job_address='Baneshwor, Kathmandu',
                 scheduled_date=now - timezone.timedelta(hours=1),
                 agreed_price=800,

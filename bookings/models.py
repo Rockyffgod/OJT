@@ -8,11 +8,10 @@ from services.models import ServiceProvider
 class BookingStatus(models.TextChoices):
     REQUESTED = 'REQUESTED', 'Requested'
     CONFIRMED = 'CONFIRMED', 'Confirmed'
-    IN_PROGRESS = 'IN_PROGRESS', 'In Progress'
+    PAID = 'PAID', 'Paid'
     COMPLETED = 'COMPLETED', 'Completed'
-    CANCELLED = 'CANCELLED', 'Cancelled'
     REJECTED = 'REJECTED', 'Rejected'
-    DISPUTED = 'DISPUTED', 'Disputed'
+    CANCELLED = 'CANCELLED', 'Cancelled'
 
 
 class PaymentMethod(models.TextChoices):
