@@ -15,9 +15,18 @@ dist/
 # Database (SQLite)
 db.sqlite3
 
-# Uploaded media (now on Cloudinary in production)
+# Uploaded media
 media/*
 !media/.gitkeep
+!media/profiles/bishalpoudel.png
+!media/profiles/hari_gurung.png
+!media/profiles/harka_lamtang.png
+!media/profiles/kp_ba.png
+!media/profiles/mahesh_khasnet.png
+!media/profiles/rajesh_hamal.png
+!media/profiles/ramsharma.png
+!media/profiles/shyam_hamal.png
+!media/profiles/rudraksha.jpg
 
 # OS
 .DS_Store

@@ -107,7 +107,7 @@ class Command(BaseCommand):
         provider_user.email = 'ram1234@example.com'
         provider_user.name_nepali = 'राम शर्मा'
         provider_user.city = 'Kathmandu'
-        provider_user.profile_photo = None
+        provider_user.profile_photo = 'profiles/ramsharma.png'
         provider_user.set_password('test1234')
         provider_user.save()
         self.stdout.write(f"{'  Created' if created else '  Found existing'} user: ram1234 (provider)")
@@ -192,18 +192,18 @@ class Command(BaseCommand):
 
         # ── Extra providers for services browsing ──
         extra_providers = [
-            dict(username='ram_sharma', email='ram@example.com', fn='Ram', ln='Sharma', cat=cat_plumber, prof='Plumber', rate=500, area='Kathmandu'),
-            dict(username='sita_adhikari', email='sita@example.com', fn='Sita', ln='Adhikari', cat=cat_electrician, prof='Electrician', rate=600, area='Lalitpur'),
-            dict(username='hari_gurung', email='hari@example.com', fn='Hari', ln='Gurung', cat=cat_carpenter, prof='Carpenter', rate=450, area='Kathmandu'),
-            dict(username='gita_rai', email='gita@example.com', fn='Gita', ln='Rai', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur'),
-            dict(username='bishal_poudel', email='bishal@example.com', fn='Bishal', ln='Poudel', cat=cat_ac, prof='AC Tech', rate=800, area='Kathmandu'),
-            dict(username='anita_kc', email='anita@example.com', fn='Anita', ln='KC', cat=cat_cleaner, prof='Cleaner', rate=250, area='Lalitpur'),
-            dict(username='maya_tamang', email='maya@example.com', fn='Maya', ln='Tamang', cat=cat_tutor, prof='Tutor', rate=300, area='Kathmandu'),
-            dict(username='harka_langtang', email='harka@example.com', fn='Harka', ln='Langtang', cat=cat_electrician, prof='Electrician', rate=600, area='Lalitpur'),
-            dict(username='kp_ba', email='kp@example.com', fn='KP', ln='Ba', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur'),
-            dict(username='mahesh_khasnet', email='mahesh@example.com', fn='Mahesh', ln='Khasnet', cat=cat_cleaner, prof='Cleaner', rate=250, area='Lalitpur'),
-            dict(username='rajesh_hamal', email='rajesh@example.com', fn='Rajesh', ln='Hamal', cat=cat_repair, prof='Repair Tech', rate=550, area='Kathmandu'),
-            dict(username='shyam_hamal', email='shyam@example.com', fn='Shyam', ln='Hamal', cat=cat_tutor, prof='Tutor', rate=300, area='Kathmandu'),
+            dict(username='ram_sharma', email='ram@example.com', fn='Ram', ln='Sharma', cat=cat_plumber, prof='Plumber', rate=500, area='Kathmandu', photo='profiles/ramsharma.png'),
+            dict(username='sita_adhikari', email='sita@example.com', fn='Sita', ln='Adhikari', cat=cat_electrician, prof='Electrician', rate=600, area='Lalitpur', photo=''),
+            dict(username='hari_gurung', email='hari@example.com', fn='Hari', ln='Gurung', cat=cat_carpenter, prof='Carpenter', rate=450, area='Kathmandu', photo='profiles/hari_gurung.png'),
+            dict(username='gita_rai', email='gita@example.com', fn='Gita', ln='Rai', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur', photo=''),
+            dict(username='bishal_poudel', email='bishal@example.com', fn='Bishal', ln='Poudel', cat=cat_ac, prof='AC Tech', rate=800, area='Kathmandu', photo='profiles/bishalpoudel.png'),
+            dict(username='anita_kc', email='anita@example.com', fn='Anita', ln='KC', cat=cat_cleaner, prof='Cleaner', rate=250, area='Lalitpur', photo=''),
+            dict(username='maya_tamang', email='maya@example.com', fn='Maya', ln='Tamang', cat=cat_tutor, prof='Tutor', rate=300, area='Kathmandu', photo=''),
+            dict(username='harka_langtang', email='harka@example.com', fn='Harka', ln='Langtang', cat=cat_electrician, prof='Electrician', rate=600, area='Lalitpur', photo='profiles/harka_lamtang.png'),
+            dict(username='kp_ba', email='kp@example.com', fn='KP', ln='Ba', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur', photo='profiles/kp_ba.png'),
+            dict(username='mahesh_khasnet', email='mahesh@example.com', fn='Mahesh', ln='Khasnet', cat=cat_cleaner, prof='Cleaner', rate=250, area='Lalitpur', photo='profiles/mahesh_khasnet.png'),
+            dict(username='rajesh_hamal', email='rajesh@example.com', fn='Rajesh', ln='Hamal', cat=cat_repair, prof='Repair Tech', rate=550, area='Kathmandu', photo='profiles/rajesh_hamal.png'),
+            dict(username='shyam_hamal', email='shyam@example.com', fn='Shyam', ln='Hamal', cat=cat_tutor, prof='Tutor', rate=300, area='Kathmandu', photo='profiles/shyam_hamal.png'),
         ]
         for p in extra_providers:
             u, created = User.objects.get_or_create(
@@ -222,6 +222,8 @@ class Command(BaseCommand):
             if created:
                 u.set_password('demo1234')
             u.set_password('demo1234')
+            if p['photo']:
+                u.profile_photo = p['photo']
             u.save()
             self.stdout.write(f"{'  Created' if created else '  Found existing'} user: {p['username']}")
 
