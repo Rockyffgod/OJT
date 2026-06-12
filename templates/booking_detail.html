@@ -4,7 +4,7 @@
 <a href="{% url 'bookings' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back to Bookings</a>
 
 <div class="row g-4">
-    <div class="col-lg-8">
+    <div class="col-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span>Booking Details</span>
@@ -56,22 +56,6 @@
                     </div>
                 </form>
                 {% endif %}
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header">Messages</div>
-            <div class="card-body" style="max-height:250px;overflow-y:auto;">
-                {% for msg in messages_list %}
-                <div class="mb-3">
-                    <small class="fw-bold d-block">{{ msg.sender.get_full_name|default:msg.sender.username }}</small>
-                    <p class="mb-0 small">{{ msg.text }}</p>
-                    <small class="text-muted" style="font-size:.7rem;">{{ msg.created_at|time:"H:i" }}</small>
-                </div>
-                {% empty %}
-                <p class="text-muted small mb-0">No messages yet.</p>
-                {% endfor %}
             </div>
         </div>
     </div>
