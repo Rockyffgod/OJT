@@ -36,6 +36,7 @@
 <div class="row g-4">
     {% for p in providers %}
     <div class="col-md-6 col-lg-4">
+        <a href="{% url 'provider_detail' p.id %}" class="text-decoration-none" style="color:inherit;">
         <div class="card h-100">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-3">
@@ -60,6 +61,7 @@
                 </div>
             </div>
         </div>
+        </a>
     </div>
     {% empty %}
     <div class="col-12"><p class="text-center text-muted py-5">No providers found.</p></div>

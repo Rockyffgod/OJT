@@ -15,6 +15,7 @@ urlpatterns = [
     path('services/', views.services_list, name='services'),
     path('services/provider/<uuid:pk>/', views.provider_detail, name='provider_detail'),
     path('bookings/', views.bookings_list, name='bookings'),
+    path('bookings/book/<uuid:provider_pk>/', views.book_booking, name='book_booking'),
     path('bookings/<uuid:pk>/', views.booking_detail, name='booking_detail'),
     path('bookings/<uuid:pk>/checkout/', views.booking_checkout, name='booking_checkout'),
     path('bookings/<uuid:pk>/tracking/', views.booking_tracking, name='booking_tracking'),

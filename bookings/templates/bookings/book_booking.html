@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Book {{ provider.user.get_full_name|default:provider.user.username }} - Karma{% endblock %}
+{% block content %}
+<a href="{% url 'provider_detail' provider.id %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back to Provider</a>
+
+<h2 class="fw-bold mb-4">Book a Service</h2>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">Booking Details</div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Scheduled Date</label>
+                        <input type="date" name="scheduled_date" class="form-control" required min="{{ now|date:'Y-m-d' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Scheduled Time</label>
+                        <input type="time" name="scheduled_time" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Address / Location</label>
+                        <input type="text" name="address" class="form-control" placeholder="e.g. Baneshwor, Kathmandu" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Description of Work Needed</label>
+                        <textarea name="description" class="form-control" rows="4" placeholder="Describe what needs to be done..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-karma w-100">Proceed to Checkout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">Provider</div>
+            <div class="card-body text-center">
+                {% if provider.user.profile_photo %}
+                <img src="{{ provider.user.profile_photo.url }}" width="80" height="80" class="rounded-circle mb-2" style="object-fit:cover;">
+                {% else %}
+                <div class="rounded-circle bg-secondary mx-auto mb-2 d-flex align-items-center justify-content-center" style="width:80px;height:80px;"><i class="bi bi-person-fill text-white fs-1"></i></div>
+                {% endif %}
+                <h5>{{ provider.user.get_full_name|default:provider.user.username }}</h5>
+                <p class="text-muted small mb-1">{{ provider.profession }}</p>
+                <span class="badge rounded-pill bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>{{ provider.average_rating|default:"0.0" }}</span>
+                <hr>
+                <div class="text-start small">
+                    <p class="mb-1"><strong>Rate:</strong> Rs. {{ provider.hourly_rate }}/hr</p>
+                    <p class="mb-1"><strong>Area:</strong> {{ provider.service_area|default:"N/A" }}</p>
+                    <p class="mb-0"><strong>Jobs Completed:</strong> {{ provider.total_jobs_completed|default:"0" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

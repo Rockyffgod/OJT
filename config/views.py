@@ -176,6 +176,38 @@ def provider_detail(request, pk):
 
 
 @login_required
+def book_booking(request, provider_pk):
+    provider = get_object_or_404(ServiceProvider.objects.select_related('user'), pk=provider_pk)
+    if request.method == 'POST':
+        scheduled_date = request.POST.get('scheduled_date')
+        scheduled_time = request.POST.get('scheduled_time')
+        address = request.POST.get('address')
+        description = request.POST.get('description')
+        if not all([scheduled_date, scheduled_time, address, description]):
+            messages.error(request, 'All fields are required.')
+        else:
+            from datetime import datetime
+            dt = datetime.strptime(f'{scheduled_date} {scheduled_time}', '%Y-%m-%d %H:%M')
+            from django.utils import timezone as tz
+            dt = tz.make_aware(dt)
+            booking = Booking.objects.create(
+                customer=request.user,
+                provider=provider,
+                job_description=description,
+                job_address=address,
+                scheduled_date=dt,
+                agreed_price=provider.hourly_rate,
+                status=BookingStatus.REQUESTED,
+                provider_lat=provider.latitude,
+                provider_lng=provider.longitude,
+                destination_lat=27.7172,
+                destination_lng=85.3240,
+            )
+            messages.success(request, 'Booking created! Proceed to checkout.')
+            return redirect('booking_checkout', pk=booking.id)
+    return render(request, 'bookings/book_booking.html', {'provider': provider, 'now': timezone.now()})
+
+@login_required
 def booking_checkout(request, pk):
     booking = get_object_or_404(Booking, pk=pk, customer=request.user)
     if booking.status not in ('REQUESTED', 'CONFIRMED'):
@@ -183,13 +215,15 @@ def booking_checkout(request, pk):
         return redirect('booking_detail', pk=pk)
     if request.method == 'POST':
         method = request.POST.get('payment_method')
-        if method in ('CASH', 'ESEWA', 'KHALTI'):
+        if method == 'CASH':
             booking.payment_method = method
             booking.status = BookingStatus.CONFIRMED
             booking.save()
             messages.success(request, 'Booking confirmed!')
             return redirect('booking_tracking', pk=pk)
-    return render(request, 'bookings/checkout.html', {'booking': booking})
+    platform_fee = 10
+    total = (booking.agreed_price or 0) + platform_fee
+    return render(request, 'bookings/checkout.html', {'booking': booking, 'platform_fee': platform_fee, 'total': total})
 
 @login_required
 def booking_tracking(request, pk):

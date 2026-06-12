@@ -16,7 +16,9 @@
                     <tr><td class="ps-0 text-muted">Description</td><td>{{ booking.job_description }}</td></tr>
                     <tr><td class="ps-0 text-muted">Date & Time</td><td>{{ booking.scheduled_date|date:"F d, Y H:i" }}</td></tr>
                     <tr><td class="ps-0 text-muted">Location</td><td>{{ booking.job_address }}</td></tr>
-                    <tr><td class="ps-0 text-muted border-0">Total</td><td class="fw-bold fs-5 border-0" style="color:var(--karma-red);">Rs. {{ booking.agreed_price|floatformat:0 }}</td></tr>
+                    <tr><td class="ps-0 text-muted">Service Fee</td><td>Rs. {{ booking.agreed_price|floatformat:0 }}</td></tr>
+                    <tr><td class="ps-0 text-muted">Platform Fee</td><td>Rs. {{ platform_fee|floatformat:0 }}</td></tr>
+                    <tr><td class="ps-0 text-muted border-0">Total</td><td class="fw-bold fs-5 border-0" style="color:var(--karma-red);">Rs. {{ total|floatformat:0 }}</td></tr>
                 </table>
             </div>
         </div>
@@ -29,18 +31,8 @@
                     <div class="mb-3">
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="radio" name="payment_method" id="cash" value="CASH" checked>
-                            <label class="form-check-label fw-medium" for="cash">Cash</label>
-                            <small class="d-block text-muted ms-4">Pay in cash when the service is completed</small>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="payment_method" id="esewa" value="ESEWA">
-                            <label class="form-check-label fw-medium" for="esewa">eSewa</label>
-                            <small class="d-block text-muted ms-4">Pay via eSewa mobile wallet</small>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="payment_method" id="khalti" value="KHALTI">
-                            <label class="form-check-label fw-medium" for="khalti">Khalti</label>
-                            <small class="d-block text-muted ms-4">Pay via Khalti digital wallet</small>
+                            <label class="form-check-label fw-medium" for="cash">Cash After Service</label>
+                            <small class="d-block text-muted ms-4">Pay in cash after the service is completed</small>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-karma w-100 mt-2">Confirm Booking</button>
