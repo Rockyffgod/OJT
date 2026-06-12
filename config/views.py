@@ -497,3 +497,7 @@ def admin_panel(request):
 
 def tos(request):
     return render(request, 'tos.html')
+
+
+def tac(request):
+    return render(request, 'tac.html')

@@ -2,76 +2,43 @@
 {% block title %}Terms of Service - Karma{% endblock %}
 {% block content %}
 <div class="container py-4" style="max-width:800px;">
-    <h1 class="fw-bold mb-4" style="color:var(--karma-red);">Terms of Service</h1>
-    <p class="text-muted mb-4"><em>Last updated: June 2026</em></p>
+    <a href="{% url 'signup' %}" class="btn btn-sm btn-outline-secondary mb-4">&larr; Back to Sign Up</a>
+    <div class="card shadow-lg">
+        <div class="card-body p-4">
+            <h1 class="fw-bold mb-1" style="color:var(--karma-red);">Terms of Service</h1>
+            <p class="text-muted mb-4"><em>Last updated: June 2026</em></p>
 
-    <h5 class="fw-bold mt-4">1. Acceptance of Terms</h5>
-    <p>By accessing or using the Hamro Karma platform, you agree to be bound by these Terms of Service. If you do not agree, please do not use the platform.</p>
+            <h5 class="fw-bold mt-4">1. Acceptance of Terms</h5>
+            <p>By accessing or using the Hamro Karma platform, you agree to be bound by these Terms of Service. If you do not agree, please do not use the platform.</p>
 
-    <h5 class="fw-bold mt-4">2. Description of Platform</h5>
-    <p>Hamro Karma is a karma-based service marketplace connecting customers with local service providers in Nepal. We facilitate connections between customers and professionals including plumbers, electricians, cleaners, carpenters, and other skilled workers.</p>
+            <h5 class="fw-bold mt-4">2. Description of Platform</h5>
+            <p>Hamro Karma is a karma-based service marketplace connecting customers with local service providers in Nepal. We facilitate connections between customers and professionals including plumbers, electricians, cleaners, carpenters, and other skilled workers.</p>
 
-    <h5 class="fw-bold mt-4">3. User Accounts</h5>
-    <ul>
-        <li>You must provide accurate and complete registration information.</li>
-        <li>You are responsible for maintaining the security of your account.</li>
-        <li>Each individual may maintain only one account.</li>
-        <li>You must be at least 16 years of age to create an account.</li>
-    </ul>
+            <h5 class="fw-bold mt-4">3. User Accounts</h5>
+            <ul>
+                <li>You must provide accurate and complete registration information.</li>
+                <li>You are responsible for maintaining the security of your account.</li>
+                <li>Each individual may maintain only one account.</li>
+                <li>You must be at least 16 years of age to create an account.</li>
+            </ul>
 
-    <h5 class="fw-bold mt-4">4. Karma System</h5>
-    <p>Karma points are awarded based on service quality, customer satisfaction, and community contributions. Karma points are non-transferable and hold no cash value.</p>
+            <h5 class="fw-bold mt-4">4. Karma System</h5>
+            <p>Karma points are awarded based on service quality, customer satisfaction, and community contributions. Karma points are non-transferable and hold no cash value.</p>
 
-    <h5 class="fw-bold mt-4">5. Payments &amp; Fees</h5>
-    <p>Payments between service providers and customers are processed through agreed-upon rates on the platform. Hamro Karma may charge a commission fee. All prices are in Nepalese Rupees (NPR).</p>
+            <h5 class="fw-bold mt-4">5. Payments &amp; Fees</h5>
+            <p>Payments between service providers and customers are processed through agreed-upon rates on the platform. Hamro Karma may charge a commission fee. All prices are in Nepalese Rupees (NPR).</p>
 
-    <h5 class="fw-bold mt-4">6. Prohibited Activities</h5>
-    <ul>
-        <li>Providing false or misleading information</li>
-        <li>Harassing or abusing other users</li>
-        <li>Manipulating the karma system</li>
-        <li>Processing payments outside the platform</li>
-    </ul>
+            <h5 class="fw-bold mt-4">6. Prohibited Activities</h5>
+            <ul>
+                <li>Providing false or misleading information</li>
+                <li>Harassing or abusing other users</li>
+                <li>Manipulating the karma system</li>
+                <li>Processing payments outside the platform</li>
+            </ul>
 
-    <h5 class="fw-bold mt-4">7. Contact</h5>
-    <p>For questions about these terms, please contact us at <a href="mailto:support@hamrokarma.com">support@hamrokarma.com</a>.</p>
-
-    <hr class="my-5">
-
-    <h1 class="fw-bold mb-4" style="color:var(--karma-red);">Terms &amp; Conditions</h1>
-    <p class="text-muted mb-4"><em>Last updated: June 2026</em></p>
-
-    <h5 class="fw-bold mt-4">1. General Conditions</h5>
-    <p>These Terms &amp; Conditions apply to all services provided through the Hamro Karma platform. We reserve the right to modify these conditions at any time with prior notice to users.</p>
-
-    <h5 class="fw-bold mt-4">2. Service Provider Obligations</h5>
-    <ul>
-        <li>All service providers must complete identity verification.</li>
-        <li>Providers must deliver quality services at the agreed-upon time.</li>
-        <li>Providers must behave professionally and respectfully at all times.</li>
-        <li>Providers are responsible for their own tools and materials unless agreed otherwise.</li>
-    </ul>
-
-    <h5 class="fw-bold mt-4">3. Customer Obligations</h5>
-    <ul>
-        <li>Customers must provide accurate descriptions of the work required.</li>
-        <li>Payment must be made at the agreed price and time.</li>
-        <li>A safe working environment must be provided for the service provider.</li>
-    </ul>
-
-    <h5 class="fw-bold mt-4">4. Booking &amp; Cancellation</h5>
-    <p>Bookings must be confirmed by both parties. Cancellations require at least 2 hours advance notice. Repeated cancellations may affect your karma score.</p>
-
-    <h5 class="fw-bold mt-4">5. Dispute Resolution</h5>
-    <p>In case of disputes, both parties should first attempt resolution through the platform. We provide mediation services. Unresolved disputes shall be governed by the laws of Nepal.</p>
-
-    <h5 class="fw-bold mt-4">6. Privacy</h5>
-    <p>We protect your personal data. Your information will not be shared with third parties without consent. Identity documents are encrypted and stored securely.</p>
-
-    <h5 class="fw-bold mt-4">7. Find The Lost (FTL)</h5>
-    <p>The FTL feature is provided as a community service. Hamro Karma does not take responsibility for lost items but facilitates the matching process. False reports may result in account suspension.</p>
-
-    <h5 class="fw-bold mt-4">8. Contact Us</h5>
-    <p>For any questions or concerns, please contact <a href="mailto:support@hamrokarma.com">support@hamrokarma.com</a> or use our in-app messaging system.</p>
+            <h5 class="fw-bold mt-4">7. Contact</h5>
+            <p>For questions about these terms, please contact us at <a href="mailto:support@hamrokarma.com">support@hamrokarma.com</a>.</p>
+        </div>
+    </div>
 </div>
 {% endblock %}

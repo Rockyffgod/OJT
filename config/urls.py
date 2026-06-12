@@ -33,6 +33,7 @@ urlpatterns = [
     path('messages/send/', views.send_message, name='send_message'),
     path('admin-panel/', views.admin_panel, name='admin_panel'),
     path('tos/', views.tos, name='tos'),
+    path('tac/', views.tac, name='tac'),
 ]
 
 if settings.DEBUG:
