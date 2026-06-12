@@ -52,7 +52,7 @@ bookings, and anyone can post FTL (Find The Lost) alerts.
 | Username / Email          | Password | Role     |
 |---------------------------|----------|----------|
 | rk1234@example.com        | test1234 | Customer |
-| ram@example.com            | demo1234 | Provider |
+| ram1234@example.com        | test1234 | Provider |
 
 ## Project Structure
 

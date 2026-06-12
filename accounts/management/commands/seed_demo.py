@@ -11,7 +11,7 @@ class Command(BaseCommand):
     help = 'Seed demo users and data for presentation'
 
     def handle(self, *args, **kwargs):
-        User.objects.filter(username='ram1234').delete()
+        User.objects.filter(username='ram_sharma').delete()
 
         # ── Admin User ──
         admin, created = User.objects.get_or_create(
@@ -88,11 +88,11 @@ class Command(BaseCommand):
         customer.save()
         self.stdout.write(f"{'  Created' if created else '  Found existing'} user: rk1234 (customer)")
 
-        # ── Demo Provider (ram_sharma) ──
+        # ── Demo Provider (ram1234) ──
         provider_user, created = User.objects.get_or_create(
-            username='ram_sharma',
+            username='ram1234',
             defaults={
-                'email': 'ram@example.com',
+                'email': 'ram1234@example.com',
                 'phone': '9841234567',
                 'account_type': AccountType.PROVIDER,
                 'first_name': 'Ram',
@@ -103,13 +103,13 @@ class Command(BaseCommand):
             },
         )
         if created:
-            provider_user.set_password('demo1234')
-        provider_user.set_password('demo1234')
+            provider_user.set_password('test1234')
+        provider_user.set_password('test1234')
         provider_user.profile_photo = 'profiles/ramsharma.png'
         provider_user.save()
-        self.stdout.write(f"{'  Created' if created else '  Found existing'} user: ram_sharma (provider)")
+        self.stdout.write(f"{'  Created' if created else '  Found existing'} user: ram1234 (provider)")
 
-        # ── ServiceProvider profile for ram_sharma ──
+        # ── ServiceProvider profile for ram1234 ──
         provider_profile, created = ServiceProvider.objects.get_or_create(
             user=provider_user,
             defaults={
@@ -137,7 +137,7 @@ class Command(BaseCommand):
         provider_profile.total_jobs_completed = 120
         provider_profile.verification_status = 'APPROVED'
         provider_profile.save()
-        self.stdout.write(f"{'  Created' if created else '  Found existing'} ServiceProvider: ram_sharma")
+        self.stdout.write(f"{'  Created' if created else '  Found existing'} ServiceProvider: ram1234")
 
         # ── Extra providers for services browsing ──
         extra_providers = [
