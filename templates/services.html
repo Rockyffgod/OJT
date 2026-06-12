@@ -88,11 +88,13 @@
     })();
     var providers = Array.isArray(raw) ? raw : Object.values(raw);
     console.log("providers loaded:", providers);
+    if(providers.length > 0) console.log("first provider:", providers[0]);
 
     var markers = [];
     var circles = [];
 
     providers.forEach(function(pr){
+        if (!pr.lat || !pr.lng) return;
         var photoUrl = pr.photo || '';
         var initial = (pr.name || '?')[0].toUpperCase();
         var icon = L.divIcon({
