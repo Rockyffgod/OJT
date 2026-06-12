@@ -11,19 +11,7 @@ class Command(BaseCommand):
     help = 'Seed demo users and data for presentation'
 
     def handle(self, *args, **kwargs):
-        ServiceProvider.objects.all().delete()
-        print("Cleared all ServiceProviders")
         User.objects.filter(username='ram1234').delete()
-        kept_providers = [
-            'sita_adhikari','hari_gurung',
-            'gita_rai','bishal_poudel','anita_kc','maya_tamang',
-            'harka_langtang','kp_ba','mahesh_khasnet','rajesh_hamal',
-            'shyam_hamal',
-        ]
-        deleted, _ = User.objects.filter(account_type=AccountType.PROVIDER).exclude(
-            username__in=kept_providers
-        ).delete()
-        print(f"Cleaned up {deleted} provider users")
 
         # ── Admin User ──
         admin, created = User.objects.get_or_create(
@@ -38,11 +26,14 @@ class Command(BaseCommand):
             },
         )
         if created:
-            admin.set_password('admin1234')
-            admin.save()
             self.stdout.write('  Created user: admin')
         else:
             self.stdout.write('  Found existing: admin')
+        admin.email = 'admin@example.com'
+        admin.set_password('test1234')
+        admin.is_superuser = True
+        admin.is_staff = True
+        admin.save()
 
         # ── Service Categories ──
         categories = {
@@ -124,12 +115,14 @@ class Command(BaseCommand):
             defaults={
                 'category': cat_plumber,
                 'profession': 'Plumber',
-                'bio': 'Experienced plumber with 10+ years in Kathmandu valley.',
+                'bio': 'Licensed plumber with 10+ years experience in Kathmandu valley. Specializes in pipe repair, installation and bathroom fixtures.',
                 'hourly_rate': 500,
                 'service_area': 'Patan',
-                'skills': ['pipe repair', 'water heater install', 'drain cleaning'],
+                'skills': ['Plumbing', 'Pipe Repair', 'Bathroom Fixtures', 'Water Heater'],
                 'languages': ['Nepali', 'English', 'Hindi'],
                 'is_available': True,
+                'experience': 10,
+                'karma_level': 'GOLD',
                 'latitude': 27.7041,
                 'longitude': 85.3145,
                 'average_rating': 4.5,
@@ -148,17 +141,17 @@ class Command(BaseCommand):
 
         # ── Extra providers for services browsing ──
         extra_providers = [
-            dict(username='sita_adhikari', email='sita@example.com', fn='Sita', ln='Adhikari', cat=cat_electrician, prof='Electrician', rate=600, area='Jawalakhel', photo='', lat=27.6933, lng=85.3164, bio='Experienced electrician with 95+ jobs in Lalitpur.', rating=4.8, jobs=95),
-            dict(username='hari_gurung', email='hari@example.com', fn='Hari', ln='Gurung', cat=cat_carpenter, prof='Carpenter', rate=450, area='Baneshwor', photo='profiles/hari_gurung.png', lat=27.7192, lng=85.3423, bio='Experienced carpenter with 67+ jobs in Kathmandu.', rating=4.2, jobs=67),
-            dict(username='gita_rai', email='gita@example.com', fn='Gita', ln='Rai', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur', photo='', lat=27.6711, lng=85.4298, bio='Experienced painter with 88+ jobs in Bhaktapur.', rating=4.6, jobs=88),
-            dict(username='bishal_poudel', email='bishal@example.com', fn='Bishal', ln='Poudel', cat=cat_ac, prof='AC Tech', rate=800, area='Lazimpat', photo='profiles/bishalpoudel.png', lat=27.7369, lng=85.3306, bio='AC repair and maintenance expert with 10+ years experience.', rating=4.9, jobs=210),
-            dict(username='anita_kc', email='anita@example.com', fn='Anita', ln='KC', cat=cat_cleaner, prof='Cleaner', rate=250, area='Jawalakhel', photo='', lat=27.6933, lng=85.3164, bio='Experienced cleaner with 150+ jobs in Lalitpur.', rating=4.3, jobs=150),
-            dict(username='maya_tamang', email='maya@example.com', fn='Maya', ln='Tamang', cat=cat_tutor, prof='Tutor', rate=300, area='Kumaripati', photo='', lat=27.7089, lng=85.3217, bio='Mathematics and Science tutor for grades 5-10.', rating=4.7, jobs=45),
-            dict(username='harka_langtang', email='harka@example.com', fn='Harka', ln='Langtang', cat=cat_electrician, prof='Electrician', rate=600, area='Jawalakhel', photo='profiles/harka_lamtang.png', lat=27.6933, lng=85.3164, bio='Experienced electrician with 95+ jobs in Lalitpur.', rating=4.8, jobs=95),
-            dict(username='kp_ba', email='kp@example.com', fn='KP', ln='Ba', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur', photo='profiles/kp_ba.png', lat=27.6711, lng=85.4298, bio='Experienced painter with 88+ jobs in Bhaktapur.', rating=4.6, jobs=88),
-            dict(username='mahesh_khasnet', email='mahesh@example.com', fn='Mahesh', ln='Khasnet', cat=cat_cleaner, prof='Cleaner', rate=250, area='Jawalakhel', photo='profiles/mahesh_khasnet.png', lat=27.6933, lng=85.3164, bio='Experienced cleaner with 150+ jobs in Lalitpur.', rating=4.3, jobs=150),
-            dict(username='rajesh_hamal', email='rajesh@example.com', fn='Rajesh', ln='Hamal', cat=cat_repair, prof='Repair Tech', rate=550, area='Ekantakuna', photo='profiles/rajesh_hamal.png', lat=27.7086, lng=85.3156, bio='Home appliance repair specialist with 7+ years experience.', rating=4.4, jobs=75),
-            dict(username='shyam_hamal', email='shyam@example.com', fn='Shyam', ln='Hamal', cat=cat_tutor, prof='Tutor', rate=300, area='Kumaripati', photo='profiles/shyam_hamal.png', lat=27.7089, lng=85.3217, bio='Experienced tutor with 45+ jobs in Kathmandu.', rating=4.7, jobs=45),
+            dict(username='sita_adhikari', email='sita@example.com', fn='Sita', ln='Adhikari', cat=cat_electrician, prof='Electrician', rate=600, area='Jawalakhel', photo='', lat=27.6933, lng=85.3164, bio='Certified electrician with 8+ years experience in Lalitpur. Handles wiring, installations and electrical repairs.', rating=4.8, jobs=95, exp=8, karma='GOLD', skills=['Wiring', 'Electrical Repair', 'Installation', 'Solar Setup']),
+            dict(username='hari_gurung', email='hari@example.com', fn='Hari', ln='Gurung', cat=cat_carpenter, prof='Carpenter', rate=450, area='Baneshwor', photo='profiles/hari_gurung.png', lat=27.7192, lng=85.3423, bio='Skilled carpenter with 7+ years experience. Specializes in furniture making, wooden doors and cabinets.', rating=4.2, jobs=67, exp=7, karma='SILVER', skills=['Furniture Making', 'Wood Work', 'Cabinet Installation']),
+            dict(username='gita_rai', email='gita@example.com', fn='Gita', ln='Rai', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur', photo='', lat=27.6711, lng=85.4298, bio='Professional painter with 6+ years experience in Bhaktapur. Interior and exterior painting specialist.', rating=4.6, jobs=88, exp=6, karma='SILVER', skills=['Interior Painting', 'Exterior Painting', 'Wall Texture']),
+            dict(username='bishal_poudel', email='bishal@example.com', fn='Bishal', ln='Poudel', cat=cat_ac, prof='AC Technician', rate=800, area='Lazimpat', photo='profiles/bishalpoudel.png', lat=27.7369, lng=85.3306, bio='Certified AC technician with 10+ years experience. Repair, maintenance and installation of all AC brands.', rating=4.9, jobs=210, exp=10, karma='PLATINUM', skills=['AC Repair', 'AC Installation', 'Maintenance', 'Refrigeration']),
+            dict(username='anita_kc', email='anita@example.com', fn='Anita', ln='KC', cat=cat_cleaner, prof='Cleaner', rate=250, area='Jawalakhel', photo='', lat=27.6933, lng=85.3164, bio='Professional cleaner with 5+ years experience in Lalitpur. Deep cleaning, office and home cleaning services.', rating=4.3, jobs=150, exp=5, karma='SILVER', skills=['Deep Cleaning', 'Home Cleaning', 'Office Cleaning', 'Sanitization']),
+            dict(username='maya_tamang', email='maya@example.com', fn='Maya', ln='Tamang', cat=cat_tutor, prof='Tutor', rate=300, area='Kumaripati', photo='', lat=27.7089, lng=85.3217, bio='Experienced tutor for grades 5-10. Mathematics and Science specialist with proven track record.', rating=4.7, jobs=45, exp=4, karma='SILVER', skills=['Mathematics', 'Science', 'English', 'Grade 5-10']),
+            dict(username='harka_langtang', email='harka@example.com', fn='Harka', ln='Langtang', cat=cat_electrician, prof='Electrician', rate=600, area='Jawalakhel', photo='profiles/harka_lamtang.png', lat=27.6933, lng=85.3164, bio='Experienced electrician with 8+ years in Lalitpur. Specializes in commercial and residential electrical work.', rating=4.8, jobs=95, exp=8, karma='GOLD', skills=['Wiring', 'Commercial Electrical', 'Residential', 'Repairs']),
+            dict(username='kp_ba', email='kp@example.com', fn='KP', ln='Ba', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur', photo='profiles/kp_ba.png', lat=27.6711, lng=85.4298, bio='Skilled painter with 6+ years experience in Bhaktapur. Known for clean finish and attention to detail.', rating=4.6, jobs=88, exp=6, karma='SILVER', skills=['Interior Painting', 'Exterior Painting', 'Waterproofing']),
+            dict(username='mahesh_khasnet', email='mahesh@example.com', fn='Mahesh', ln='Khasnet', cat=cat_cleaner, prof='Cleaner', rate=250, area='Jawalakhel', photo='profiles/mahesh_khasnet.png', lat=27.6933, lng=85.3164, bio='Reliable cleaner with 5+ years experience. Home, office and post-construction cleaning services.', rating=4.3, jobs=150, exp=5, karma='SILVER', skills=['Home Cleaning', 'Post Construction', 'Office Cleaning']),
+            dict(username='rajesh_hamal', email='rajesh@example.com', fn='Rajesh', ln='Hamal', cat=cat_repair, prof='Repair Technician', rate=550, area='Ekantakuna', photo='profiles/rajesh_hamal.png', lat=27.7086, lng=85.3156, bio='Home appliance repair specialist with 7+ years experience. Fixes washing machines, refrigerators, TVs and more.', rating=4.4, jobs=75, exp=7, karma='SILVER', skills=['Appliance Repair', 'TV Repair', 'Washing Machine', 'Refrigerator']),
+            dict(username='shyam_hamal', email='shyam@example.com', fn='Shyam', ln='Hamal', cat=cat_tutor, prof='Tutor', rate=300, area='Kumaripati', photo='profiles/shyam_hamal.png', lat=27.7089, lng=85.3217, bio='Dedicated tutor for school and college students. Mathematics, Science and Computer Science specialist.', rating=4.7, jobs=45, exp=4, karma='SILVER', skills=['Mathematics', 'Computer Science', 'Science', 'College Level']),
         ]
         for p in extra_providers:
             u, created = User.objects.get_or_create(
@@ -190,13 +183,15 @@ class Command(BaseCommand):
                     bio=p['bio'],
                     hourly_rate=p['rate'],
                     service_area=p['area'],
-                    skills=[p['prof'], 'Customer Service'],
+                    skills=p['skills'],
                     languages=['Nepali', 'English'],
                     is_available=True,
                     latitude=p['lat'],
                     longitude=p['lng'],
                     average_rating=p['rating'],
                     total_jobs_completed=p['jobs'],
+                    experience=p['exp'],
+                    karma_level=p['karma'],
                     verification_status='APPROVED',
                 ),
             )
@@ -205,6 +200,9 @@ class Command(BaseCommand):
             sp.service_area = p['area']
             sp.average_rating = p['rating']
             sp.total_jobs_completed = p['jobs']
+            sp.experience = p['exp']
+            sp.karma_level = p['karma']
+            sp.skills = p['skills']
             sp.verification_status = 'APPROVED'
             sp.save()
             if sp_created:
