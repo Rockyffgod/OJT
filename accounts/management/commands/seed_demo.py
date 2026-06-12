@@ -126,11 +126,13 @@ class Command(BaseCommand):
                 'is_available': True,
                 'latitude': 27.7041,
                 'longitude': 85.3145,
+                'verification_status': 'APPROVED',
             },
         )
         provider_profile.latitude = 27.7041
         provider_profile.longitude = 85.3145
         provider_profile.service_area = 'Patan'
+        provider_profile.verification_status = 'APPROVED'
         provider_profile.save()
         self.stdout.write(f"{'  Created' if created else '  Found existing'} ServiceProvider: ram_sharma")
 
@@ -195,11 +197,13 @@ class Command(BaseCommand):
                     is_available=True,
                     latitude=p['lat'],
                     longitude=p['lng'],
+                    verification_status='APPROVED',
                 ),
             )
             sp.latitude = p['lat']
             sp.longitude = p['lng']
             sp.service_area = p['area']
+            sp.verification_status = 'APPROVED'
             sp.save()
             if sp_created:
                 self.stdout.write(f"  Created ServiceProvider: {p['username']}")
@@ -253,11 +257,13 @@ class Command(BaseCommand):
                     is_available=True,
                     latitude=p['lat'],
                     longitude=p['lng'],
+                    verification_status='APPROVED',
                 ),
             )
             sp.latitude = p['lat']
             sp.longitude = p['lng']
             sp.service_area = p['area']
+            sp.verification_status = 'APPROVED'
             sp.save()
             if sp_created:
                 self.stdout.write(f"  Created ServiceProvider: {p['username']}")

@@ -134,7 +134,7 @@ def dashboard(request):
 def services_list(request):
     categories = ServiceCategory.objects.filter(is_active=True)
     providers = ServiceProvider.objects.filter(
-        verification_status='APPROVED', is_available=True
+        is_available=True
     ).select_related('user', 'category').order_by('-average_rating')
 
     category_id = request.GET.get('category')
@@ -155,6 +155,7 @@ def services_list(request):
             'area': sp.service_area or '',
             'lat': float(sp.latitude),
             'lng': float(sp.longitude),
+            'profile_url': reverse('provider_detail', args=[str(sp.pk)]),
         }
         for sp in providers
         if sp.latitude and sp.longitude
@@ -166,6 +167,12 @@ def services_list(request):
         'selected_category': category_id,
         'search': search,
     })
+
+
+@login_required
+def provider_detail(request, pk):
+    sp = get_object_or_404(ServiceProvider.objects.select_related('user', 'category'), pk=pk)
+    return render(request, 'provider_detail.html', {'sp': sp})
 
 
 @login_required
