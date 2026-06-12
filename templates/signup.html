@@ -56,6 +56,7 @@
                         <div class="col"><label class="form-label fw-medium">Confirm</label><input type="password" name="password2" class="form-control" required><div class="invalid-feedback">Passwords must match.</div></div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100 py-2 fw-medium">Create Account</button>
+                    <p class="text-muted small text-center mt-2 mb-0">By signing up, you agree to our <a href="{% url 'tos' %}" style="color:var(--karma-red);">Terms of Service</a>.</p>
                 </form>
                 <p class="text-center mt-3 mb-0">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none fw-medium" style="color:var(--karma-red);">Sign in</a></p>
             </div>

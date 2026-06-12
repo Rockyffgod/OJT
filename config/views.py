@@ -493,3 +493,7 @@ def admin_panel(request):
         'recent_users': User.objects.order_by('-date_joined')[:10],
         'recent_bookings': Booking.objects.select_related('customer', 'provider__user').order_by('-created_at')[:10],
     })
+
+
+def tos(request):
+    return render(request, 'tos.html')
