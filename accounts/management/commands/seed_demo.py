@@ -163,7 +163,7 @@ class Command(BaseCommand):
                 'service_area': 'Patan',
                 'skills': ['pipe repair', 'water heater install', 'drain cleaning'],
                 'languages': ['Nepali', 'English', 'Hindi'],
-                'is_available': True,
+                'is_available': False,
                 'latitude': 27.7041,
                 'longitude': 85.3145,
                 'average_rating': 4.5,
