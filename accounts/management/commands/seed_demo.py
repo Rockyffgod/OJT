@@ -11,8 +11,19 @@ class Command(BaseCommand):
     help = 'Seed demo users and data for presentation'
 
     def handle(self, *args, **kwargs):
-        # ── Nuke all ServiceProvider objects and recreate clean ──
+        from services.models import ServiceProvider
         ServiceProvider.objects.all().delete()
+        print("Cleared all ServiceProviders")
+        kept_providers = [
+            'ram_sharma','sita_adhikari','hari_gurung',
+            'gita_rai','bishal_poudel','anita_kc','maya_tamang',
+            'harka_langtang','kp_ba','mahesh_khasnet','rajesh_hamal',
+            'shyam_hamal','ram1234',
+        ]
+        deleted, _ = User.objects.filter(account_type=AccountType.PROVIDER).exclude(
+            username__in=kept_providers
+        ).delete()
+        print(f"Cleaned up {deleted} provider users")
 
         # ── Admin User ──
         admin, created = User.objects.get_or_create(
@@ -86,6 +97,31 @@ class Command(BaseCommand):
         customer.save()
         self.stdout.write(f"{'  Created' if created else '  Found existing'} user: rk1234 (customer)")
 
+        # ── Demo Customer (testcustomer) ──
+        test_customer, created = User.objects.get_or_create(
+            username='testcustomer',
+            defaults={
+                'email': 'testcustomer@example.com',
+                'phone': '9840000000',
+                'account_type': AccountType.CUSTOMER,
+                'first_name': 'Test',
+                'last_name': 'Customer',
+                'city': 'Kathmandu',
+                'is_active': True,
+                'is_phone_verified': True,
+                'is_email_verified': True,
+            },
+        )
+        if created:
+            test_customer.set_password('test1234')
+        else:
+            if test_customer.account_type != AccountType.CUSTOMER:
+                test_customer.account_type = AccountType.CUSTOMER
+        test_customer.email = 'testcustomer@example.com'
+        test_customer.set_password('test1234')
+        test_customer.save()
+        self.stdout.write(f"{'  Created' if created else '  Found existing'} user: testcustomer (customer)")
+
         # ── Demo Provider (ram1234) ──
         provider_user, created = User.objects.get_or_create(
             username='ram1234',
@@ -142,82 +178,6 @@ class Command(BaseCommand):
         provider_profile.verification_status = 'APPROVED'
         provider_profile.save()
         self.stdout.write(f"{'  Created' if created else '  Found existing'} ServiceProvider: ram1234")
-
-        # ── Additional providers for browsing ──
-        additional_providers = [
-            dict(username='anita_cleaner', email='anita.cleaner@karma.com', fn='Anita', ln='KC',
-                 phone='9841111111', photo='', name_nepali='अनिता के.सी.',
-                 cat=cat_cleaner, prof='Cleaner', rate=250, area='Dillibazar',
-                 bio='Experienced cleaner with 150+ jobs completed.', rating=4.3, jobs=150,
-                 lat=27.7181, lng=85.3247),
-            dict(username='bishal_actech', email='bishal.actech@karma.com', fn='Bishal', ln='Poudel',
-                 phone='9842222222', photo='profiles/bishalpoudel.png', name_nepali='विशाल पौडेल',
-                 cat=cat_ac, prof='AC Technician', rate=800, area='Lazimpat',
-                 bio='AC repair and maintenance expert with 10+ years experience.', rating=4.9, jobs=210,
-                 lat=27.7369, lng=85.3306),
-            dict(username='maya_tutor', email='maya.tutor@karma.com', fn='Maya', ln='Tamang',
-                 phone='9843333333', photo='', name_nepali='माया तामाङ',
-                 cat=cat_tutor, prof='Tutor', rate=300, area='Kumaripati',
-                 bio='Mathematics and Science tutor for grades 5-10.', rating=4.7, jobs=45,
-                 lat=27.7089, lng=85.3217),
-            dict(username='rajesh_repair', email='rajesh.repair@karma.com', fn='Rajesh', ln='Hamal',
-                 phone='9844444444', photo='profiles/rajesh_hamal.png', name_nepali='राजेश हमाल',
-                 cat=cat_repair, prof='Repair Technician', rate=550, area='Ekantakuna',
-                 bio='Home appliance repair specialist with 7+ years experience.', rating=4.4, jobs=75,
-                 lat=27.7086, lng=85.3156),
-        ]
-        for p in additional_providers:
-            u, created = User.objects.get_or_create(
-                username=p['username'],
-                defaults=dict(
-                    email=p['email'],
-                    phone=p['phone'],
-                    account_type=AccountType.PROVIDER,
-                    first_name=p['fn'],
-                    last_name=p['ln'],
-                    city='Kathmandu',
-                    name_nepali=p['name_nepali'],
-                    is_active=True,
-                    is_phone_verified=True,
-                    is_email_verified=True,
-                ),
-            )
-            if created:
-                u.set_password('demo1234')
-            u.name_nepali = p['name_nepali']
-            u.city = 'Kathmandu'
-            if p['photo']:
-                u.profile_photo = p['photo']
-            u.save()
-            self.stdout.write(f"{'  Created' if created else '  Found existing'} user: {p['username']}")
-
-            sp, sp_created = ServiceProvider.objects.get_or_create(
-                user=u,
-                defaults=dict(
-                    category=p['cat'],
-                    profession=p['prof'],
-                    bio=p['bio'],
-                    hourly_rate=p['rate'],
-                    service_area=p['area'],
-                    skills=['general service'],
-                    languages=['Nepali', 'English'],
-                    is_available=True,
-                    latitude=p['lat'],
-                    longitude=p['lng'],
-                    average_rating=p['rating'],
-                    total_jobs_completed=p['jobs'],
-                    verification_status='APPROVED',
-                ),
-            )
-            sp.latitude = p['lat']
-            sp.longitude = p['lng']
-            sp.service_area = p['area']
-            sp.average_rating = p['rating']
-            sp.total_jobs_completed = p['jobs']
-            sp.verification_status = 'APPROVED'
-            sp.save()
-            if sp_created:
-                self.stdout.write(f"  Created ServiceProvider: {p['username']}")
 
         # ── Extra providers for services browsing ──
         extra_providers = [

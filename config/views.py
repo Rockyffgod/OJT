@@ -135,7 +135,7 @@ def services_list(request):
     categories = ServiceCategory.objects.filter(is_active=True)
     providers = ServiceProvider.objects.filter(
         is_available=True
-    ).select_related('user', 'category').order_by('-average_rating')
+    ).select_related('user', 'category').order_by('-average_rating').distinct()
 
     category_id = request.GET.get('category')
     search = request.GET.get('search')
