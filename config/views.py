@@ -169,6 +169,27 @@ def services_list(request):
 
 
 @login_required
+def booking_checkout(request, pk):
+    booking = get_object_or_404(Booking, pk=pk, customer=request.user)
+    if booking.status not in ('REQUESTED', 'CONFIRMED'):
+        messages.error(request, 'This booking is not available for checkout.')
+        return redirect('booking_detail', pk=pk)
+    if request.method == 'POST':
+        method = request.POST.get('payment_method')
+        if method in ('CASH', 'ESEWA', 'KHALTI'):
+            booking.payment_method = method
+            booking.status = BookingStatus.CONFIRMED
+            booking.save()
+            messages.success(request, 'Booking confirmed!')
+            return redirect('booking_tracking', pk=pk)
+    return render(request, 'bookings/checkout.html', {'booking': booking})
+
+@login_required
+def booking_tracking(request, pk):
+    booking = get_object_or_404(Booking, pk=pk, customer=request.user)
+    return render(request, 'bookings/tracking.html', {'booking': booking})
+
+@login_required
 def bookings_list(request):
     user = request.user
     if user.account_type == AccountType.PROVIDER:

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Tracking - Karma{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+{% block content %}
+<h2 class="fw-bold mb-4">Live Tracking</h2>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body p-0">
+                <div id="tracking-map" style="height:450px; border-radius:8px;"></div>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-body text-center py-3">
+                <p class="mb-1 fw-bold">Provider is heading your way...</p>
+                <p class="mb-0" style="font-size:1.4rem; font-weight:700; color:var(--karma-red);">Estimated arrival: 15 mins</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header">Booking Info</div>
+            <div class="card-body">
+                <p class="mb-1"><strong>Provider:</strong> {{ booking.provider.user.get_full_name|default:booking.provider.user.username }}</p>
+                <p class="mb-1"><strong>Service:</strong> {{ booking.provider.profession }}</p>
+                <p class="mb-1"><strong>Status:</strong> <span class="badge bg-success">Confirmed</span></p>
+                <p class="mb-1"><strong>Address:</strong> {{ booking.job_address }}</p>
+                <p class="mb-0"><strong>Price:</strong> Rs. {{ booking.agreed_price|floatformat:0 }}</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">Provider</div>
+            <div class="card-body text-center">
+                {% if booking.provider.user.profile_photo %}
+                <img src="{{ booking.provider.user.profile_photo.url }}" width="64" height="64" class="rounded-circle mb-2" style="object-fit:cover;">
+                {% else %}
+                <div class="rounded-circle bg-secondary mx-auto mb-2 d-flex align-items-center justify-content-center" style="width:64px;height:64px;"><i class="bi bi-person-fill text-white fs-2"></i></div>
+                {% endif %}
+                <h5>{{ booking.provider.user.get_full_name|default:booking.provider.user.username }}</h5>
+                <p class="text-muted small mb-2">{{ booking.provider.profession }}</p>
+                <span class="badge rounded-pill bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>{{ booking.provider.average_rating|default:"0.0" }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+    var mapEl = document.getElementById('tracking-map');
+    if(!mapEl) return;
+    var map = L.map(mapEl).setView([27.7172, 85.3240], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 18,
+    }).addTo(map);
+
+    var providerLat = {{ booking.provider_lat|default:"27.7172" }};
+    var providerLng = {{ booking.provider_lng|default:"85.3240" }};
+    var destLat = {{ booking.destination_lat|default:"27.7172" }};
+    var destLng = {{ booking.destination_lng|default:"85.3240" }};
+
+    L.marker([providerLat, providerLng]).addTo(map)
+        .bindPopup('<strong>{{ booking.provider.user.get_full_name|default:booking.provider.user.username|escapejs }}</strong><br>Provider');
+
+    L.circleMarker([destLat, destLng], {
+        radius: 10, color: '#3b82f6', fillColor: '#3b82f6',
+        fillOpacity: 0.8, weight: 2,
+    }).addTo(map).bindPopup('<strong>Your Location</strong><br>{{ booking.job_address|escapejs }}');
+
+    L.polyline([[providerLat, providerLng], [destLat, destLng]], {
+        color: 'var(--karma-red)', weight: 3, dashArray: '8, 8',
+    }).addTo(map);
+
+    var group = L.featureGroup([
+        L.marker([providerLat, providerLng]),
+        L.circleMarker([destLat, destLng]),
+    ]);
+    map.fitBounds(group.getBounds().pad(0.2));
+})();
+</script>
+{% endblock %}

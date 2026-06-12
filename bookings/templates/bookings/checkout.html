@@ -28,17 +28,17 @@
                     {% csrf_token %}
                     <div class="mb-3">
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="payment_method" id="cash" value="cash" checked>
+                            <input class="form-check-input" type="radio" name="payment_method" id="cash" value="CASH" checked>
                             <label class="form-check-label fw-medium" for="cash">Cash</label>
                             <small class="d-block text-muted ms-4">Pay in cash when the service is completed</small>
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="payment_method" id="esewa" value="esewa">
+                            <input class="form-check-input" type="radio" name="payment_method" id="esewa" value="ESEWA">
                             <label class="form-check-label fw-medium" for="esewa">eSewa</label>
                             <small class="d-block text-muted ms-4">Pay via eSewa mobile wallet</small>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="payment_method" id="khalti" value="khalti">
+                            <input class="form-check-input" type="radio" name="payment_method" id="khalti" value="KHALTI">
                             <label class="form-check-label fw-medium" for="khalti">Khalti</label>
                             <small class="d-block text-muted ms-4">Pay via Khalti digital wallet</small>
                         </div>

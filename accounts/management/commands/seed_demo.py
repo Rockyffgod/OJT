@@ -274,10 +274,19 @@ class Command(BaseCommand):
                 job_address='Kamal Pokhari, Kathmandu',
                 scheduled_date=now + timezone.timedelta(hours=3),
                 agreed_price=500,
+                provider_lat=27.7041,
+                provider_lng=85.3145,
+                destination_lat=27.7172,
+                destination_lng=85.3240,
             ),
         )
         if _:
             self.stdout.write('  Created booking: Kitchen sink repair')
+        booking1.provider_lat = 27.7041
+        booking1.provider_lng = 85.3145
+        booking1.destination_lat = 27.7172
+        booking1.destination_lng = 85.3240
+        booking1.save(update_fields=['provider_lat', 'provider_lng', 'destination_lat', 'destination_lng'])
 
         booking2, _ = Booking.objects.get_or_create(
             customer=customer,
@@ -288,10 +297,19 @@ class Command(BaseCommand):
                 job_address='Thamel, Kathmandu',
                 scheduled_date=now + timezone.timedelta(days=1),
                 agreed_price=1500,
+                provider_lat=27.7041,
+                provider_lng=85.3145,
+                destination_lat=27.7172,
+                destination_lng=85.3240,
             ),
         )
         if _:
             self.stdout.write('  Created booking: Water heater install')
+        booking2.provider_lat = 27.7041
+        booking2.provider_lng = 85.3145
+        booking2.destination_lat = 27.7172
+        booking2.destination_lng = 85.3240
+        booking2.save(update_fields=['provider_lat', 'provider_lng', 'destination_lat', 'destination_lng'])
 
         booking3, _ = Booking.objects.get_or_create(
             customer=customer,
@@ -302,10 +320,19 @@ class Command(BaseCommand):
                 job_address='Baneshwor, Kathmandu',
                 scheduled_date=now - timezone.timedelta(hours=1),
                 agreed_price=800,
+                provider_lat=27.7041,
+                provider_lng=85.3145,
+                destination_lat=27.7172,
+                destination_lng=85.3240,
             ),
         )
         if _:
             self.stdout.write('  Created booking: Bathroom pipe repair')
+        booking3.provider_lat = 27.7041
+        booking3.provider_lng = 85.3145
+        booking3.destination_lat = 27.7172
+        booking3.destination_lng = 85.3240
+        booking3.save(update_fields=['provider_lat', 'provider_lng', 'destination_lat', 'destination_lng'])
 
         # ── Demo FTL Alerts ──
         ftl1, _ = FTLAlert.objects.get_or_create(
