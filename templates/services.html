@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
 {% block title %}Services - Karma{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
 {% block content %}
 <h2 class="fw-bold mb-4">Browse Services</h2>
+
+<div id="services-map" style="height:350px; border-radius:12px; margin-bottom:1.5rem; border:1px solid var(--border-color);"></div>
 
 <form method="get" class="row g-2 mb-4">
     <div class="col-md-5">
@@ -35,7 +40,7 @@
                     <div class="rounded-circle bg-secondary me-3 d-flex align-items-center justify-content-center" style="width:56px;height:56px;"><i class="bi bi-person-fill text-white fs-3"></i></div>
                     {% endif %}
                     <div>
-                        <h5 class="mb-0 small fw-bold">{{ p.user.get_full_name|default:p.user.username }}</h5>
+                        <h5 class="mb-0 small fw-bold provider-name">{{ p.user.get_full_name|default:p.user.username }}</h5>
                         <small class="text-muted">{{ p.profession }}</small>
                     </div>
                 </div>
@@ -55,4 +60,40 @@
     <div class="col-12"><p class="text-center text-muted py-5">No providers found.</p></div>
     {% endfor %}
 </div>
+{% endblock %}
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+    var mapEl = document.getElementById('services-map');
+    if(!mapEl) return;
+    var map = L.map(mapEl).setView([27.7172, 85.3240], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 18,
+    }).addTo(map);
+    var providers = [
+        {% for p in providers %}
+        {% if p.latitude and p.longitude %}
+        {
+            name: "{{ p.user.get_full_name|default:p.user.username|escapejs }}",
+            prof: "{{ p.profession|escapejs }}",
+            rate: "Rs.{{ p.hourly_rate }}/hr",
+            area: "{{ p.service_area|escapejs }}",
+            lat: {{ p.latitude }},
+            lng: {{ p.longitude }},
+        },
+        {% endif %}
+        {% endfor %}
+    ];
+    providers.forEach(function(pr){
+        L.marker([pr.lat, pr.lng]).addTo(map)
+            .bindPopup('<strong>' + pr.name + '</strong><br>' + pr.prof + '<br>' + pr.rate + '<br>' + pr.area);
+    });
+    if(providers.length > 0){
+        var group = L.featureGroup(providers.map(function(p){ return L.marker([p.lat, p.lng]); }));
+        map.fitBounds(group.getBounds().pad(0.1));
+    }
+})();
+</script>
 {% endblock %}

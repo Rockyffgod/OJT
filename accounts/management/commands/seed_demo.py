@@ -128,6 +128,10 @@ class Command(BaseCommand):
                 'longitude': 85.3240,
             },
         )
+        provider_profile.latitude = 27.7172
+        provider_profile.longitude = 85.3240
+        provider_profile.service_area = 'Kathmandu'
+        provider_profile.save()
         self.stdout.write(f"{'  Created' if created else '  Found existing'} ServiceProvider: ram_sharma")
 
         # ── Additional providers for browsing ──
@@ -181,12 +185,18 @@ class Command(BaseCommand):
                     profession=p['prof'],
                     bio=p['bio'],
                     hourly_rate=p['rate'],
-                    service_area=p['area'],
+                    service_area='Kathmandu',
                     skills=['general service'],
                     languages=['Nepali', 'English'],
                     is_available=True,
+                    latitude=27.7172,
+                    longitude=85.3240,
                 ),
             )
+            sp.latitude = 27.7172
+            sp.longitude = 85.3240
+            sp.service_area = 'Kathmandu'
+            sp.save()
             if sp_created:
                 self.stdout.write(f"  Created ServiceProvider: {p['username']}")
 
@@ -233,12 +243,18 @@ class Command(BaseCommand):
                     category=p['cat'],
                     profession=p['prof'],
                     hourly_rate=p['rate'],
-                    service_area=p['area'],
+                    service_area='Kathmandu',
                     skills=[p['prof'], 'Customer Service'],
                     languages=['Nepali', 'English'],
                     is_available=True,
+                    latitude=27.7172,
+                    longitude=85.3240,
                 ),
             )
+            sp.latitude = 27.7172
+            sp.longitude = 85.3240
+            sp.service_area = 'Kathmandu'
+            sp.save()
             if sp_created:
                 self.stdout.write(f"  Created ServiceProvider: {p['username']}")
 
