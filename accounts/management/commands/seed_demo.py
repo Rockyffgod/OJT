@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from django.db.models import Count
 from accounts.models import User, AccountType
 from services.models import ServiceCategory, ServiceProvider
 from bookings.models import Booking, BookingStatus
@@ -12,6 +11,9 @@ class Command(BaseCommand):
     help = 'Seed demo users and data for presentation'
 
     def handle(self, *args, **kwargs):
+        # ── Nuke all ServiceProvider objects and recreate clean ──
+        ServiceProvider.objects.all().delete()
+
         # ── Admin User ──
         admin, created = User.objects.get_or_create(
             username='admin',
@@ -30,14 +32,6 @@ class Command(BaseCommand):
             self.stdout.write('  Created user: admin')
         else:
             self.stdout.write('  Found existing: admin')
-
-        # ── Cleanup duplicate ServiceProvider profiles ──
-        for u in User.objects.annotate(sp_count=Count('service_provider')).filter(sp_count__gt=1):
-            sps = list(ServiceProvider.objects.filter(user=u).order_by('-created_at'))
-            kept = sps[0]
-            for dup in sps[1:]:
-                dup.delete()
-                self.stdout.write(f"  Deleted duplicate SP for user: {u.username} (kept id={kept.id})")
 
         # ── Service Categories ──
         categories = {
@@ -267,6 +261,7 @@ class Command(BaseCommand):
                 defaults=dict(
                     category=p['cat'],
                     profession=p['prof'],
+                    bio=p['bio'],
                     hourly_rate=p['rate'],
                     service_area=p['area'],
                     skills=[p['prof'], 'Customer Service'],
