@@ -1,54 +1,52 @@
 {% extends 'base.html' %}
 {% block title %}Edit Profile - Hamro Karma{% endblock %}
 {% block content %}
-<div class="mb-4">
-    <a href="{% url 'profile' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back to Profile</a>
+<div class="mb-3">
+    <a href="{% url 'profile' %}" class="btn btn-outline-secondary btn-sm">&larr; Back to Profile</a>
 </div>
 
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header"><h5 class="mb-0"><i class="bi bi-pencil-square"></i> Edit Profile</h5></div>
+    <div class="col-md-6">
+        <div class="card form-card">
+            <div class="card-header"><i class="bi bi-pencil-square me-1"></i> Edit Profile</div>
             <div class="card-body">
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                     {% csrf_token %}
                     <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">First Name</label>
-                            <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Last Name</label>
-                            <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
-                        </div>
+                        <div class="col-md-6"><label class="form-label fw-medium">First Name</label><input type="text" name="first_name" class="form-control" value="{{ user.first_name }}"></div>
+                        <div class="col-md-6"><label class="form-label fw-medium">Last Name</label><input type="text" name="last_name" class="form-control" value="{{ user.last_name }}"></div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                    <div class="mb-3"><label class="form-label fw-medium">Email</label><input type="email" name="email" class="form-control" value="{{ user.email }}" required><div class="invalid-feedback">Valid email required.</div></div>
+                    <div class="row mb-3">
+                        <div class="col"><label class="form-label fw-medium">Phone</label><input type="text" name="phone" class="form-control" value="{{ user.phone|default:'' }}"></div>
+                        <div class="col"><label class="form-label fw-medium">City</label><input type="text" name="city" class="form-control" value="{{ user.city|default:'' }}"></div>
                     </div>
+                    <div class="mb-3"><label class="form-label fw-medium">Name (Nepali)</label><input type="text" name="name_nepali" class="form-control" value="{{ user.name_nepali|default:'' }}"></div>
                     <div class="mb-3">
-                        <label class="form-label">Phone</label>
-                        <input type="text" name="phone" class="form-control" value="{{ user.phone|default:'' }}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">City</label>
-                        <input type="text" name="city" class="form-control" value="{{ user.city|default:'' }}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Name in Nepali</label>
-                        <input type="text" name="name_nepali" class="form-control" value="{{ user.name_nepali|default:'' }}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Profile Photo</label>
+                        <label class="form-label fw-medium">Profile Photo</label>
                         <input type="file" name="profile_photo" class="form-control" accept="image/*">
-                        {% if user.profile_photo %}
                         <div class="mt-2">
-                            <img src="{{ user.profile_photo.url }}" alt="Current" width="80" height="80" style="object-fit:cover;border-radius:50%;">
-                            <small class="text-muted ms-2">Current photo</small>
+                            {% if user.profile_photo %}
+                            <img src="{{ user.profile_photo.url }}" id="imagePreview" alt="Preview" width="80" height="80" style="object-fit:cover;border-radius:50%;">
+                            {% else %}
+                            <img src="" id="imagePreview" alt="Preview" width="80" height="80" style="object-fit:cover;border-radius:50%;display:none;">
+                            {% endif %}
                         </div>
-                        {% endif %}
                     </div>
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Save Changes</button>
+                    {% if provider %}
+                    <hr>
+                    <h6 class="fw-bold mb-3">Service Provider Info</h6>
+                    <div class="row mb-3">
+                        <div class="col"><label class="form-label fw-medium">Profession</label><input type="text" name="profession" class="form-control" value="{{ provider.profession|default:'' }}"></div>
+                        <div class="col"><label class="form-label fw-medium">Experience (yrs)</label><input type="number" name="experience" class="form-control" value="{{ provider.experience|default:'' }}"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col"><label class="form-label fw-medium">Hourly Rate (Rs.)</label><input type="number" name="hourly_rate" class="form-control" value="{{ provider.hourly_rate|default:'' }}"></div>
+                        <div class="col"><label class="form-label fw-medium">Service Area</label><input type="text" name="service_area" class="form-control" value="{{ provider.service_area|default:'' }}"></div>
+                    </div>
+                    <div class="mb-3"><label class="form-label fw-medium">Bio</label><textarea name="bio" class="form-control" rows="3">{{ provider.bio|default:'' }}</textarea></div>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i> Save Changes</button>
                 </form>
             </div>
         </div>

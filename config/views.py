@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
+from django.urls import reverse
 from django.utils import timezone
 from accounts.models import User, AccountType
 from services.models import ServiceCategory, ServiceProvider
@@ -154,7 +155,7 @@ def booking_detail(request, pk):
     booking = get_object_or_404(Booking, id=pk)
     if not (booking.customer == user or getattr(user, 'service_provider', None) == booking.provider or user.account_type == AccountType.ADMIN):
         messages.error(request, 'You do not have access to this booking.')
-        return redirect('page_bookings')
+        return redirect('bookings')
 
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -178,7 +179,7 @@ def booking_detail(request, pk):
             booking.status = BookingStatus.IN_PROGRESS
             booking.save()
             messages.success(request, 'Arrival confirmed.')
-        return redirect('page_booking_detail', pk=booking.id)
+        return redirect('booking_detail', pk=booking.id)
 
     messages_list = Message.objects.filter(booking=booking).order_by('created_at')
     is_provider = getattr(user, 'service_provider', None) == booking.provider
@@ -192,6 +193,12 @@ def booking_detail(request, pk):
 
 @login_required
 def profile_view(request):
+    user = request.user
+    provider = getattr(user, 'service_provider', None)
+    return render(request, 'profile.html', {'user': user, 'provider': provider})
+
+@login_required
+def profile_edit(request):
     user = request.user
     provider = getattr(user, 'service_provider', None)
 
@@ -217,7 +224,7 @@ def profile_view(request):
         messages.success(request, 'Profile updated.')
         return redirect('profile')
 
-    return render(request, 'profile.html', {'user': user, 'provider': provider})
+    return render(request, 'profile_edit.html', {'user': user, 'provider': provider})
 
 
 @login_required
@@ -275,7 +282,7 @@ def notifications_list(request):
     ).order_by('-created_at')
     if request.method == 'POST':
         notifs.filter(read_at__isnull=True, is_global=False).update(read_at=timezone.now())
-        return redirect('page_notifications')
+        return redirect('notifications')
     unread_count = notifs.filter(read_at__isnull=True).count()
     return render(request, 'notifications.html', {'notifications_list': notifs, 'unread_count': unread_count})
 
@@ -316,8 +323,8 @@ def send_message(request):
         if booking_id and text:
             booking = get_object_or_404(Booking, id=booking_id)
             Message.objects.create(booking=booking, sender=request.user, text=text)
-        return redirect(f'/messages/?booking={booking_id}')
-    return redirect('page_messages')
+        return redirect(f"{reverse('messages')}?booking={booking_id}")
+    return redirect('messages')
 
 
 @login_required

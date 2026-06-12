@@ -1,39 +1,44 @@
 {% extends 'base.html' %}
 {% block title %}Report Lost - Hamro Karma{% endblock %}
 {% block content %}
-<a href="{% url 'ftl_list' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back</a>
+<div class="mb-3">
+    <a href="{% url 'ftl_list' %}" class="btn btn-outline-secondary btn-sm">&larr; Back to Alerts</a>
+</div>
 
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header"><h5 class="mb-0">Report Lost Item / Person / Pet</h5></div>
+    <div class="col-md-6">
+        <div class="card form-card">
+            <div class="card-header"><i class="bi bi-plus-circle me-1"></i> Report Lost Item / Person / Pet</div>
             <div class="card-body">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label class="form-label">Title *</label>
+                        <label class="form-label fw-medium">Title *</label>
                         <input type="text" name="title" class="form-control" required placeholder="e.g., Lost Brown Wallet">
+                        <div class="invalid-feedback">Title is required.</div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Type *</label>
+                        <label class="form-label fw-medium">Type *</label>
                         <select name="type" class="form-select" required>
                             <option value="">Select...</option>
                             {% for k, v in ftl_types %}
                             <option value="{{ k }}">{{ v }}</option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback">Please select a type.</div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Description *</label>
+                        <label class="form-label fw-medium">Description *</label>
                         <textarea name="description" class="form-control" rows="4" required placeholder="Describe what was lost, when, and any distinguishing features..."></textarea>
+                        <div class="invalid-feedback">Description is required.</div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Last Seen Location</label>
+                        <label class="form-label fw-medium">Last Seen Location</label>
                         <input type="text" name="last_seen_location" class="form-control" placeholder="e.g., New Bus Park, Kathmandu">
                     </div>
                     <div class="row mb-3">
                         <div class="col">
-                            <label class="form-label">Contact Method</label>
+                            <label class="form-label fw-medium">Contact Method</label>
                             <select name="contact_method" class="form-select">
                                 <option value="PHONE">Phone</option>
                                 <option value="EMAIL">Email</option>
@@ -41,11 +46,16 @@
                             </select>
                         </div>
                         <div class="col">
-                            <label class="form-label">Contact Value</label>
+                            <label class="form-label fw-medium">Contact Value</label>
                             <input type="text" name="contact_value" class="form-control" placeholder="Phone or email">
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-danger">Submit Alert</button>
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Image</label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                        <div class="mt-2"><img src="" id="imagePreview" alt="Preview" width="120" class="img-fluid rounded" style="display:none;"></div>
+                    </div>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-send me-1"></i> Submit Alert</button>
                 </form>
             </div>
         </div>

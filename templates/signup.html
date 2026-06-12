@@ -1,50 +1,48 @@
 {% extends 'base.html' %}
 {% block title %}Sign Up - Hamro Karma{% endblock %}
 {% block content %}
-<div class="row justify-content-center mt-5">
+<div class="row justify-content-center mt-4">
     <div class="col-md-6">
         <div class="text-center mb-4">
-            <h1 class="text-primary"><i class="bi bi-hand-index-thumb"></i> Hamro Karma</h1>
-            <p class="text-muted">Create your account</p>
+            <h2 class="fw-bold">Create Account</h2>
+            <p class="text-muted">Join Hamro Karma today</p>
         </div>
-        <div class="card shadow">
+        <div class="card shadow-lg">
             <div class="card-body p-4">
-                <form method="post">
+                <form method="post" class="needs-validation" novalidate>
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
+                        <label class="form-label fw-medium">Email</label>
                         <input type="email" name="email" class="form-control" required>
+                        <div class="invalid-feedback">Valid email is required.</div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <input type="text" name="username" class="form-control" required>
+                        <label class="form-label fw-medium">Username</label>
+                        <input type="text" name="username" class="form-control" required minlength="3">
+                        <div class="invalid-feedback">Username must be at least 3 characters.</div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col"><label class="form-label">First Name</label><input type="text" name="first_name" class="form-control"></div>
-                        <div class="col"><label class="form-label">Last Name</label><input type="text" name="last_name" class="form-control"></div>
+                        <div class="col"><label class="form-label fw-medium">First Name</label><input type="text" name="first_name" class="form-control"></div>
+                        <div class="col"><label class="form-label fw-medium">Last Name</label><input type="text" name="last_name" class="form-control"></div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col"><label class="form-label">Phone</label><input type="text" name="phone" class="form-control"></div>
-                        <div class="col"><label class="form-label">City</label><input type="text" name="city" class="form-control"></div>
+                        <div class="col"><label class="form-label fw-medium">Phone</label><input type="text" name="phone" class="form-control"></div>
+                        <div class="col"><label class="form-label fw-medium">City</label><input type="text" name="city" class="form-control"></div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Account Type</label>
+                        <label class="form-label fw-medium">Account Type</label>
                         <select name="account_type" class="form-select">
                             <option value="CUSTOMER">Customer</option>
                             <option value="PROVIDER">Service Provider</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" name="password1" class="form-control" required minlength="8">
+                    <div class="row mb-3">
+                        <div class="col"><label class="form-label fw-medium">Password</label><input type="password" name="password1" class="form-control" required minlength="8"><div class="invalid-feedback">At least 8 characters.</div></div>
+                        <div class="col"><label class="form-label fw-medium">Confirm</label><input type="password" name="password2" class="form-control" required><div class="invalid-feedback">Passwords must match.</div></div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Confirm Password</label>
-                        <input type="password" name="password2" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-medium">Create Account</button>
                 </form>
-                <p class="text-center mt-3">Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+                <p class="text-center mt-3 mb-0">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none fw-medium" style="color:var(--karma-purple);">Sign in</a></p>
             </div>
         </div>
     </div>

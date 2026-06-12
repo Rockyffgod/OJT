@@ -1,127 +1,85 @@
 {% extends 'base.html' %}
 {% block title %}Dashboard - Hamro Karma{% endblock %}
 {% block content %}
-<div class="bg-primary text-white p-4 rounded mb-4">
-    <h2>Welcome, {{ user.first_name|default:user.username }}!</h2>
-    <p class="mb-0">
-    {% if user.account_type == 'PROVIDER' %}
-        Manage your services and bookings.
-    {% else %}
-        Find trusted service providers near you.
-    {% endif %}
+<div class="rounded-3 p-4 mb-4" style="background: linear-gradient(135deg, var(--karma-purple), #5a32a3);">
+    <h2 class="text-white mb-1">Welcome, {{ user.first_name|default:user.username }}!</h2>
+    <p class="text-white-50 mb-0">
+    {% if user.account_type == 'PROVIDER' %}Manage your services and bookings.{% else %}Find trusted service providers near you.{% endif %}
     </p>
 </div>
 
-<div class="row mb-4">
-    <div class="col-md-3 mb-3">
-        <a href="{% url 'services' %}" class="text-decoration-none">
-            <div class="card text-center h-100">
-                <div class="card-body">
-                    <i class="bi bi-grid fs-1 text-primary"></i>
-                    <h6>Browse Services</h6>
-                </div>
-            </div>
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <a href="{% url 'services' %}" class="action-card">
+            <div class="card text-center h-100"><div class="card-body"><i class="bi bi-grid" style="color:var(--karma-purple);"></i><h6 class="mt-2 mb-0">Services</h6></div></div>
         </a>
     </div>
-    <div class="col-md-3 mb-3">
-        <a href="{% url 'page_bookings' %}" class="text-decoration-none">
-            <div class="card text-center h-100">
-                <div class="card-body">
-                    <i class="bi bi-calendar-check fs-1 text-success"></i>
-                    <h6>My Bookings</h6>
-                </div>
-            </div>
+    <div class="col-6 col-md-3">
+        <a href="{% url 'bookings' %}" class="action-card">
+            <div class="card text-center h-100"><div class="card-body"><i class="bi bi-calendar-check" style="color:#059669;"></i><h6 class="mt-2 mb-0">Bookings</h6></div></div>
         </a>
     </div>
-    <div class="col-md-3 mb-3">
-        <a href="{% url 'page_messages' %}" class="text-decoration-none">
-            <div class="card text-center h-100">
-                <div class="card-body">
-                    <i class="bi bi-chat-dots fs-1 text-info"></i>
-                    <h6>Messages</h6>
-                </div>
-            </div>
+    <div class="col-6 col-md-3">
+        <a href="{% url 'messages' %}" class="action-card">
+            <div class="card text-center h-100"><div class="card-body"><i class="bi bi-chat-dots" style="color:#0284c7;"></i><h6 class="mt-2 mb-0">Messages</h6></div></div>
         </a>
     </div>
-    <div class="col-md-3 mb-3">
-        <a href="{% url 'ftl_list' %}" class="text-decoration-none">
-            <div class="card text-center h-100">
-                <div class="card-body">
-                    <i class="bi bi-search fs-1 text-danger"></i>
-                    <h6>Find The Lost</h6>
-                </div>
-            </div>
+    <div class="col-6 col-md-3">
+        <a href="{% url 'ftl_list' %}" class="action-card">
+            <div class="card text-center h-100"><div class="card-body"><i class="bi bi-search" style="color:#dc2626;"></i><h6 class="mt-2 mb-0">Find Lost</h6></div></div>
         </a>
     </div>
 </div>
 
 {% if user.account_type == 'PROVIDER' and stats %}
-<div class="row mb-4">
-    <div class="col-md-3 mb-2"><div class="card"><div class="card-body"><h6>Total Jobs</h6><h3>{{ stats.total_jobs }}</h3></div></div></div>
-    <div class="col-md-3 mb-2"><div class="card"><div class="card-body"><h6>Completed</h6><h3>{{ stats.completed_jobs }}</h3></div></div></div>
-    <div class="col-md-3 mb-2"><div class="card"><div class="card-body"><h6>Pending</h6><h3>{{ stats.pending_bookings }}</h3></div></div></div>
-    <div class="col-md-3 mb-2"><div class="card"><div class="card-body"><h6>Rating</h6><h3>{{ stats.avg_rating }}</h3></div></div></div>
+<div class="row g-2 mb-4">
+    <div class="col-6 col-md-3"><div class="card stat-card"><div class="card-body"><h6 class="text-muted mb-1">Total Jobs</h6><h3 class="mb-0 fw-bold">{{ stats.total_jobs }}</h3></div></div></div>
+    <div class="col-6 col-md-3"><div class="card stat-card" style="border-left-color:#059669;"><div class="card-body"><h6 class="text-muted mb-1">Completed</h6><h3 class="mb-0 fw-bold text-success">{{ stats.completed_jobs }}</h3></div></div></div>
+    <div class="col-6 col-md-3"><div class="card stat-card" style="border-left-color:#d97706;"><div class="card-body"><h6 class="text-muted mb-1">Pending</h6><h3 class="mb-0 fw-bold text-warning">{{ stats.pending_bookings }}</h3></div></div></div>
+    <div class="col-6 col-md-3"><div class="card stat-card" style="border-left-color:#0284c7;"><div class="card-body"><h6 class="text-muted mb-1">Rating</h6><h3 class="mb-0 fw-bold text-info">{{ stats.avg_rating }}</h3></div></div></div>
 </div>
 {% endif %}
 
-<div class="row">
-    <div class="col-md-8 mb-4">
+<div class="row g-4">
+    <div class="col-lg-8">
         <div class="card">
-            <div class="card-header d-flex justify-content-between">
-                <h5 class="mb-0">Recent Bookings</h5>
-                <a href="{% url 'page_bookings' %}" class="btn btn-sm btn-primary">View All</a>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Recent Bookings</span>
+                <a href="{% url 'bookings' %}" class="btn btn-sm btn-primary">View All</a>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 {% if bookings %}
-                <table class="table table-hover">
-                    <thead><tr><th>#</th><th>Service</th><th>Status</th><th>Date</th><th></th></tr></thead>
-                    <tbody>
-                    {% for b in bookings %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ b.job_description|truncatechars:40 }}</td>
-                        <td><span class="badge bg-{% if b.status == 'COMPLETED' %}success{% elif b.status == 'CANCELLED' %}danger{% elif b.status == 'REQUESTED' %}warning{% else %}info{% endif %}">{{ b.get_status_display }}</span></td>
-                        <td>{{ b.created_at|date:"M d" }}</td>
-                        <td><a href="{% url 'page_booking_detail' b.id %}" class="btn btn-sm btn-outline-primary">View</a></td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light"><tr><th>#</th><th>Service</th><th>Status</th><th>Date</th><th></th></tr></thead>
+                        <tbody>{% for b in bookings %}<tr><td>{{ forloop.counter }}</td><td>{{ b.job_description|truncatechars:40 }}</td><td><span class="badge rounded-pill bg-{% if b.status == 'COMPLETED' %}success{% elif b.status == 'CANCELLED' %}danger{% elif b.status == 'REQUESTED' %}warning text-dark{% else %}info{% endif %}">{{ b.get_status_display }}</span></td><td>{{ b.created_at|date:"M d" }}</td><td><a href="{% url 'booking_detail' b.id %}" class="btn btn-sm btn-outline-primary">View</a></td></tr>{% endfor %}</tbody>
+                    </table>
+                </div>
                 {% else %}
-                <p class="text-muted mb-0">No bookings yet.</p>
+                <p class="text-muted text-center py-4 mb-0">No bookings yet.</p>
                 {% endif %}
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-4">
-        <div class="card mb-3">
-            <div class="card-header"><h5 class="mb-0">Top Providers</h5></div>
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">Top Providers</div>
             <div class="card-body">
                 {% for p in top_providers %}
-                <div class="d-flex align-items-center mb-2">
-                    {% if p.user.profile_photo %}
-                    <img src="{{ p.user.profile_photo.url }}" width="40" height="40" class="rounded-circle me-2" style="object-fit:cover;">
-                    {% else %}
-                    <div class="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center" style="width:40px;height:40px;"><i class="bi bi-person-fill text-white"></i></div>
-                    {% endif %}
-                    <div>
-                        <strong>{{ p.user.get_full_name|default:p.user.username }}</strong><br>
-                        <small class="text-muted">{{ p.profession }} | {{ p.karma_level }}</small>
-                    </div>
+                <div class="d-flex align-items-center mb-3">
+                    {% if p.user.profile_photo %}<img src="{{ p.user.profile_photo.url }}" width="40" height="40" class="rounded-circle me-2" style="object-fit:cover;">
+                    {% else %}<div class="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center" style="width:40px;height:40px;"><i class="bi bi-person-fill text-white"></i></div>{% endif %}
+                    <div><strong class="small">{{ p.user.get_full_name|default:p.user.username }}</strong><br><small class="text-muted">{{ p.profession }}</small></div>
                 </div>
-                {% empty %}
-                <p class="text-muted mb-0">No providers yet.</p>
-                {% endfor %}
+                {% empty %}<p class="text-muted mb-0 small">No providers yet.</p>{% endfor %}
             </div>
         </div>
         <div class="card">
-            <div class="card-header"><h5 class="mb-0">Recent Notifications</h5></div>
+            <div class="card-header">Recent Notifications</div>
             <div class="card-body">
                 {% for n in recent_notifications %}
-                <div class="mb-2"><strong>{{ n.title }}</strong><br><small class="text-muted">{{ n.created_at|timesince }} ago</small></div>
-                {% empty %}
-                <p class="text-muted mb-0">No notifications.</p>
-                {% endfor %}
+                <div class="mb-2"><strong class="small">{{ n.title }}</strong><br><small class="text-muted">{{ n.created_at|timesince }} ago</small></div>
+                {% empty %}<p class="text-muted mb-0 small">No notifications.</p>{% endfor %}
             </div>
         </div>
     </div>

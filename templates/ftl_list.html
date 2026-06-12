@@ -2,31 +2,34 @@
 {% block title %}Find The Lost - Hamro Karma{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">Find The Lost</h2>
-    <a href="{% url 'ftl_new' %}" class="btn btn-primary">Report Lost</a>
+    <h2 class="fw-bold mb-0">Find The Lost</h2>
+    <a href="{% url 'ftl_new' %}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Report Lost</a>
 </div>
 
 <form method="get" class="mb-4">
-    <select name="type" class="form-select w-auto d-inline" onchange="this.form.submit()">
-        <option value="">All Types</option>
-        {% for k, v in ftl_types %}
-        <option value="{{ k }}" {% if request.GET.type == k %}selected{% endif %}>{{ v }}</option>
-        {% endfor %}
-    </select>
-    <a href="{% url 'ftl_list' %}" class="btn btn-outline-secondary btn-sm">Clear</a>
+    <div class="d-flex gap-2 align-items-center">
+        <select name="type" class="form-select w-auto" onchange="this.form.submit()">
+            <option value="">All Types</option>
+            {% for k, v in ftl_types %}
+            <option value="{{ k }}" {% if request.GET.type == k %}selected{% endif %}>{{ v }}</option>
+            {% endfor %}
+        </select>
+        <a href="{% url 'ftl_list' %}" class="btn btn-outline-secondary btn-sm">Clear</a>
+    </div>
 </form>
 
-<div class="row">
+<div class="row g-4">
     {% for alert in alerts %}
-    <div class="col-md-6 col-lg-4 mb-4">
+    <div class="col-md-6 col-lg-4">
         <div class="card h-100">
             <div class="card-body">
                 <div class="d-flex justify-content-between mb-2">
-                    <h5 class="mb-0">{{ alert.title }}</h5>
-                    <span class="badge bg-danger">{{ alert.get_type_display }}</span>
+                    <h5 class="fw-bold small mb-0">{{ alert.title }}</h5>
+                    <span class="badge rounded-pill bg-danger">{{ alert.get_type_display }}</span>
                 </div>
-                <p class="small">{{ alert.description|truncatechars:100 }}</p>
-                <p class="small text-muted mb-1"><i class="bi bi-geo-alt"></i> {{ alert.last_seen_location|default:"Unknown" }}</p>
+                <p class="small text-muted">{{ alert.description|truncatechars:100 }}</p>
+                {% if alert.image %}<img src="{{ alert.image.url }}" class="img-fluid rounded mb-2" style="max-height:120px;object-fit:cover;">{% endif %}
+                <p class="small text-muted mb-1"><i class="bi bi-geo-alt me-1"></i>{{ alert.last_seen_location|default:"Unknown" }}</p>
                 <p class="small text-muted">{{ alert.created_at|timesince }} ago</p>
                 <a href="{% url 'ftl_detail' alert.id %}" class="btn btn-sm btn-outline-danger">View Details</a>
             </div>

@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% block title %}Services - Hamro Karma{% endblock %}
 {% block content %}
-<h2 class="mb-4">Browse Services</h2>
+<h2 class="fw-bold mb-4">Browse Services</h2>
 
 <form method="get" class="row g-2 mb-4">
     <div class="col-md-5">
-        <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ search|default:'' }}">
+        <input type="text" name="search" class="form-control" placeholder="Search providers..." value="{{ search|default:'' }}">
     </div>
     <div class="col-md-3">
         <select name="category" class="form-select" onchange="this.form.submit()">
@@ -16,37 +16,37 @@
         </select>
     </div>
     <div class="col-md-2">
-        <button type="submit" class="btn btn-primary w-100">Search</button>
+        <button type="submit" class="btn btn-karma w-100">Search</button>
     </div>
     <div class="col-md-2">
         <a href="{% url 'services' %}" class="btn btn-outline-secondary w-100">Clear</a>
     </div>
 </form>
 
-<div class="row">
+<div class="row g-4">
     {% for p in providers %}
-    <div class="col-md-6 col-lg-4 mb-4">
+    <div class="col-md-6 col-lg-4">
         <div class="card h-100">
             <div class="card-body">
                 <div class="d-flex align-items-center mb-3">
                     {% if p.user.profile_photo %}
-                    <img src="{{ p.user.profile_photo.url }}" width="64" height="64" class="rounded-circle me-3" style="object-fit:cover;">
+                    <img src="{{ p.user.profile_photo.url }}" width="56" height="56" class="rounded-circle me-3" style="object-fit:cover;">
                     {% else %}
-                    <div class="rounded-circle bg-secondary me-3 d-flex align-items-center justify-content-center" style="width:64px;height:64px;"><i class="bi bi-person-fill text-white fs-3"></i></div>
+                    <div class="rounded-circle bg-secondary me-3 d-flex align-items-center justify-content-center" style="width:56px;height:56px;"><i class="bi bi-person-fill text-white fs-3"></i></div>
                     {% endif %}
                     <div>
-                        <h5 class="mb-0">{{ p.user.get_full_name|default:p.user.username }}</h5>
+                        <h5 class="mb-0 small fw-bold">{{ p.user.get_full_name|default:p.user.username }}</h5>
                         <small class="text-muted">{{ p.profession }}</small>
                     </div>
                 </div>
-                <p class="card-text small">{{ p.bio|truncatechars:100|default:"No bio" }}</p>
-                <div class="d-flex justify-content-between">
-                    <span><i class="bi bi-geo-alt"></i> {{ p.service_area|default:"N/A" }}</span>
-                    <span><strong>Rs. {{ p.hourly_rate|default:"N/A" }}</strong></span>
+                <p class="small text-muted mb-3">{{ p.bio|truncatechars:100|default:"No bio" }}</p>
+                <div class="d-flex justify-content-between small mb-2">
+                    <span><i class="bi bi-geo-alt me-1"></i>{{ p.service_area|default:"N/A" }}</span>
+                    <span class="fw-bold" style="color:var(--karma-purple);">Rs. {{ p.hourly_rate|default:"N/A" }}</span>
                 </div>
-                <div class="d-flex justify-content-between mt-2">
-                    <span class="badge bg-warning text-dark"><i class="bi bi-star-fill"></i> {{ p.average_rating|default:"0.0" }}</span>
-                    <span class="badge bg-{% if p.is_available %}success{% else %}secondary{% endif %}">{% if p.is_available %}Available{% else %}Offline{% endif %}</span>
+                <div class="d-flex justify-content-between">
+                    <span class="badge rounded-pill bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>{{ p.average_rating|default:"0.0" }}</span>
+                    <span class="badge rounded-pill bg-{% if p.is_available %}success{% else %}secondary{% endif %}">{% if p.is_available %}Available{% else %}Offline{% endif %}</span>
                 </div>
             </div>
         </div>
