@@ -17,9 +17,15 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
     if request.method == 'POST':
-        email = request.POST.get('email')
+        username_input = request.POST.get('email')
         password = request.POST.get('password')
-        user = authenticate(request, email=email, password=password)
+        user = authenticate(request, username=username_input, password=password)
+        if not user:
+            try:
+                u = User.objects.get(email=username_input)
+                user = authenticate(request, username=u.username, password=password)
+            except User.DoesNotExist:
+                pass
         if user is not None:
             if user.is_suspended:
                 messages.error(request, 'Your account has been suspended.')

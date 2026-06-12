@@ -17,6 +17,7 @@ db.sqlite3
 
 # Uploaded media (now on Cloudinary in production)
 media/*
+!media/.gitkeep
 
 # OS
 .DS_Store
