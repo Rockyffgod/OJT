@@ -22,7 +22,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Address / Location</label>
-                        <input type="text" name="address" class="form-control" placeholder="e.g. Baneshwor, Kathmandu" required>
+                        <div class="input-group">
+                            <input type="text" name="address" id="address-input" class="form-control" placeholder="e.g. Baneshwor, Kathmandu" required>
+                            <button type="button" id="locate-address-btn" class="btn btn-outline-primary"><i class="bi bi-geo-alt"></i> Use My Location</button>
+                        </div>
+                        <div id="location-status" class="mt-1 small" style="display:none;"></div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Description of Work Needed</label>
@@ -55,4 +59,50 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.getElementById('locate-address-btn').addEventListener('click', function(){
+    var statusEl = document.getElementById('location-status');
+    var inputEl = document.getElementById('address-input');
+    if(!navigator.geolocation){
+        statusEl.textContent = 'Geolocation is not supported by your browser.';
+        statusEl.style.display = 'block';
+        statusEl.style.color = 'var(--color-red, #dc3545)';
+        return;
+    }
+    statusEl.textContent = 'Detecting location...';
+    statusEl.style.display = 'block';
+    statusEl.style.color = 'var(--text-muted, #888)';
+    this.disabled = true;
+    navigator.geolocation.getCurrentPosition(function(pos){
+        var lat = pos.coords.latitude;
+        var lon = pos.coords.longitude;
+        statusEl.textContent = 'Getting address...';
+        fetch('https://nominatim.openstreetmap.org/reverse?lat=' + lat + '&lon=' + lon + '&format=json')
+            .then(function(r){ return r.json(); })
+            .then(function(data){
+                if(data && data.display_name){
+                    inputEl.value = data.display_name;
+                    statusEl.style.display = 'none';
+                } else {
+                    statusEl.textContent = 'Could not detect location, please enter manually.';
+                    statusEl.style.color = 'var(--color-red, #dc3545)';
+                }
+            })
+            .catch(function(){
+                statusEl.textContent = 'Could not detect location, please enter manually.';
+                statusEl.style.color = 'var(--color-red, #dc3545)';
+            })
+            .finally(function(){
+                document.getElementById('locate-address-btn').disabled = false;
+            });
+    }, function(){
+        statusEl.textContent = 'Could not detect location, please enter manually.';
+        statusEl.style.display = 'block';
+        statusEl.style.color = 'var(--color-red, #dc3545)';
+        document.getElementById('locate-address-btn').disabled = false;
+    });
+});
+</script>
 {% endblock %}
