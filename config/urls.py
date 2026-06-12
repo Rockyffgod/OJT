@@ -1,24 +1,12 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
 from . import views
 
 urlpatterns = [
-    # API routes (existing)
     path('admin/', admin.site.urls),
-    path('api/auth/', include('accounts.urls')),
-    path('api/accounts/', include('accounts.urls')),
-    path('api/admin/', include('accounts.admin_urls')),
-    path('api/services/', include('services.urls')),
-    path('api/bookings/', include('bookings.urls')),
-    path('api/messages/', include('messaging.urls')),
-    path('api/karma/', include('karma.urls')),
-    path('api/ftl/', include('ftl.urls')),
-    path('api/notifications/', include('notifications.urls')),
-    path('api/ai/', include('ai.urls')),
-    # Template-based routes
     path('', lambda r: redirect('login')),
     path('login/', views.login_view, name='login'),
     path('signup/', views.signup_view, name='signup'),

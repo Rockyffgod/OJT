@@ -75,6 +75,43 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('input[name="password"]').value = this.dataset.password;
         });
     });
+
+    var serviceCards = document.querySelectorAll('.service-option');
+    var selectedServicesDiv = document.getElementById('selected-services');
+    var selectionCount = document.getElementById('selection-count');
+    var selectedData = [];
+
+    serviceCards.forEach(function(card) {
+        card.addEventListener('click', function() {
+            var val = this.dataset.value;
+            if (selectedData.includes(val)) {
+                selectedData = selectedData.filter(function(v) { return v !== val; });
+                this.style.borderColor = 'transparent';
+                this.style.background = '';
+            } else {
+                if (selectedData.length >= 2) {
+                    alert('Maximum 2 services allowed');
+                    return;
+                }
+                selectedData.push(val);
+                this.style.borderColor = 'var(--karma-red)';
+                this.style.background = 'var(--karma-red-light)';
+            }
+            if (selectedServicesDiv) {
+                selectedServicesDiv.innerHTML = '';
+                selectedData.forEach(function(v) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'service_categories';
+                    input.value = v;
+                    selectedServicesDiv.appendChild(input);
+                });
+            }
+            if (selectionCount) {
+                selectionCount.textContent = selectedData.length;
+            }
+        });
+    });
 });
 
 function toggleTheme() {

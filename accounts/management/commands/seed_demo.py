@@ -7,9 +7,6 @@ from ftl.models import FTLAlert, FTLType, FTLContactMethod, FTLStatus
 from notifications.models import Notification
 
 
-CLOUD_BASE = 'https://res.cloudinary.com/dfffms38g/image/upload'
-
-
 class Command(BaseCommand):
     help = 'Seed demo users and data for presentation'
 

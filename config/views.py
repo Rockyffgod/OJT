@@ -39,6 +39,7 @@ def login_view(request):
 def signup_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
+    services = ServiceCategory.objects.all()
     if request.method == 'POST':
         email = request.POST.get('email')
         username = request.POST.get('username')
@@ -52,16 +53,16 @@ def signup_view(request):
 
         if password1 != password2:
             messages.error(request, 'Passwords do not match.')
-            return render(request, 'signup.html')
+            return render(request, 'signup.html', {'services': services})
         if len(password1) < 8:
             messages.error(request, 'Password must be at least 8 characters.')
-            return render(request, 'signup.html')
+            return render(request, 'signup.html', {'services': services})
         if User.objects.filter(email=email).exists():
             messages.error(request, 'Email already registered.')
-            return render(request, 'signup.html')
+            return render(request, 'signup.html', {'services': services})
         if User.objects.filter(username=username).exists():
             messages.error(request, 'Username already taken.')
-            return render(request, 'signup.html')
+            return render(request, 'signup.html', {'services': services})
 
         user = User.objects.create_user(
             username=username, email=email, password=password1,
@@ -69,27 +70,21 @@ def signup_view(request):
             phone=phone, city=city, account_type=account_type,
         )
         if account_type == 'PROVIDER':
-            service_map = {
-                'plumber': 'Plumber', 'electrician': 'Electrician',
-                'carpenter': 'Carpenter', 'painter': 'Painter',
-                'ac_technician': 'AC Tech', 'appliance_repair': 'Repair',
-                'cleaner': 'Cleaner', 'tutor': 'Tutor',
-            }
-            selected = request.POST.getlist('service_categories')
-            if selected:
-                first_cat_name = service_map.get(selected[0], '')
-                first_cat = ServiceCategory.objects.filter(name=first_cat_name).first()
-                skills = [service_map.get(s, s) for s in selected if service_map.get(s)]
+            selected_ids = request.POST.getlist('service_categories')
+            if selected_ids:
+                categories = ServiceCategory.objects.filter(id__in=selected_ids)
+                first_cat = categories.first()
+                skills = [c.name for c in categories]
                 ServiceProvider.objects.create(
                     user=user,
-                    profession=first_cat_name,
+                    profession=first_cat.name if first_cat else '',
                     category=first_cat,
                     skills=skills,
                 )
         login(request, user)
         messages.success(request, 'Account created successfully!')
         return redirect('dashboard')
-    return render(request, 'signup.html')
+    return render(request, 'signup.html', {'services': services})
 
 
 def logout_view(request):

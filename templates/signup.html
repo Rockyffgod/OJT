@@ -38,17 +38,18 @@
                     </div>
                     <div id="provider-services" style="display:none;">
                         <label class="form-label">Services You Offer <small class="text-muted">(select up to 2)</small></label>
-                        <select class="form-select" name="service_categories" multiple id="service-select">
-                            <option value="plumber">Plumber</option>
-                            <option value="electrician">Electrician</option>
-                            <option value="carpenter">Carpenter</option>
-                            <option value="painter">Painter</option>
-                            <option value="ac_technician">AC Technician</option>
-                            <option value="appliance_repair">Appliance Repair</option>
-                            <option value="cleaner">Cleaner</option>
-                            <option value="tutor">Tutor</option>
-                        </select>
-                        <small class="text-muted">Hold Ctrl to select multiple (max 2)</small>
+                        <div class="row g-2" id="service-cards">
+                            {% for service in services %}
+                            <div class="col-6 col-md-4">
+                                <div class="service-option card p-2 text-center" data-value="{{ service.id }}" style="cursor:pointer; border:2px solid transparent;">
+                                    <i class="bi bi-tools mb-1" style="font-size:1.3rem;"></i>
+                                    <div style="font-size:0.85rem;">{{ service.name }}</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div id="selected-services"></div>
+                        <small class="text-muted"><span id="selection-count">0</span>/2 selected</small>
                     </div>
                     <div class="row mb-3">
                         <div class="col"><label class="form-label fw-medium">Password</label><input type="password" name="password1" class="form-control" required minlength="8"><div class="invalid-feedback">At least 8 characters.</div></div>
