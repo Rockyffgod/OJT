@@ -9,24 +9,24 @@
         <table class="table table-hover mb-0 align-middle">
             <thead class="table-light">
                 <tr>
-                    <th>#</th>
-                    <th>{% if user.account_type == 'PROVIDER' %}Customer{% else %}Description{% endif %}</th>
-                    <th>Status</th>
-                    <th>Scheduled</th>
-                    <th>Price</th>
-                    <th></th>
-                    {% if user.account_type == 'PROVIDER' %}<th></th>{% endif %}
+                    <th style="width:40px;">#</th>
+                    <th style="min-width:140px;">{% if user.account_type == 'PROVIDER' %}Customer{% else %}Description{% endif %}</th>
+                    <th style="width:130px;">Status</th>
+                    <th style="width:110px;" class="text-nowrap">Scheduled</th>
+                    <th style="width:90px;" class="text-nowrap">Price</th>
+                    <th style="width:65px;"></th>
+                    {% if user.account_type == 'PROVIDER' %}<th style="width:170px;"></th>{% endif %}
                 </tr>
             </thead>
             <tbody>
                 {% for b in bookings %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>
+                    <td style="max-width:200px;">
                         {% if user.account_type == 'PROVIDER' %}
                             {{ b.customer.get_full_name|default:b.customer.username }}
                         {% else %}
-                            {{ b.job_description|truncatechars:50 }}
+                            <span class="d-inline-block text-truncate" style="max-width:190px;display:block;">{{ b.job_description }}</span>
                         {% endif %}
                     </td>
                     <td>
@@ -45,12 +45,12 @@
                             {% endif %}
                         </span>
                     </td>
-                    <td>{{ b.scheduled_date|date:"M d, H:i" }}</td>
-                    <td>{% if b.agreed_price %}Rs. {{ b.agreed_price }}{% else %}&mdash;{% endif %}</td>
+                    <td class="text-nowrap">{{ b.scheduled_date|date:"M d, H:i" }}</td>
+                    <td class="text-nowrap">{% if b.agreed_price %}Rs. {{ b.agreed_price }}{% else %}&mdash;{% endif %}</td>
                     <td><a href="{% url 'booking_detail' b.id %}" class="btn btn-sm btn-outline-primary">View</a></td>
                     {% if user.account_type == 'PROVIDER' %}
                         {% if b.status == 'REQUESTED' %}
-                        <td>
+                        <td class="text-nowrap">
                             <form method="post" action="{% url 'booking_accept' b.id %}" style="display:inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-sm btn-success me-1"><i class="bi bi-check-lg"></i> Accept</button>

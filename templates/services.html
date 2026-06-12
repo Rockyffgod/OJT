@@ -12,7 +12,7 @@
 
 <form method="get" class="row g-2 mb-4">
     <div class="col-md-5">
-        <input type="text" name="search" class="form-control" placeholder="Search providers..." value="{{ search|default:'' }}">
+        <input type="text" name="search" class="form-control" placeholder="Search by name or profession..." value="{{ search|default:'' }}">
     </div>
     <div class="col-md-3">
         <select name="category" class="form-select" onchange="this.form.submit()">
