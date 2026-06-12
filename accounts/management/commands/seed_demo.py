@@ -78,7 +78,7 @@ class Command(BaseCommand):
                 customer.account_type = AccountType.CUSTOMER
         customer.email = 'rk1234@example.com'
         customer.name_nepali = 'रोशन तामाङ'
-        customer.profile_photo = None
+        customer.profile_photo = 'profiles/rk1234.png'
         customer.set_password('test1234')
         customer.save()
         self.stdout.write(f"{'  Created' if created else '  Found existing'} user: rk1234 (customer)")
