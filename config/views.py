@@ -232,6 +232,46 @@ def booking_tracking(request, pk):
     return render(request, 'bookings/tracking.html', {'booking': booking})
 
 @login_required
+def booking_accept(request, pk):
+    booking = get_object_or_404(Booking, id=pk, status=BookingStatus.REQUESTED)
+    if getattr(request.user, 'service_provider', None) != booking.provider:
+        messages.error(request, 'You do not have permission to accept this booking.')
+        return redirect('bookings')
+    booking.status = BookingStatus.CONFIRMED
+    booking.save()
+    provider_name = booking.provider.user.get_full_name() or booking.provider.user.username
+    Notification.objects.create(
+        user=booking.customer,
+        title='Booking Accepted',
+        body=f'Your booking has been accepted by {provider_name}.',
+        type='booking_accepted',
+        reference_id=str(booking.id),
+    )
+    messages.success(request, 'Booking accepted.')
+    return redirect('bookings')
+
+
+@login_required
+def booking_reject(request, pk):
+    booking = get_object_or_404(Booking, id=pk, status=BookingStatus.REQUESTED)
+    if getattr(request.user, 'service_provider', None) != booking.provider:
+        messages.error(request, 'You do not have permission to reject this booking.')
+        return redirect('bookings')
+    booking.status = BookingStatus.REJECTED
+    booking.save()
+    provider_name = booking.provider.user.get_full_name() or booking.provider.user.username
+    Notification.objects.create(
+        user=booking.customer,
+        title='Booking Rejected',
+        body=f'Your booking was rejected by {provider_name}.',
+        type='booking_rejected',
+        reference_id=str(booking.id),
+    )
+    messages.success(request, 'Booking rejected.')
+    return redirect('bookings')
+
+
+@login_required
 def bookings_list(request):
     user = request.user
     if user.account_type == AccountType.PROVIDER:

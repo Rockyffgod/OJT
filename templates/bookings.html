@@ -8,17 +8,59 @@
     <div class="table-responsive">
         <table class="table table-hover mb-0 align-middle">
             <thead class="table-light">
-                <tr><th>#</th><th>Description</th><th>Status</th><th>Scheduled</th><th>Price</th><th></th></tr>
+                <tr>
+                    <th>#</th>
+                    <th>{% if user.account_type == 'PROVIDER' %}Customer{% else %}Description{% endif %}</th>
+                    <th>Status</th>
+                    <th>Scheduled</th>
+                    <th>Price</th>
+                    <th></th>
+                    {% if user.account_type == 'PROVIDER' %}<th></th>{% endif %}
+                </tr>
             </thead>
             <tbody>
                 {% for b in bookings %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ b.job_description|truncatechars:50 }}</td>
-                    <td><span class="badge rounded-pill bg-{% if b.status == 'COMPLETED' %}success{% elif b.status == 'CANCELLED' or b.status == 'DISPUTED' %}danger{% elif b.status == 'REQUESTED' %}warning text-dark{% elif b.status == 'CONFIRMED' %}info{% else %}primary{% endif %}">{{ b.get_status_display }}</span></td>
+                    <td>
+                        {% if user.account_type == 'PROVIDER' %}
+                            {{ b.customer.get_full_name|default:b.customer.username }}
+                        {% else %}
+                            {{ b.job_description|truncatechars:50 }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge rounded-pill
+                            {% if b.status == 'COMPLETED' %}bg-success
+                            {% elif b.status == 'CANCELLED' or b.status == 'DISPUTED' %}bg-danger
+                            {% elif b.status == 'REJECTED' %}bg-danger
+                            {% elif b.status == 'REQUESTED' %}bg-warning text-dark
+                            {% elif b.status == 'CONFIRMED' %}bg-info
+                            {% else %}bg-primary{% endif %}">
+                            {{ b.get_status_display }}
+                        </span>
+                    </td>
                     <td>{{ b.scheduled_date|date:"M d, H:i" }}</td>
                     <td>{% if b.agreed_price %}Rs. {{ b.agreed_price }}{% else %}&mdash;{% endif %}</td>
                     <td><a href="{% url 'booking_detail' b.id %}" class="btn btn-sm btn-outline-primary">View</a></td>
+                    {% if user.account_type == 'PROVIDER' and b.status == 'REQUESTED' %}
+                    <td>
+                        <form method="post" action="{% url 'booking_accept' b.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-success me-1">
+                                <i class="bi bi-check-lg"></i> Accept
+                            </button>
+                        </form>
+                        <form method="post" action="{% url 'booking_reject' b.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="bi bi-x-lg"></i> Reject
+                            </button>
+                        </form>
+                    </td>
+                    {% elif user.account_type == 'PROVIDER' %}
+                    <td></td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>

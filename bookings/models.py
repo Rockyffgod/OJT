@@ -11,6 +11,7 @@ class BookingStatus(models.TextChoices):
     IN_PROGRESS = 'IN_PROGRESS', 'In Progress'
     COMPLETED = 'COMPLETED', 'Completed'
     CANCELLED = 'CANCELLED', 'Cancelled'
+    REJECTED = 'REJECTED', 'Rejected'
     DISPUTED = 'DISPUTED', 'Disputed'
 
 
