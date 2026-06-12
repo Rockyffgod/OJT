@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-{% block title %}Sign Up - Hamro Karma{% endblock %}
+{% block title %}Sign Up - Karma{% endblock %}
 {% block content %}
 <div class="row justify-content-center mt-4">
     <div class="col-md-6">
         <div class="text-center mb-4">
             <h2 class="fw-bold">Create Account</h2>
-            <p class="text-muted">Join Hamro Karma today</p>
+            <p class="text-muted">Join Karma today</p>
         </div>
         <div class="card shadow-lg">
             <div class="card-body p-4">
@@ -31,10 +31,24 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-medium">Account Type</label>
-                        <select name="account_type" class="form-select">
+                        <select name="account_type" id="id_account_type" class="form-select">
                             <option value="CUSTOMER">Customer</option>
                             <option value="PROVIDER">Service Provider</option>
                         </select>
+                    </div>
+                    <div id="provider-services" style="display:none;">
+                        <label class="form-label">Services You Offer <small class="text-muted">(select up to 2)</small></label>
+                        <select class="form-select" name="service_categories" multiple id="service-select">
+                            <option value="plumber">Plumber</option>
+                            <option value="electrician">Electrician</option>
+                            <option value="carpenter">Carpenter</option>
+                            <option value="painter">Painter</option>
+                            <option value="ac_technician">AC Technician</option>
+                            <option value="appliance_repair">Appliance Repair</option>
+                            <option value="cleaner">Cleaner</option>
+                            <option value="tutor">Tutor</option>
+                        </select>
+                        <small class="text-muted">Hold Ctrl to select multiple (max 2)</small>
                     </div>
                     <div class="row mb-3">
                         <div class="col"><label class="form-label fw-medium">Password</label><input type="password" name="password1" class="form-control" required minlength="8"><div class="invalid-feedback">At least 8 characters.</div></div>
@@ -42,7 +56,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary w-100 py-2 fw-medium">Create Account</button>
                 </form>
-                <p class="text-center mt-3 mb-0">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none fw-medium" style="color:var(--karma-purple);">Sign in</a></p>
+                <p class="text-center mt-3 mb-0">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none fw-medium" style="color:var(--karma-red);">Sign in</a></p>
             </div>
         </div>
     </div>

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Notifications - Hamro Karma{% endblock %}
+{% block title %}Notifications - Karma{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold mb-0">Notifications {% if unread_count > 0 %}<span class="badge rounded-pill bg-danger ms-1">{{ unread_count }}</span>{% endif %}</h2>
@@ -15,7 +15,15 @@
     <div class="list-group-item list-group-item-action {% if not n.read_at %}border-start border-primary border-4{% endif %}">
         <div class="d-flex justify-content-between">
             <div class="fw-bold">{{ n.title }}</div>
-            {% if not n.read_at %}<span class="badge bg-primary rounded-pill">New</span>{% endif %}
+            <div class="d-flex align-items-center gap-2">
+                {% if not n.read_at %}<span class="badge bg-primary rounded-pill">New</span>{% endif %}
+                {% if not n.read_at %}
+                <form method="POST" action="{% url 'mark_notification_read' n.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">Mark Read</button>
+                </form>
+                {% endif %}
+            </div>
         </div>
         <p class="mb-1 small text-muted">{{ n.body }}</p>
         <small class="text-muted">{{ n.created_at|timesince }} ago</small>

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% block title %}Dashboard - Hamro Karma{% endblock %}
+{% block title %}Dashboard - Karma{% endblock %}
 {% block content %}
-<div class="rounded-3 p-4 mb-4" style="background: linear-gradient(135deg, var(--karma-purple), #5a32a3);">
+<div class="dashboard-hero">
     <h2 class="text-white mb-1">Welcome, {{ user.first_name|default:user.username }}!</h2>
     <p class="text-white-50 mb-0">
     {% if user.account_type == 'PROVIDER' %}Manage your services and bookings.{% else %}Find trusted service providers near you.{% endif %}
@@ -11,22 +11,22 @@
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
         <a href="{% url 'services' %}" class="action-card">
-            <div class="card text-center h-100"><div class="card-body"><i class="bi bi-grid" style="color:var(--karma-purple);"></i><h6 class="mt-2 mb-0">Services</h6></div></div>
+            <div class="card text-center h-100"><div class="card-body"><i class="bi bi-grid" style="color:var(--karma-red);"></i><h6 class="mt-2 mb-0">Services</h6></div></div>
         </a>
     </div>
     <div class="col-6 col-md-3">
         <a href="{% url 'bookings' %}" class="action-card">
-            <div class="card text-center h-100"><div class="card-body"><i class="bi bi-calendar-check" style="color:#059669;"></i><h6 class="mt-2 mb-0">Bookings</h6></div></div>
+            <div class="card text-center h-100"><div class="card-body"><i class="bi bi-calendar-check" style="color:var(--color-green);"></i><h6 class="mt-2 mb-0">Bookings</h6></div></div>
         </a>
     </div>
     <div class="col-6 col-md-3">
         <a href="{% url 'messages' %}" class="action-card">
-            <div class="card text-center h-100"><div class="card-body"><i class="bi bi-chat-dots" style="color:#0284c7;"></i><h6 class="mt-2 mb-0">Messages</h6></div></div>
+            <div class="card text-center h-100"><div class="card-body"><i class="bi bi-chat-dots" style="color:var(--color-blue);"></i><h6 class="mt-2 mb-0">Messages</h6></div></div>
         </a>
     </div>
     <div class="col-6 col-md-3">
         <a href="{% url 'ftl_list' %}" class="action-card">
-            <div class="card text-center h-100"><div class="card-body"><i class="bi bi-search" style="color:#dc2626;"></i><h6 class="mt-2 mb-0">Find Lost</h6></div></div>
+            <div class="card text-center h-100"><div class="card-body"><i class="bi bi-search" style="color:var(--color-red);"></i><h6 class="mt-2 mb-0">Find Lost</h6></div></div>
         </a>
     </div>
 </div>
@@ -34,9 +34,9 @@
 {% if user.account_type == 'PROVIDER' and stats %}
 <div class="row g-2 mb-4">
     <div class="col-6 col-md-3"><div class="card stat-card"><div class="card-body"><h6 class="text-muted mb-1">Total Jobs</h6><h3 class="mb-0 fw-bold">{{ stats.total_jobs }}</h3></div></div></div>
-    <div class="col-6 col-md-3"><div class="card stat-card" style="border-left-color:#059669;"><div class="card-body"><h6 class="text-muted mb-1">Completed</h6><h3 class="mb-0 fw-bold text-success">{{ stats.completed_jobs }}</h3></div></div></div>
-    <div class="col-6 col-md-3"><div class="card stat-card" style="border-left-color:#d97706;"><div class="card-body"><h6 class="text-muted mb-1">Pending</h6><h3 class="mb-0 fw-bold text-warning">{{ stats.pending_bookings }}</h3></div></div></div>
-    <div class="col-6 col-md-3"><div class="card stat-card" style="border-left-color:#0284c7;"><div class="card-body"><h6 class="text-muted mb-1">Rating</h6><h3 class="mb-0 fw-bold text-info">{{ stats.avg_rating }}</h3></div></div></div>
+    <div class="col-6 col-md-3"><div class="card stat-card" style="border-left-color:var(--color-green);"><div class="card-body"><h6 class="text-muted mb-1">Completed</h6><h3 class="mb-0 fw-bold text-success">{{ stats.completed_jobs }}</h3></div></div></div>
+    <div class="col-6 col-md-3"><div class="card stat-card" style="border-left-color:var(--color-amber);"><div class="card-body"><h6 class="text-muted mb-1">Pending</h6><h3 class="mb-0 fw-bold text-warning">{{ stats.pending_bookings }}</h3></div></div></div>
+    <div class="col-6 col-md-3"><div class="card stat-card" style="border-left-color:var(--color-blue);"><div class="card-body"><h6 class="text-muted mb-1">Rating</h6><h3 class="mb-0 fw-bold text-info">{{ stats.avg_rating }}</h3></div></div></div>
 </div>
 {% endif %}
 

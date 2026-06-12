@@ -17,16 +17,16 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
     if request.method == 'POST':
-        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
         if user is not None:
             if user.is_suspended:
                 messages.error(request, 'Your account has been suspended.')
                 return render(request, 'login.html')
             login(request, user)
             return redirect('dashboard')
-        messages.error(request, 'Invalid username or password.')
+        messages.error(request, 'Invalid email or password.')
     return render(request, 'login.html')
 
 
@@ -62,6 +62,24 @@ def signup_view(request):
             first_name=first_name, last_name=last_name,
             phone=phone, city=city, account_type=account_type,
         )
+        if account_type == 'PROVIDER':
+            service_map = {
+                'plumber': 'Plumber', 'electrician': 'Electrician',
+                'carpenter': 'Carpenter', 'painter': 'Painter',
+                'ac_technician': 'AC Tech', 'appliance_repair': 'Repair',
+                'cleaner': 'Cleaner', 'tutor': 'Tutor',
+            }
+            selected = request.POST.getlist('service_categories')
+            if selected:
+                first_cat_name = service_map.get(selected[0], '')
+                first_cat = ServiceCategory.objects.filter(name=first_cat_name).first()
+                skills = [service_map.get(s, s) for s in selected if service_map.get(s)]
+                ServiceProvider.objects.create(
+                    user=user,
+                    profession=first_cat_name,
+                    category=first_cat,
+                    skills=skills,
+                )
         login(request, user)
         messages.success(request, 'Account created successfully!')
         return redirect('dashboard')
@@ -285,6 +303,15 @@ def notifications_list(request):
         return redirect('notifications')
     unread_count = notifs.filter(read_at__isnull=True).count()
     return render(request, 'notifications.html', {'notifications_list': notifs, 'unread_count': unread_count})
+
+
+@login_required
+def mark_notification_read(request, pk):
+    if request.method == 'POST':
+        n = get_object_or_404(Notification, pk=pk, user=request.user)
+        n.read_at = timezone.now()
+        n.save()
+    return redirect('notifications')
 
 
 @login_required

@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-{% block title %}Login - Hamro Karma{% endblock %}
+{% block title %}Login - Karma{% endblock %}
 {% block content %}
 <div class="row justify-content-center mt-5">
     <div class="col-md-5">
         <div class="text-center mb-4">
-            <div class="display-4 mb-2"><i class="bi bi-hand-index-thumb" style="color:var(--karma-purple);"></i></div>
-            <h2 class="fw-bold">Hamro Karma</h2>
+            <div class="display-4 mb-2"><i class="bi bi-hand-index-thumb" style="color:var(--karma-red);"></i></div>
+            <h2 class="fw-bold">Karma</h2>
             <p class="text-muted">Sign in to continue</p>
         </div>
         <div class="card shadow-lg">
@@ -13,23 +13,23 @@
                 <form method="post" class="needs-validation" novalidate>
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label class="form-label fw-medium">Username</label>
-                        <input type="text" name="username" class="form-control" required autofocus>
-                        <div class="invalid-feedback">Please enter your username.</div>
+                        <label class="form-label fw-medium">Email</label>
+                        <input type="email" name="email" id="id_email" class="form-control" required autofocus>
+                        <div class="invalid-feedback">Please enter your email.</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-medium">Password</label>
-                        <input type="password" name="password" class="form-control" required>
+                        <input type="password" name="password" id="id_password" class="form-control" required>
                         <div class="invalid-feedback">Please enter your password.</div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100 py-2 fw-medium">Sign In</button>
                 </form>
-                <p class="text-center mt-3 mb-0">Don't have an account? <a href="{% url 'signup' %}" class="text-decoration-none fw-medium" style="color:var(--karma-purple);">Sign up</a></p>
+                <p class="text-center mt-3 mb-0">Don't have an account? <a href="{% url 'signup' %}" class="text-decoration-none fw-medium" style="color:var(--karma-red);">Sign up</a></p>
                 <hr class="my-3">
                 <p class="text-center text-muted small mb-2">Quick Demo Access</p>
                 <div class="d-grid gap-2">
-                    <button class="btn btn-outline-success btn-sm demo-login" data-username="rk1234" data-password="rk1234"><i class="bi bi-person-fill me-1"></i> Demo Customer</button>
-                    <button class="btn btn-outline-warning btn-sm demo-login" data-username="ram1234" data-password="ram1234"><i class="bi bi-person-fill me-1"></i> Demo Provider</button>
+                    <button class="btn btn-outline-success btn-sm" onclick="document.getElementById('id_email').value='rockyffgod@gmail.com'; document.getElementById('id_password').value='test1234'"><i class="bi bi-person-fill me-1"></i> Demo Customer</button>
+                    <button class="btn btn-outline-warning btn-sm" onclick="document.getElementById('id_email').value='ram@example.com'; document.getElementById('id_password').value='test1234'"><i class="bi bi-person-fill me-1"></i> Demo Provider</button>
                 </div>
             </div>
         </div>

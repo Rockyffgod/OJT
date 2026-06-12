@@ -75,12 +75,13 @@ class Command(BaseCommand):
             },
         )
         if created:
-            customer.set_password('rk1234')
+            customer.set_password('test1234')
         else:
             if customer.account_type != AccountType.CUSTOMER:
                 customer.account_type = AccountType.CUSTOMER
         customer.name_nepali = 'रोशन तामाङ'
         customer.profile_photo = 'rk1234'
+        customer.set_password('test1234')
         customer.save()
         self.stdout.write(f"{'  Created' if created else '  Found existing'} user: rk1234 (customer)")
 
@@ -101,12 +102,14 @@ class Command(BaseCommand):
             },
         )
         if created:
-            provider_user.set_password('ram1234')
+            provider_user.set_password('test1234')
         else:
             if provider_user.account_type != AccountType.PROVIDER:
                 provider_user.account_type = AccountType.PROVIDER
         provider_user.name_nepali = 'राम शर्मा'
+        provider_user.city = 'Kathmandu'
         provider_user.profile_photo = 'ramsharma'
+        provider_user.set_password('test1234')
         provider_user.save()
         self.stdout.write(f"{'  Created' if created else '  Found existing'} user: ram1234 (provider)")
 
@@ -156,7 +159,7 @@ class Command(BaseCommand):
                     account_type=AccountType.PROVIDER,
                     first_name=p['fn'],
                     last_name=p['ln'],
-                    city=p['area'].split(',')[0],
+                    city='Kathmandu',
                     name_nepali=p['name_nepali'],
                     is_active=True,
                     is_phone_verified=True,
@@ -166,6 +169,7 @@ class Command(BaseCommand):
             if created:
                 u.set_password('demo1234')
             u.name_nepali = p['name_nepali']
+            u.city = 'Kathmandu'
             if p['photo']:
                 u.profile_photo = p['photo']
             u.save()
@@ -306,4 +310,5 @@ class Command(BaseCommand):
         if _:
             self.stdout.write('  Created global notification')
 
+        User.objects.filter(account_type=AccountType.PROVIDER).update(city='Kathmandu')
         self.stdout.write(self.style.SUCCESS('Demo data seeded successfully!'))

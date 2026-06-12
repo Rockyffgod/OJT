@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}{{ alert.title }} - Hamro Karma{% endblock %}
+{% block title %}{{ alert.title }} - Karma{% endblock %}
 {% block content %}
 <a href="{% url 'ftl_list' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back to Alerts</a>
 
@@ -22,14 +22,7 @@
         </div>
     </div>
     <div class="col-lg-4">
-        {% if alert.latitude and alert.longitude %}
-        <div class="card mb-4">
-            <div class="card-header">Location</div>
-            <div class="card-body p-0">
-                <iframe width="100%" height="200" style="border:0" src="https://www.openstreetmap.org/export/embed.html?bbox={{ alert.longitude|add:-0.01 }}%2C{{ alert.latitude|add:-0.01 }}%2C{{ alert.longitude|add:0.01 }}%2C{{ alert.latitude|add:0.01 }}&amp;layer=mapnik&amp;marker={{ alert.latitude }}%2C{{ alert.longitude }}"></iframe>
-            </div>
-        </div>
-        {% endif %}
+        <p><i class="bi bi-geo-alt me-1"></i> Last seen: {{ alert.last_seen_location }}</p>
         {% if is_owner %}
         <div class="card">
             <div class="card-header">Manage</div>

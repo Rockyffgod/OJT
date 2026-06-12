@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
-{% block title %}Admin Panel - Hamro Karma{% endblock %}
+{% block title %}Admin Panel - Karma{% endblock %}
 {% block content %}
 <h2 class="fw-bold mb-4">Admin Panel</h2>
 
 <div class="row g-3 mb-4">
-    <div class="col-6 col-md-3"><div class="card text-white" style="background:var(--karma-purple);"><div class="card-body text-center"><h3 class="fw-bold mb-0">{{ total_users }}</h3><p class="mb-0 small opacity-75">Users</p></div></div></div>
-    <div class="col-6 col-md-3"><div class="card text-white" style="background:#059669;"><div class="card-body text-center"><h3 class="fw-bold mb-0">{{ total_providers }}</h3><p class="mb-0 small opacity-75">Providers</p></div></div></div>
-    <div class="col-6 col-md-3"><div class="card text-white" style="background:#d97706;"><div class="card-body text-center"><h3 class="fw-bold mb-0">{{ total_bookings }}</h3><p class="mb-0 small opacity-75">Bookings</p></div></div></div>
-    <div class="col-6 col-md-3"><div class="card text-white" style="background:#dc2626;"><div class="card-body text-center"><h3 class="fw-bold mb-0">{{ pending_verifications }}</h3><p class="mb-0 small opacity-75">Pending</p></div></div></div>
+    <div class="col-6 col-md-3"><div class="card text-white" style="background:var(--karma-red);"><div class="card-body text-center"><h3 class="fw-bold mb-0">{{ total_users }}</h3><p class="mb-0 small opacity-75">Users</p></div></div></div>
+    <div class="col-6 col-md-3"><div class="card text-white" style="background:var(--color-green);"><div class="card-body text-center"><h3 class="fw-bold mb-0">{{ total_providers }}</h3><p class="mb-0 small opacity-75">Providers</p></div></div></div>
+    <div class="col-6 col-md-3"><div class="card text-white" style="background:var(--color-amber);"><div class="card-body text-center"><h3 class="fw-bold mb-0">{{ total_bookings }}</h3><p class="mb-0 small opacity-75">Bookings</p></div></div></div>
+    <div class="col-6 col-md-3"><div class="card text-white" style="background:var(--color-red);"><div class="card-body text-center"><h3 class="fw-bold mb-0">{{ pending_verifications }}</h3><p class="mb-0 small opacity-75">Pending</p></div></div></div>
 </div>
 
 <div class="row g-4">

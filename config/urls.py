@@ -33,6 +33,7 @@ urlpatterns = [
     path('ftl/new/', views.ftl_new, name='ftl_new'),
     path('ftl/<uuid:pk>/', views.ftl_detail, name='ftl_detail'),
     path('notifications/', views.notifications_list, name='notifications'),
+    path('notifications/<uuid:pk>/read/', views.mark_notification_read, name='mark_notification_read'),
     path('messages/', views.messages_list, name='messages'),
     path('messages/send/', views.send_message, name='send_message'),
     path('admin-panel/', views.admin_panel, name='admin_panel'),
