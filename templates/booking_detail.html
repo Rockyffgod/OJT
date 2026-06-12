@@ -46,22 +46,20 @@
                     {% if is_provider and booking.status == 'IN_PROGRESS' %}
                     <button type="submit" name="action" value="complete" class="btn btn-success btn-sm">Mark Complete</button>
                     {% endif %}
+                    <div class="border-top pt-3 mt-3 d-flex gap-2">
+                        {% if is_customer %}
+                        <a href="{% url 'booking_checkout' booking.id %}" class="btn btn-karma btn-sm">Checkout</a>
+                        {% endif %}
+                        {% if booking.status == 'CONFIRMED' or booking.status == 'IN_PROGRESS' %}
+                        <a href="{% url 'booking_tracking' booking.id %}" class="btn btn-karma btn-sm">Track Provider</a>
+                        {% endif %}
+                    </div>
                 </form>
                 {% endif %}
             </div>
         </div>
     </div>
     <div class="col-lg-4">
-        <div class="card mb-4">
-            <div class="card-header">Location</div>
-            <div class="card-body p-0">
-                {% if booking.destination_lat and booking.destination_lng %}
-                <iframe width="100%" height="200" style="border:0" src="https://www.openstreetmap.org/export/embed.html?bbox={{ booking.destination_lng|add:-0.01 }}%2C{{ booking.destination_lat|add:-0.01 }}%2C{{ booking.destination_lng|add:0.01 }}%2C{{ booking.destination_lat|add:0.01 }}&amp;layer=mapnik&amp;marker={{ booking.destination_lat }}%2C{{ booking.destination_lng }}"></iframe>
-                {% else %}
-                <p class="text-center text-muted py-4 mb-0">No location</p>
-                {% endif %}
-            </div>
-        </div>
         <div class="card">
             <div class="card-header">Messages</div>
             <div class="card-body" style="max-height:250px;overflow-y:auto;">
