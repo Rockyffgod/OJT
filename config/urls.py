@@ -32,6 +32,7 @@ urlpatterns = [
     path('messages/', views.messages_list, name='messages'),
     path('messages/send/', views.send_message, name='send_message'),
     path('admin-panel/', views.admin_panel, name='admin_panel'),
+    path('admin-panel/notify/', views.admin_notify, name='admin_notify'),
     path('tos/', views.tos, name='tos'),
     path('tac/', views.tac, name='tac'),
 ]

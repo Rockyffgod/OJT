@@ -393,7 +393,15 @@ def ftl_detail(request, pk):
             messages.success(request, 'Alert marked as matched.')
         elif action == 'close':
             alert.status = FTLStatus.CLOSED
+            alert.resolved_at = timezone.now()
             alert.save()
+            Notification.objects.create(
+                user=alert.user,
+                title='FTL Alert Closed',
+                body=f'Your alert "{alert.title}" has been marked as resolved.',
+                type='ftl_closed',
+                reference_id=str(alert.id),
+            )
             messages.success(request, 'Alert closed.')
         elif action == 'delete':
             alert.delete()
@@ -406,7 +414,7 @@ def ftl_detail(request, pk):
 @login_required
 def ftl_new(request):
     if request.method == 'POST':
-        FTLAlert.objects.create(
+        alert = FTLAlert.objects.create(
             user=request.user,
             title=request.POST.get('title', ''),
             description=request.POST.get('description', ''),
@@ -414,6 +422,13 @@ def ftl_new(request):
             last_seen_location=request.POST.get('last_seen_location', ''),
             contact_method=request.POST.get('contact_method', 'PHONE'),
             contact_value=request.POST.get('contact_value', ''),
+        )
+        Notification.objects.create(
+            user=request.user,
+            title='FTL Alert Created',
+            body=f'Your alert "{alert.title}" has been posted.',
+            type='ftl_created',
+            reference_id=str(alert.id),
         )
         messages.success(request, 'FTL alert created.')
         return redirect('ftl_list')
@@ -494,6 +509,32 @@ def admin_panel(request):
         'recent_users': User.objects.order_by('-date_joined')[:10],
         'recent_bookings': Booking.objects.select_related('customer', 'provider__user').order_by('-created_at')[:10],
     })
+
+
+@login_required
+def admin_notify(request):
+    if request.user.account_type != AccountType.ADMIN and not request.user.is_staff:
+        messages.error(request, 'Access denied.')
+        return redirect('dashboard')
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        body = request.POST.get('body', '').strip()
+        user_id = request.POST.get('user_id', '')
+        if not title or not body:
+            messages.error(request, 'Title and message are required.')
+            return redirect('admin_notify')
+        if user_id == 'all':
+            users = User.objects.filter(is_active=True)
+        else:
+            users = User.objects.filter(id=user_id, is_active=True)
+        count = 0
+        for u in users:
+            Notification.objects.create(user=u, title=title, body=body, type='admin', is_global=False)
+            count += 1
+        messages.success(request, f'Notification sent to {count} user(s).')
+        return redirect('admin_panel')
+    users = User.objects.filter(is_active=True).order_by('username')
+    return render(request, 'admin_notify.html', {'users': users})
 
 
 def tos(request):

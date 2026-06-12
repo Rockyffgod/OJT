@@ -39,6 +39,7 @@
     <div class="card-header">Quick Links</div>
     <div class="card-body">
         <a href="/admin/" class="btn btn-outline-primary btn-sm me-2"><i class="bi bi-shield-lock me-1"></i> Django Admin</a>
+        <a href="{% url 'admin_notify' %}" class="btn btn-outline-warning btn-sm me-2"><i class="bi bi-bell me-1"></i> Send Notification</a>
         <a href="{% url 'services' %}" class="btn btn-outline-success btn-sm me-2"><i class="bi bi-grid me-1"></i> Services</a>
         <a href="{% url 'bookings' %}" class="btn btn-outline-info btn-sm"><i class="bi bi-calendar-check me-1"></i> Bookings</a>
     </div>
