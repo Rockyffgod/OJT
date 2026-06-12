@@ -130,9 +130,9 @@ class Command(BaseCommand):
                 'phone': '9841234567',
                 'account_type': AccountType.PROVIDER,
                 'first_name': 'Ram',
-                'last_name': 'Sharma',
+                'last_name': 'Karki',
                 'city': 'Kathmandu',
-                'name_nepali': 'राम शर्मा',
+                'name_nepali': 'राम कार्की',
                 'is_active': True,
                 'is_phone_verified': True,
                 'is_email_verified': True,
@@ -144,7 +144,7 @@ class Command(BaseCommand):
             if provider_user.account_type != AccountType.PROVIDER:
                 provider_user.account_type = AccountType.PROVIDER
         provider_user.email = 'ram1234@example.com'
-        provider_user.name_nepali = 'राम शर्मा'
+        provider_user.name_nepali = 'राम कार्की'
         provider_user.city = 'Kathmandu'
         provider_user.profile_photo = 'profiles/ramsharma.png'
         provider_user.set_password('test1234')
@@ -363,7 +363,7 @@ class Command(BaseCommand):
         # ── Demo Notifications ──
         notif_types = [
             ('Booking Confirmed', 'Your booking for kitchen sink repair has been confirmed.', 'booking_confirmed', str(booking1.id)),
-            ('Provider Assigned', 'Ram Sharma has been assigned to your booking.', 'provider_assigned', str(booking2.id)),
+            ('Provider Assigned', 'Ram Karki has been assigned to your booking.', 'provider_assigned', str(booking2.id)),
             ('FTL Alert Created', 'Your FTL alert "Missing elderly man near Thamel" is now live.', 'ftl_created', str(ftl1.id)),
         ]
         for title, body, ntype, ref_id in notif_types:
