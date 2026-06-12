@@ -14,8 +14,9 @@ class Command(BaseCommand):
         from services.models import ServiceProvider
         ServiceProvider.objects.all().delete()
         print("Cleared all ServiceProviders")
+        User.objects.filter(username='ram_sharma').delete()
         kept_providers = [
-            'ram_sharma','sita_adhikari','hari_gurung',
+            'sita_adhikari','hari_gurung',
             'gita_rai','bishal_poudel','anita_kc','maya_tamang',
             'harka_langtang','kp_ba','mahesh_khasnet','rajesh_hamal',
             'shyam_hamal','ram1234',
@@ -146,7 +147,7 @@ class Command(BaseCommand):
         provider_user.email = 'ram1234@example.com'
         provider_user.name_nepali = 'राम कार्की'
         provider_user.city = 'Kathmandu'
-        provider_user.profile_photo = 'profiles/ramsharma.png'
+        provider_user.profile_photo = ''
         provider_user.set_password('test1234')
         provider_user.save()
         self.stdout.write(f"{'  Created' if created else '  Found existing'} user: ram1234 (provider)")
@@ -181,7 +182,6 @@ class Command(BaseCommand):
 
         # ── Extra providers for services browsing ──
         extra_providers = [
-            dict(username='ram_sharma', email='ram@example.com', fn='Ram', ln='Sharma', cat=cat_plumber, prof='Plumber', rate=500, area='Patan', photo='profiles/ramsharma.png', lat=27.7041, lng=85.3145, bio='Experienced plumber with 120+ jobs in Kathmandu valley.', rating=4.5, jobs=120),
             dict(username='sita_adhikari', email='sita@example.com', fn='Sita', ln='Adhikari', cat=cat_electrician, prof='Electrician', rate=600, area='Jawalakhel', photo='', lat=27.6933, lng=85.3164, bio='Experienced electrician with 95+ jobs in Lalitpur.', rating=4.8, jobs=95),
             dict(username='hari_gurung', email='hari@example.com', fn='Hari', ln='Gurung', cat=cat_carpenter, prof='Carpenter', rate=450, area='Baneshwor', photo='profiles/hari_gurung.png', lat=27.7192, lng=85.3423, bio='Experienced carpenter with 67+ jobs in Kathmandu.', rating=4.2, jobs=67),
             dict(username='gita_rai', email='gita@example.com', fn='Gita', ln='Rai', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur', photo='', lat=27.6711, lng=85.4298, bio='Experienced painter with 88+ jobs in Bhaktapur.', rating=4.6, jobs=88),
