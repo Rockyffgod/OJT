@@ -190,6 +190,56 @@ class Command(BaseCommand):
             if sp_created:
                 self.stdout.write(f"  Created ServiceProvider: {p['username']}")
 
+        # ── Extra providers for services browsing ──
+        extra_providers = [
+            dict(username='ram_sharma', email='ram@example.com', fn='Ram', ln='Sharma', cat=cat_plumber, prof='Plumber', rate=500, area='Kathmandu'),
+            dict(username='sita_adhikari', email='sita@example.com', fn='Sita', ln='Adhikari', cat=cat_electrician, prof='Electrician', rate=600, area='Lalitpur'),
+            dict(username='hari_gurung', email='hari@example.com', fn='Hari', ln='Gurung', cat=cat_carpenter, prof='Carpenter', rate=450, area='Kathmandu'),
+            dict(username='gita_rai', email='gita@example.com', fn='Gita', ln='Rai', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur'),
+            dict(username='bishal_poudel', email='bishal@example.com', fn='Bishal', ln='Poudel', cat=cat_ac, prof='AC Tech', rate=800, area='Kathmandu'),
+            dict(username='anita_kc', email='anita@example.com', fn='Anita', ln='KC', cat=cat_cleaner, prof='Cleaner', rate=250, area='Lalitpur'),
+            dict(username='maya_tamang', email='maya@example.com', fn='Maya', ln='Tamang', cat=cat_tutor, prof='Tutor', rate=300, area='Kathmandu'),
+            dict(username='harka_langtang', email='harka@example.com', fn='Harka', ln='Langtang', cat=cat_electrician, prof='Electrician', rate=600, area='Lalitpur'),
+            dict(username='kp_ba', email='kp@example.com', fn='KP', ln='Ba', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur'),
+            dict(username='mahesh_khasnet', email='mahesh@example.com', fn='Mahesh', ln='Khasnet', cat=cat_cleaner, prof='Cleaner', rate=250, area='Lalitpur'),
+            dict(username='rajesh_hamal', email='rajesh@example.com', fn='Rajesh', ln='Hamal', cat=cat_repair, prof='Repair Tech', rate=550, area='Kathmandu'),
+            dict(username='shyam_hamal', email='shyam@example.com', fn='Shyam', ln='Hamal', cat=cat_tutor, prof='Tutor', rate=300, area='Kathmandu'),
+        ]
+        for p in extra_providers:
+            u, created = User.objects.get_or_create(
+                username=p['username'],
+                defaults=dict(
+                    email=p['email'],
+                    phone=None,
+                    account_type=AccountType.PROVIDER,
+                    first_name=p['fn'],
+                    last_name=p['ln'],
+                    city=p['area'],
+                    is_active=True,
+                    is_email_verified=True,
+                ),
+            )
+            if created:
+                u.set_password('demo1234')
+            u.set_password('demo1234')
+            u.save()
+            self.stdout.write(f"{'  Created' if created else '  Found existing'} user: {p['username']}")
+
+            sp, sp_created = ServiceProvider.objects.get_or_create(
+                user=u,
+                defaults=dict(
+                    category=p['cat'],
+                    profession=p['prof'],
+                    hourly_rate=p['rate'],
+                    service_area=p['area'],
+                    skills=[p['prof'], 'Customer Service'],
+                    languages=['Nepali', 'English'],
+                    is_available=True,
+                ),
+            )
+            if sp_created:
+                self.stdout.write(f"  Created ServiceProvider: {p['username']}")
+
         # ── Demo Bookings ──
         now = timezone.now()
 
