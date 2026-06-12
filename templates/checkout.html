@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - Karma{% endblock %}
+{% block content %}
+<a href="{% url 'bookings' %}" class="btn btn-outline-secondary btn-sm mb-3">&larr; Back to Bookings</a>
+
+<h2 class="fw-bold mb-4">Checkout</h2>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card mb-4">
+            <div class="card-header">Booking Summary</div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr><td class="ps-0 text-muted">Provider</td><td class="fw-bold">{{ booking.provider.user.get_full_name|default:booking.provider.user.username }}</td></tr>
+                    <tr><td class="ps-0 text-muted">Service</td><td>{{ booking.provider.profession }}</td></tr>
+                    <tr><td class="ps-0 text-muted">Description</td><td>{{ booking.job_description }}</td></tr>
+                    <tr><td class="ps-0 text-muted">Date & Time</td><td>{{ booking.scheduled_date|date:"F d, Y H:i" }}</td></tr>
+                    <tr><td class="ps-0 text-muted">Location</td><td>{{ booking.job_address }}</td></tr>
+                    <tr><td class="ps-0 text-muted border-0">Total</td><td class="fw-bold fs-5 border-0" style="color:var(--karma-red);">Rs. {{ booking.agreed_price|floatformat:0 }}</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Payment Method</div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="payment_method" id="cash" value="cash" checked>
+                            <label class="form-check-label fw-medium" for="cash">Cash</label>
+                            <small class="d-block text-muted ms-4">Pay in cash when the service is completed</small>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="payment_method" id="esewa" value="esewa">
+                            <label class="form-check-label fw-medium" for="esewa">eSewa</label>
+                            <small class="d-block text-muted ms-4">Pay via eSewa mobile wallet</small>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="payment_method" id="khalti" value="khalti">
+                            <label class="form-check-label fw-medium" for="khalti">Khalti</label>
+                            <small class="d-block text-muted ms-4">Pay via Khalti digital wallet</small>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-karma w-100 mt-2">Confirm Booking</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">Provider</div>
+            <div class="card-body text-center">
+                {% if booking.provider.user.profile_photo %}
+                <img src="{{ booking.provider.user.profile_photo.url }}" width="80" height="80" class="rounded-circle mb-2" style="object-fit:cover;">
+                {% else %}
+                <div class="rounded-circle bg-secondary mx-auto mb-2 d-flex align-items-center justify-content-center" style="width:80px;height:80px;"><i class="bi bi-person-fill text-white fs-1"></i></div>
+                {% endif %}
+                <h5>{{ booking.provider.user.get_full_name|default:booking.provider.user.username }}</h5>
+                <p class="text-muted small mb-0">{{ booking.provider.profession }}</p>
+                <span class="badge rounded-pill bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>{{ booking.provider.average_rating|default:"0.0" }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

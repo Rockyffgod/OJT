@@ -120,17 +120,17 @@ class Command(BaseCommand):
                 'profession': 'Plumber',
                 'bio': 'Experienced plumber with 10+ years in Kathmandu valley.',
                 'hourly_rate': 500,
-                'service_area': 'Kathmandu',
+                'service_area': 'Patan',
                 'skills': ['pipe repair', 'water heater install', 'drain cleaning'],
                 'languages': ['Nepali', 'English', 'Hindi'],
                 'is_available': True,
-                'latitude': 27.7172,
-                'longitude': 85.3240,
+                'latitude': 27.7041,
+                'longitude': 85.3145,
             },
         )
-        provider_profile.latitude = 27.7172
-        provider_profile.longitude = 85.3240
-        provider_profile.service_area = 'Kathmandu'
+        provider_profile.latitude = 27.7041
+        provider_profile.longitude = 85.3145
+        provider_profile.service_area = 'Patan'
         provider_profile.save()
         self.stdout.write(f"{'  Created' if created else '  Found existing'} ServiceProvider: ram_sharma")
 
@@ -138,20 +138,24 @@ class Command(BaseCommand):
         additional_providers = [
             dict(username='anita_cleaner', email='anita.cleaner@karma.com', fn='Anita', ln='KC',
                  phone='9841111111', photo='', name_nepali='अनिता के.सी.',
-                 cat=cat_cleaner, prof='Cleaner', rate=250, area='Lalitpur',
-                 bio='Experienced cleaner with 150+ jobs completed.'),
+                 cat=cat_cleaner, prof='Cleaner', rate=250, area='Dillibazar',
+                 bio='Experienced cleaner with 150+ jobs completed.',
+                 lat=27.7181, lng=85.3247),
             dict(username='bishal_actech', email='bishal.actech@karma.com', fn='Bishal', ln='Poudel',
                  phone='9842222222', photo='bishalpoudel', name_nepali='विशाल पौडेल',
-                 cat=cat_ac, prof='AC Technician', rate=800, area='Kathmandu',
-                 bio='AC repair and maintenance expert with 10+ years experience.'),
+                 cat=cat_ac, prof='AC Technician', rate=800, area='Lazimpat',
+                 bio='AC repair and maintenance expert with 10+ years experience.',
+                 lat=27.7369, lng=85.3306),
             dict(username='maya_tutor', email='maya.tutor@karma.com', fn='Maya', ln='Tamang',
                  phone='9843333333', photo='', name_nepali='माया तामाङ',
-                 cat=cat_tutor, prof='Tutor', rate=300, area='Kathmandu',
-                 bio='Mathematics and Science tutor for grades 5-10.'),
+                 cat=cat_tutor, prof='Tutor', rate=300, area='Kumaripati',
+                 bio='Mathematics and Science tutor for grades 5-10.',
+                 lat=27.7089, lng=85.3217),
             dict(username='rajesh_repair', email='rajesh.repair@karma.com', fn='Rajesh', ln='Hamal',
                  phone='9844444444', photo='rajesh_hamal', name_nepali='राजेश हमाल',
-                 cat=cat_repair, prof='Repair Technician', rate=550, area='Kathmandu',
-                 bio='Home appliance repair specialist with 7+ years experience.'),
+                 cat=cat_repair, prof='Repair Technician', rate=550, area='Ekantakuna',
+                 bio='Home appliance repair specialist with 7+ years experience.',
+                 lat=27.7086, lng=85.3156),
         ]
         for p in additional_providers:
             u, created = User.objects.get_or_create(
@@ -185,35 +189,35 @@ class Command(BaseCommand):
                     profession=p['prof'],
                     bio=p['bio'],
                     hourly_rate=p['rate'],
-                    service_area='Kathmandu',
+                    service_area=p['area'],
                     skills=['general service'],
                     languages=['Nepali', 'English'],
                     is_available=True,
-                    latitude=27.7172,
-                    longitude=85.3240,
+                    latitude=p['lat'],
+                    longitude=p['lng'],
                 ),
             )
-            sp.latitude = 27.7172
-            sp.longitude = 85.3240
-            sp.service_area = 'Kathmandu'
+            sp.latitude = p['lat']
+            sp.longitude = p['lng']
+            sp.service_area = p['area']
             sp.save()
             if sp_created:
                 self.stdout.write(f"  Created ServiceProvider: {p['username']}")
 
         # ── Extra providers for services browsing ──
         extra_providers = [
-            dict(username='ram_sharma', email='ram@example.com', fn='Ram', ln='Sharma', cat=cat_plumber, prof='Plumber', rate=500, area='Kathmandu', photo='profiles/ramsharma.png'),
-            dict(username='sita_adhikari', email='sita@example.com', fn='Sita', ln='Adhikari', cat=cat_electrician, prof='Electrician', rate=600, area='Lalitpur', photo=''),
-            dict(username='hari_gurung', email='hari@example.com', fn='Hari', ln='Gurung', cat=cat_carpenter, prof='Carpenter', rate=450, area='Kathmandu', photo='profiles/hari_gurung.png'),
-            dict(username='gita_rai', email='gita@example.com', fn='Gita', ln='Rai', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur', photo=''),
-            dict(username='bishal_poudel', email='bishal@example.com', fn='Bishal', ln='Poudel', cat=cat_ac, prof='AC Tech', rate=800, area='Kathmandu', photo='profiles/bishalpoudel.png'),
-            dict(username='anita_kc', email='anita@example.com', fn='Anita', ln='KC', cat=cat_cleaner, prof='Cleaner', rate=250, area='Lalitpur', photo=''),
-            dict(username='maya_tamang', email='maya@example.com', fn='Maya', ln='Tamang', cat=cat_tutor, prof='Tutor', rate=300, area='Kathmandu', photo=''),
-            dict(username='harka_langtang', email='harka@example.com', fn='Harka', ln='Langtang', cat=cat_electrician, prof='Electrician', rate=600, area='Lalitpur', photo='profiles/harka_lamtang.png'),
-            dict(username='kp_ba', email='kp@example.com', fn='KP', ln='Ba', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur', photo='profiles/kp_ba.png'),
-            dict(username='mahesh_khasnet', email='mahesh@example.com', fn='Mahesh', ln='Khasnet', cat=cat_cleaner, prof='Cleaner', rate=250, area='Lalitpur', photo='profiles/mahesh_khasnet.png'),
-            dict(username='rajesh_hamal', email='rajesh@example.com', fn='Rajesh', ln='Hamal', cat=cat_repair, prof='Repair Tech', rate=550, area='Kathmandu', photo='profiles/rajesh_hamal.png'),
-            dict(username='shyam_hamal', email='shyam@example.com', fn='Shyam', ln='Hamal', cat=cat_tutor, prof='Tutor', rate=300, area='Kathmandu', photo='profiles/shyam_hamal.png'),
+            dict(username='ram_sharma', email='ram@example.com', fn='Ram', ln='Sharma', cat=cat_plumber, prof='Plumber', rate=500, area='Patan', photo='profiles/ramsharma.png', lat=27.7041, lng=85.3145),
+            dict(username='sita_adhikari', email='sita@example.com', fn='Sita', ln='Adhikari', cat=cat_electrician, prof='Electrician', rate=600, area='Jawalakhel', photo='', lat=27.6933, lng=85.3164),
+            dict(username='hari_gurung', email='hari@example.com', fn='Hari', ln='Gurung', cat=cat_carpenter, prof='Carpenter', rate=450, area='Baneshwor', photo='profiles/hari_gurung.png', lat=27.7192, lng=85.3423),
+            dict(username='gita_rai', email='gita@example.com', fn='Gita', ln='Rai', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur', photo='', lat=27.6711, lng=85.4298),
+            dict(username='bishal_poudel', email='bishal@example.com', fn='Bishal', ln='Poudel', cat=cat_ac, prof='AC Tech', rate=800, area='Lazimpat', photo='profiles/bishalpoudel.png', lat=27.7369, lng=85.3306),
+            dict(username='anita_kc', email='anita@example.com', fn='Anita', ln='KC', cat=cat_cleaner, prof='Cleaner', rate=250, area='Jawalakhel', photo='', lat=27.6933, lng=85.3164),
+            dict(username='maya_tamang', email='maya@example.com', fn='Maya', ln='Tamang', cat=cat_tutor, prof='Tutor', rate=300, area='Kumaripati', photo='', lat=27.7089, lng=85.3217),
+            dict(username='harka_langtang', email='harka@example.com', fn='Harka', ln='Langtang', cat=cat_electrician, prof='Electrician', rate=600, area='Jawalakhel', photo='profiles/harka_lamtang.png', lat=27.6933, lng=85.3164),
+            dict(username='kp_ba', email='kp@example.com', fn='KP', ln='Ba', cat=cat_painter, prof='Painter', rate=350, area='Bhaktapur', photo='profiles/kp_ba.png', lat=27.6711, lng=85.4298),
+            dict(username='mahesh_khasnet', email='mahesh@example.com', fn='Mahesh', ln='Khasnet', cat=cat_cleaner, prof='Cleaner', rate=250, area='Jawalakhel', photo='profiles/mahesh_khasnet.png', lat=27.6933, lng=85.3164),
+            dict(username='rajesh_hamal', email='rajesh@example.com', fn='Rajesh', ln='Hamal', cat=cat_repair, prof='Repair Tech', rate=550, area='Ekantakuna', photo='profiles/rajesh_hamal.png', lat=27.7086, lng=85.3156),
+            dict(username='shyam_hamal', email='shyam@example.com', fn='Shyam', ln='Hamal', cat=cat_tutor, prof='Tutor', rate=300, area='Kumaripati', photo='profiles/shyam_hamal.png', lat=27.7089, lng=85.3217),
         ]
         for p in extra_providers:
             u, created = User.objects.get_or_create(
@@ -243,17 +247,17 @@ class Command(BaseCommand):
                     category=p['cat'],
                     profession=p['prof'],
                     hourly_rate=p['rate'],
-                    service_area='Kathmandu',
+                    service_area=p['area'],
                     skills=[p['prof'], 'Customer Service'],
                     languages=['Nepali', 'English'],
                     is_available=True,
-                    latitude=27.7172,
-                    longitude=85.3240,
+                    latitude=p['lat'],
+                    longitude=p['lng'],
                 ),
             )
-            sp.latitude = 27.7172
-            sp.longitude = 85.3240
-            sp.service_area = 'Kathmandu'
+            sp.latitude = p['lat']
+            sp.longitude = p['lng']
+            sp.service_area = p['area']
             sp.save()
             if sp_created:
                 self.stdout.write(f"  Created ServiceProvider: {p['username']}")
