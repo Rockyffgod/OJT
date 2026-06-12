@@ -6,11 +6,8 @@
 {% block content %}
 <h2 class="fw-bold mb-4">Browse Services</h2>
 
-<div style="position:relative; margin-bottom:1.5rem;">
+<div style="margin-bottom:1.5rem;">
     <div id="services-map" style="height:400px; border-radius:12px; border:1px solid var(--border-color);"></div>
-    <button id="locate-btn" class="btn btn-sm btn-outline-primary position-absolute" style="top:10px;right:10px;z-index:1000;background:var(--bg-card);">
-        <i class="bi bi-crosshair"></i> Locate Me
-    </button>
 </div>
 
 <form method="get" class="row g-2 mb-4">
@@ -91,7 +88,6 @@
     if(providers.length > 0) console.log("first provider:", providers[0]);
 
     var markers = [];
-    var circles = [];
 
     providers.forEach(function(pr){
         if (!pr.lat || !pr.lng) return;
@@ -127,54 +123,6 @@
         var group = L.featureGroup(markers);
         map.fitBounds(group.getBounds().pad(0.1));
     }
-
-    function deg2rad(deg) { return deg * (Math.PI / 180); }
-    function haversine(lat1, lng1, lat2, lng2){
-        var R = 6371;
-        var dLat = deg2rad(lat2 - lat1);
-        var dLng = deg2rad(lng2 - lng1);
-        var a = Math.sin(dLat/2)*Math.sin(dLat/2) +
-                Math.cos(deg2rad(lat1))*Math.cos(deg2rad(lat2)) *
-                Math.sin(dLng/2)*Math.sin(dLng/2);
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    }
-
-    document.getElementById('locate-btn').addEventListener('click', function(){
-        if(!navigator.geolocation){
-            alert('Geolocation is not supported by your browser.');
-            return;
-        }
-        navigator.geolocation.getCurrentPosition(function(pos){
-            var userLat = pos.coords.latitude;
-            var userLng = pos.coords.longitude;
-
-            circles.forEach(function(c){ map.removeLayer(c); });
-            circles = [];
-
-            var userMarker = L.circleMarker([userLat, userLng], {
-                radius: 10, color: '#3b82f6', fillColor: '#3b82f6',
-                fillOpacity: 0.8, weight: 2,
-            }).addTo(map);
-            circles.push(userMarker);
-
-            var nearest = markers.map(function(m){
-                return { marker: m, dist: haversine(userLat, userLng, m.prData.lat, m.prData.lng) };
-            }).sort(function(a,b){ return a.dist - b.dist; }).slice(0, 3);
-
-            nearest.forEach(function(n){
-                var c = L.circle([n.marker.prData.lat, n.marker.prData.lng], {
-                    radius: 200, color: '#f59e0b', fillColor: '#f59e0b',
-                    fillOpacity: 0.15, weight: 2,
-                }).addTo(map);
-                circles.push(c);
-                n.marker.setZIndexOffset(1000);
-            });
-
-            map.setView([userLat, userLng], 14);
-        }, function(){
-            alert('Could not get your location. Please enable location services.');
-        });
-    });
 })();
 </script>
 {% endblock %}

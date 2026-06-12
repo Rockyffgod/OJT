@@ -11,7 +11,6 @@ from bookings.models import Booking, BookingStatus
 from ftl.models import FTLAlert, FTLType, FTLStatus
 from notifications.models import Notification
 from messaging.models import Message
-import json
 
 
 def login_view(request):
@@ -166,7 +165,7 @@ def services_list(request):
     return render(request, 'services.html', {
         'categories': categories,
         'providers': providers,
-        'providers_data': json.dumps(providers_data),
+        'providers_data': providers_data,
         'selected_category': category_id,
         'search': search,
     })
