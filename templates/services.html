@@ -92,23 +92,27 @@
 
     providers.forEach(function(pr){
         var photoUrl = pr.photo || '';
+        var initial = (pr.name || '?')[0].toUpperCase();
         var icon = L.divIcon({
             className: '',
             html: '<div style="' +
                 'width:42px;height:42px;border-radius:50%;' +
                 'border:2px solid var(--karma-red,#e53e3e);' +
-                (photoUrl ? 'background-image:url(' + photoUrl + ');background-size:cover;background-position:center;' : 'background:var(--bg-card,#333);display:flex;align-items:center;justify-content:center;') +
+                (photoUrl ? 'background-image:url(' + photoUrl + ');background-size:cover;background-position:center;' : 'background:var(--karma-red,#e53e3e);display:flex;align-items:center;justify-content:center;') +
                 'box-shadow:0 2px 6px rgba(0,0,0,0.5);' +
-                '">' + (photoUrl ? '' : '<i class="bi bi-person-fill" style="color:var(--text-muted,#888);font-size:1.2rem;"></i>') + '</div>',
+                'color:#fff;font-weight:bold;font-size:18px;' +
+                '">' + (photoUrl ? '' : initial) + '</div>',
             iconSize: [42, 42],
             iconAnchor: [21, 21],
         });
+        var stars = '';
+        for(var s=0; s<Math.round(pr.rating); s++) stars += '&#9733;';
         var m = L.marker([pr.lat, pr.lng], {icon: icon}).addTo(map);
         m.bindPopup(
             '<strong>' + pr.name + '</strong><br>' +
-            pr.prof + '<br>' +
-            pr.rate + '<br>' +
-            '<i class="bi bi-geo-alt"></i> ' + pr.area + '<br>' +
+            '<span class="text-muted">' + pr.prof + '</span><br>' +
+            (pr.rating ? '<span style="color:#f59e0b;">' + stars + ' ' + pr.rating.toFixed(1) + '</span><br>' : '') +
+            pr.rate + ' &middot; ' + pr.area + '<br>' +
             '<a href="' + pr.profile_url + '" class="btn btn-sm btn-karma mt-2" style="font-size:.8rem;">View Profile</a>'
         );
         m.prData = pr;
