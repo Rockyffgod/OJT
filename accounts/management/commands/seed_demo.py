@@ -11,15 +11,14 @@ class Command(BaseCommand):
     help = 'Seed demo users and data for presentation'
 
     def handle(self, *args, **kwargs):
-        from services.models import ServiceProvider
         ServiceProvider.objects.all().delete()
         print("Cleared all ServiceProviders")
-        User.objects.filter(username='ram_sharma').delete()
+        User.objects.filter(username='ram1234').delete()
         kept_providers = [
             'sita_adhikari','hari_gurung',
             'gita_rai','bishal_poudel','anita_kc','maya_tamang',
             'harka_langtang','kp_ba','mahesh_khasnet','rajesh_hamal',
-            'shyam_hamal','ram1234',
+            'shyam_hamal',
         ]
         deleted, _ = User.objects.filter(account_type=AccountType.PROVIDER).exclude(
             username__in=kept_providers
@@ -98,61 +97,28 @@ class Command(BaseCommand):
         customer.save()
         self.stdout.write(f"{'  Created' if created else '  Found existing'} user: rk1234 (customer)")
 
-        # ── Demo Customer (testcustomer) ──
-        test_customer, created = User.objects.get_or_create(
-            username='testcustomer',
-            defaults={
-                'email': 'testcustomer@example.com',
-                'phone': '9840000000',
-                'account_type': AccountType.CUSTOMER,
-                'first_name': 'Test',
-                'last_name': 'Customer',
-                'city': 'Kathmandu',
-                'is_active': True,
-                'is_phone_verified': True,
-                'is_email_verified': True,
-            },
-        )
-        if created:
-            test_customer.set_password('test1234')
-        else:
-            if test_customer.account_type != AccountType.CUSTOMER:
-                test_customer.account_type = AccountType.CUSTOMER
-        test_customer.email = 'testcustomer@example.com'
-        test_customer.set_password('test1234')
-        test_customer.save()
-        self.stdout.write(f"{'  Created' if created else '  Found existing'} user: testcustomer (customer)")
-
-        # ── Demo Provider (ram1234) ──
+        # ── Demo Provider (ram_sharma) ──
         provider_user, created = User.objects.get_or_create(
-            username='ram1234',
+            username='ram_sharma',
             defaults={
-                'email': 'ram1234@example.com',
+                'email': 'ram@example.com',
                 'phone': '9841234567',
                 'account_type': AccountType.PROVIDER,
                 'first_name': 'Ram',
-                'last_name': 'Karki',
-                'city': 'Kathmandu',
-                'name_nepali': 'राम कार्की',
+                'last_name': 'Sharma',
+                'city': 'Patan',
                 'is_active': True,
-                'is_phone_verified': True,
                 'is_email_verified': True,
             },
         )
         if created:
-            provider_user.set_password('test1234')
-        else:
-            if provider_user.account_type != AccountType.PROVIDER:
-                provider_user.account_type = AccountType.PROVIDER
-        provider_user.email = 'ram1234@example.com'
-        provider_user.name_nepali = 'राम कार्की'
-        provider_user.city = 'Kathmandu'
-        provider_user.profile_photo = ''
-        provider_user.set_password('test1234')
+            provider_user.set_password('demo1234')
+        provider_user.set_password('demo1234')
+        provider_user.profile_photo = 'profiles/ramsharma.png'
         provider_user.save()
-        self.stdout.write(f"{'  Created' if created else '  Found existing'} user: ram1234 (provider)")
+        self.stdout.write(f"{'  Created' if created else '  Found existing'} user: ram_sharma (provider)")
 
-        # ── ServiceProvider profile for ram1234 ──
+        # ── ServiceProvider profile for ram_sharma ──
         provider_profile, created = ServiceProvider.objects.get_or_create(
             user=provider_user,
             defaults={
@@ -163,7 +129,7 @@ class Command(BaseCommand):
                 'service_area': 'Patan',
                 'skills': ['pipe repair', 'water heater install', 'drain cleaning'],
                 'languages': ['Nepali', 'English', 'Hindi'],
-                'is_available': False,
+                'is_available': True,
                 'latitude': 27.7041,
                 'longitude': 85.3145,
                 'average_rating': 4.5,
@@ -178,7 +144,7 @@ class Command(BaseCommand):
         provider_profile.total_jobs_completed = 120
         provider_profile.verification_status = 'APPROVED'
         provider_profile.save()
-        self.stdout.write(f"{'  Created' if created else '  Found existing'} ServiceProvider: ram1234")
+        self.stdout.write(f"{'  Created' if created else '  Found existing'} ServiceProvider: ram_sharma")
 
         # ── Extra providers for services browsing ──
         extra_providers = [
@@ -363,7 +329,7 @@ class Command(BaseCommand):
         # ── Demo Notifications ──
         notif_types = [
             ('Booking Confirmed', 'Your booking for kitchen sink repair has been confirmed.', 'booking_confirmed', str(booking1.id)),
-            ('Provider Assigned', 'Ram Karki has been assigned to your booking.', 'provider_assigned', str(booking2.id)),
+            ('Provider Assigned', 'Ram Sharma has been assigned to your booking.', 'provider_assigned', str(booking2.id)),
             ('FTL Alert Created', 'Your FTL alert "Missing elderly man near Thamel" is now live.', 'ftl_created', str(ftl1.id)),
         ]
         for title, body, ntype, ref_id in notif_types:
