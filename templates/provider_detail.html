@@ -10,7 +10,7 @@
                 {% if sp.user.profile_photo %}
                 <img src="{{ sp.user.profile_photo.url }}" width="120" height="120" class="rounded-circle mb-3" style="object-fit:cover;">
                 {% else %}
-                <div class="rounded-circle bg-secondary mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:120px;height:120px;"><i class="bi bi-person-fill text-white fs-1"></i></div>
+                <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:120px;height:120px;background-color:var(--karma-red,#e53e3e);color:white;font-weight:bold;font-size:48px;">{{ sp.user.first_name|first|default:sp.user.username|first|upper }}</div>
                 {% endif %}
                 <h4>{{ sp.user.get_full_name|default:sp.user.username }}</h4>
                 <p class="text-muted mb-1">{{ sp.profession }}</p>
