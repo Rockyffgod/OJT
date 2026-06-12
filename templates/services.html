@@ -81,11 +81,13 @@
         maxZoom: 18,
     }).addTo(map);
 
-    var providers = (function(){
+    var raw = (function(){
         var el = document.getElementById('providers-data');
         if(!el) return [];
         try{ return JSON.parse(el.textContent); }catch(e){ return []; }
     })();
+    var providers = Array.isArray(raw) ? raw : Object.values(raw);
+    console.log("providers loaded:", providers);
 
     var markers = [];
     var circles = [];
