@@ -35,21 +35,24 @@ bookings, and anyone can post FTL (Find The Lost) alerts.
 3. Set up environment variables
    Copy .env.example to .env and fill in the values
 
-4. Run migrations
+4. Collect static files
+   python manage.py collectstatic --no-input
+
+5. Run migrations
    python manage.py migrate
 
-5. Seed demo data
+6. Seed demo data
    python manage.py seed_demo
 
-6. Start the server
+7. Start the dev server
    python manage.py runserver
 
 ## Demo Accounts
 
-| Username | Password | Role     |
-|----------|----------|----------|
-| rk1234   | rk1234   | Customer |
-| ram1234  | ram1234  | Provider |
+| Username / Email          | Password | Role     |
+|---------------------------|----------|----------|
+| rk1234@example.com        | test1234 | Customer |
+| ram@example.com           | test1234 | Provider |
 
 ## Project Structure
 

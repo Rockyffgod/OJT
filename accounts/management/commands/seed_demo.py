@@ -62,7 +62,7 @@ class Command(BaseCommand):
         customer, created = User.objects.get_or_create(
             username='rk1234',
             defaults={
-                'email': 'rockyffgod@gmail.com',
+                'email': 'rk1234@example.com',
                 'phone': '9864997037',
                 'account_type': AccountType.CUSTOMER,
                 'first_name': 'Roshan',
@@ -79,8 +79,9 @@ class Command(BaseCommand):
         else:
             if customer.account_type != AccountType.CUSTOMER:
                 customer.account_type = AccountType.CUSTOMER
+        customer.email = 'rk1234@example.com'
         customer.name_nepali = 'रोशन तामाङ'
-        customer.profile_photo = 'rk1234'
+        customer.profile_photo = None
         customer.set_password('test1234')
         customer.save()
         self.stdout.write(f"{'  Created' if created else '  Found existing'} user: rk1234 (customer)")

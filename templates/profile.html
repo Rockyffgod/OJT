@@ -1,43 +1,94 @@
 {% extends 'base.html' %}
 {% block title %}Profile - Karma{% endblock %}
 {% block content %}
-<h2 class="fw-bold mb-4">My Profile</h2>
+<h2 class="mb-4">My Profile</h2>
+<div class="card">
+  <div class="card-body">
+    <div class="row">
 
-<div class="row g-4">
-    <div class="col-md-4">
-        <div class="card text-center">
-            <div class="card-body">
-                {% if user.profile_photo %}
-                <img src="{{ user.profile_photo.url }}" class="profile-photo mb-3">
-                {% else %}
-                <div class="rounded-circle bg-secondary mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:100px;height:100px;"><i class="bi bi-person-fill text-white fs-1"></i></div>
-                {% endif %}
-                <h4 class="fw-bold">{{ user.first_name }} {{ user.last_name }}</h4>
-                <p class="text-muted mb-3">{{ user.get_account_type_display }}</p>
-                <a href="{% url 'profile_edit' %}" class="btn btn-primary btn-sm w-100"><i class="bi bi-pencil me-1"></i> Edit Profile</a>
-            </div>
+      <!-- Left: Photo -->
+      <div class="col-md-4 text-center">
+        {% if user.profile_photo %}
+        <img src="{{ user.profile_photo.url }}"
+          class="rounded-circle mb-3"
+          style="width:150px; height:150px;
+                 object-fit:cover;">
+        {% else %}
+        <div class="rounded-circle bg-secondary
+          d-flex align-items-center
+          justify-content-center mx-auto mb-3"
+          style="width:150px; height:150px;">
+          <i class="bi bi-person"
+             style="font-size:4rem; color:white;">
+          </i>
         </div>
+        {% endif %}
+        <h4>{{ user.get_full_name|default:user.username }}</h4>
+        <p class="text-muted">{{ user.account_type }}</p>
+        <a href="{% url 'profile_edit' %}"
+           class="btn btn-primary w-100">
+          <i class="bi bi-pencil"></i> Edit Profile
+        </a>
+      </div>
+
+      <!-- Right: Info -->
+      <div class="col-md-8">
+        <h5 class="mb-3">Profile Info</h5>
+        <table class="table">
+          <tr>
+            <td class="text-muted">Name</td>
+            <td>{{ user.get_full_name|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td class="text-muted">Email</td>
+            <td>{{ user.email }}</td>
+          </tr>
+          <tr>
+            <td class="text-muted">Username</td>
+            <td>{{ user.username }}</td>
+          </tr>
+          <tr>
+            <td class="text-muted">Phone</td>
+            <td>{{ user.phone|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td class="text-muted">City</td>
+            <td>{{ user.city|default:"—" }}</td>
+          </tr>
+          <tr>
+            <td class="text-muted">Account Type</td>
+            <td>{{ user.account_type }}</td>
+          </tr>
+        </table>
+        {% if provider %}
+        <hr>
+        <h5 class="mb-3">Service Provider</h5>
+        <table class="table">
+          <tr>
+            <td class="text-muted">Profession</td>
+            <td>{{ provider.profession }}</td>
+          </tr>
+          <tr>
+            <td class="text-muted">Experience</td>
+            <td>{{ provider.experience }} years</td>
+          </tr>
+          <tr>
+            <td class="text-muted">Hourly Rate</td>
+            <td>Rs. {{ provider.hourly_rate|default:"N/A" }}</td>
+          </tr>
+          <tr>
+            <td class="text-muted">Service Area</td>
+            <td>{{ provider.service_area }}</td>
+          </tr>
+          <tr>
+            <td class="text-muted">Bio</td>
+            <td>{{ provider.bio|default:"N/A" }}</td>
+          </tr>
+        </table>
+        {% endif %}
+      </div>
+
     </div>
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">Profile Info</div>
-            <div class="card-body">
-                <div class="row mb-3"><div class="col-sm-4 text-muted">Name</div><div class="col-sm-8 fw-medium">{{ user.first_name }} {{ user.last_name }}</div></div>
-                <div class="row mb-3"><div class="col-sm-4 text-muted">Email</div><div class="col-sm-8">{{ user.email }}</div></div>
-                <div class="row mb-3"><div class="col-sm-4 text-muted">Phone</div><div class="col-sm-8">{{ user.phone|default:"N/A" }}</div></div>
-                <div class="row mb-3"><div class="col-sm-4 text-muted">City</div><div class="col-sm-8">{{ user.city|default:"N/A" }}</div></div>
-                <div class="row mb-3"><div class="col-sm-4 text-muted">Account Type</div><div class="col-sm-8">{{ user.get_account_type_display }}</div></div>
-                {% if provider %}
-                <hr>
-                <h6 class="fw-bold mb-3">Service Provider</h6>
-                <div class="row mb-2"><div class="col-sm-4 text-muted">Profession</div><div class="col-sm-8">{{ provider.profession }}</div></div>
-                <div class="row mb-2"><div class="col-sm-4 text-muted">Experience</div><div class="col-sm-8">{{ provider.experience }} years</div></div>
-                <div class="row mb-2"><div class="col-sm-4 text-muted">Hourly Rate</div><div class="col-sm-8">Rs. {{ provider.hourly_rate|default:"N/A" }}</div></div>
-                <div class="row mb-2"><div class="col-sm-4 text-muted">Service Area</div><div class="col-sm-8">{{ provider.service_area }}</div></div>
-                <div class="row mb-2"><div class="col-sm-4 text-muted">Bio</div><div class="col-sm-8">{{ provider.bio|default:"N/A" }}</div></div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
 {% endblock %}
