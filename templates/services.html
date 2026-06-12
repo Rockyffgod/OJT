@@ -91,7 +91,19 @@
     var circles = [];
 
     providers.forEach(function(pr){
-        var m = L.marker([pr.lat, pr.lng]).addTo(map);
+        var photoUrl = pr.photo || '';
+        var icon = L.divIcon({
+            className: '',
+            html: '<div style="' +
+                'width:42px;height:42px;border-radius:50%;' +
+                'border:2px solid var(--karma-red,#e53e3e);' +
+                (photoUrl ? 'background-image:url(' + photoUrl + ');background-size:cover;background-position:center;' : 'background:var(--bg-card,#333);display:flex;align-items:center;justify-content:center;') +
+                'box-shadow:0 2px 6px rgba(0,0,0,0.5);' +
+                '">' + (photoUrl ? '' : '<i class="bi bi-person-fill" style="color:var(--text-muted,#888);font-size:1.2rem;"></i>') + '</div>',
+            iconSize: [42, 42],
+            iconAnchor: [21, 21],
+        });
+        var m = L.marker([pr.lat, pr.lng], {icon: icon}).addTo(map);
         m.bindPopup(
             '<strong>' + pr.name + '</strong><br>' +
             pr.prof + '<br>' +

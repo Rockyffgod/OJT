@@ -150,6 +150,7 @@ def services_list(request):
     providers_data = [
         {
             'name': sp.user.get_full_name() or sp.user.username,
+            'photo': sp.user.profile_photo.url if sp.user.profile_photo else '',
             'prof': sp.profession,
             'rate': f'Rs.{sp.hourly_rate}/hr',
             'area': sp.service_area or '',
