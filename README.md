@@ -27,7 +27,8 @@ bookings, and anyone can post FTL (Find The Lost) alerts.
 
 ## Hosted
 
-https://karmanepal.pythonanywhere.com
+> [!WARNING]
+> The hosted site at https://karmanepal.pythonanywhere.com is currently down (showing a PythonAnywhere placeholder page). This may be due to the free tier account needing renewal or the web app configuration requiring updates.
 
 ## Setup
 
