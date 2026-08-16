@@ -58,21 +58,3 @@ https://karmanepal.pythonanywhere.com
 | ram1234      | test1234  | Customer |
 | ram_sharma   | demo1234  | Provider |
 | admin        | admin1234 | Admin    |
-
-## Project Structure
-
-OJT/
-├── config/         # Settings and URLs
-├── accounts/       # User model and auth
-├── bookings/       # Booking logic
-├── services/       # Service providers and browse
-├── ftl/            # Find The Lost alerts
-├── notifications/  # Notification system
-├── messaging/      # User messaging
-├── karma/          # Karma points system
-├── templates/      # HTML templates
-└── static/         # CSS, JS, images
-
-## Support
-
-Join our Discord: https://discord.gg/yqVyTFrqf7
